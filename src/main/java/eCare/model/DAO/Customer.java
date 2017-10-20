@@ -1,6 +1,11 @@
 package eCare.model.DAO;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by echerkas on 18.10.2017.
@@ -8,7 +13,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "customer")
-public class Customer {
+public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +38,39 @@ public class Customer {
     @Column(name = "tel_number")
     private String telNumber;
 
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
+    }
+
     @Column(name = "mail")
     private String mail;
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    private List<Contract> contracts;
+
+    public Customer(String name, String surname, String birthDate, String telNumber, String mail, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.birthDate = birthDate;
+        this.telNumber = telNumber;
+        this.mail = mail;
+        this.password = password;
+    }
+
+    public Customer(String name, String surname, String birthDate, String mail, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.birthDate = birthDate;
+        this.mail = mail;
+        this.password = password;
+    }
 
     public Customer() {
     }
@@ -144,6 +177,7 @@ public class Customer {
                 ", telNumber='" + telNumber + '\'' +
                 ", mail='" + mail + '\'' +
                 ", password='" + password + '\'' +
+                ", contracts=" + contracts +
                 '}';
     }
 }

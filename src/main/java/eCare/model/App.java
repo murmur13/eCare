@@ -1,7 +1,11 @@
 package eCare.model;
 
+import eCare.model.DAO.Contract;
 import eCare.model.DAO.Customer;
+import eCare.model.DAO.Tarif;
+import eCare.model.services.ContractService;
 import eCare.model.services.CustomerService;
+import eCare.model.services.TarifService;
 
 import java.util.List;
 
@@ -12,8 +16,8 @@ public class App {
 
     public static void main(String[] args) {
         CustomerService customerService = new CustomerService();
-        Customer customer1 = new Customer("Katty", "Blood", "55676787", "19-01-1990");
-        Customer customer2 = new Customer("234545", "War@com.ru", "pass", "Ann");
+        Customer customer1 = new Customer("Katty", "Blood", "1990-01-21", "7890890", "qerty", "lonely@com.ru");
+        Customer customer2 = new Customer("Ann", "Wayne", "2000-06-06", "@com", "pass");
         System.out.println("*** Persist - start ***");
         customerService.persist(customer1);
         customerService.persist(customer2);
@@ -33,24 +37,54 @@ public class App {
         Customer another = customerService.findById(id1);
         System.out.println("Customer found with id " + id1 + " is =>" + another.toString());
         System.out.println("*** Find - end ***");
-        System.out.println("*** Delete - start ***");
-        Integer id2 = customer2.getId();
-        customerService.delete(id2);
-        System.out.println("Deleted customer with id " + id2 + ".");
-        System.out.println("Now all customers are " + customerService.findAll().size() + ".");
-        System.out.println("*** Delete - end ***");
-        System.out.println("*** FindAll - start ***");
-        List<Customer> customerList2 = customerService.findAll();
-        System.out.println("Customers found are :");
-        for (Customer b : customerList2) {
-            System.out.println("-" + b.toString());
+
+        TarifService tarifService = new TarifService();
+        Tarif tarif1 = new Tarif("bezlimit1");
+        Tarif tarif2 = new Tarif("more sms1");
+        System.out.println("*** Persist - start ***");
+        tarifService.persist(tarif1);
+        tarifService.persist(tarif2);
+        List<Tarif> tarifList = tarifService.findAll();
+        System.out.println("Tarifs Persisted are :");
+        for(Tarif t : tarifList){
+            System.out.println("-" + t.toString());
         }
-        System.out.println("*** FindAll - end ***");
-        System.out.println("*** DeleteAll - start ***");
-        customerService.deleteAll();
-        System.out.println("Customers found are now " + customerService.findAll().size());
-        System.out.println("*** DeleteAll - end ***");
-        System.exit(0);
+        System.out.println("*** Persist - end ***");
+
+        ContractService contractService = new ContractService();
+        Contract contract1 = new Contract("8-911056475");
+        Contract contract2 = new Contract("8-921-35435");
+        System.out.println("*** Persist - start ***");
+        contractService.persist(contract1);
+        contractService.persist(contract2);
+        List<Contract> contractList = contractService.findAll();
+        System.out.println("Contracts Persisted are :");
+        for(Contract c : contractList){
+            System.out.println("-" + c.toString());
+        }
+        System.out.println("*** Persist - end ***");
+
+
+
+
+//        System.out.println("*** Delete - start ***");
+//        Integer id2 = customer2.getId();
+//        customerService.delete(id2);
+//        System.out.println("Deleted customer with id " + id2 + ".");
+//        System.out.println("Now all customers are " + customerService.findAll().size() + ".");
+//        System.out.println("*** Delete - end ***");
+//        System.out.println("*** FindAll - start ***");
+//        List<Customer> customerList2 = customerService.findAll();
+//        System.out.println("Customers found are :");
+//        for (Customer b : customerList2) {
+//            System.out.println("-" + b.toString());
+//        }
+//        System.out.println("*** FindAll - end ***");
+//        System.out.println("*** DeleteAll - start ***");
+//        customerService.deleteAll();
+//        System.out.println("Customers found are now " + customerService.findAll().size());
+//        System.out.println("*** DeleteAll - end ***");
+//        System.exit(0);
     }
 }
 

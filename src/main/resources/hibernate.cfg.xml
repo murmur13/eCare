@@ -13,5 +13,7 @@
         <property name="show_sql">true</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <mapping class="eCare.model.DAO.Customer"/>
+        <mapping class="eCare.model.DAO.Tarif"/>
+        <mapping class="eCare.model.DAO.Contract"/>
     </session-factory>
 </hibernate-configuration>
