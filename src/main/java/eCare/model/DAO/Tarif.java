@@ -11,35 +11,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "tarif")
-public class Tarif implements Serializable {
-
-//    public List<Contract> getContractsTarif() {
-//        return contractsTarif;
-//    }
-//
-//    public void setContractsTarif(List<Contract> contractsTarif) {
-//        this.contractsTarif = contractsTarif;
-//    }
-
-    @Override
-    public String toString() {
-        return "Tarif{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", contractsTarif=" + contractsTarif +
-                '}';
-    }
+public class Tarif{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tarif_id")
-    private int id;
+    private int tarifId;
 
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy="tarif", fetch = FetchType.EAGER)
-    private List<Contract> contractsTarif;
+    @OneToMany(mappedBy="tarif")
+    private List<Contract> tarifContracts;
 
     public Tarif(){
     }
@@ -49,11 +32,11 @@ public class Tarif implements Serializable {
     }
 
     public int getId() {
-        return id;
+        return tarifId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.tarifId = id;
     }
 
     public String getName() {

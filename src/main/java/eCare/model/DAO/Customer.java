@@ -1,11 +1,7 @@
 package eCare.model.DAO;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by echerkas on 18.10.2017.
@@ -13,12 +9,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "customer")
-public class Customer implements Serializable {
+public class Customer{
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "customer_id")
-    private int id;
+    private int customerId;
 
     @Column(name = "name")
     private String name;
@@ -38,21 +34,13 @@ public class Customer implements Serializable {
     @Column(name = "tel_number")
     private String telNumber;
 
-    public List<Contract> getContracts() {
-        return contracts;
-    }
-
-    public void setContracts(List<Contract> contracts) {
-        this.contracts = contracts;
-    }
-
     @Column(name = "mail")
     private String mail;
 
     @Column(name = "password")
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="customer")
     private List<Contract> contracts;
 
     public Customer(String name, String surname, String birthDate, String telNumber, String mail, String password) {
@@ -94,11 +82,11 @@ public class Customer implements Serializable {
     }
 
     public int getId() {
-        return id;
+        return customerId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.customerId = id;
     }
 
     public String getName() {
@@ -168,7 +156,7 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         return "Customer{" +
-                "id=" + id +
+                "customerId=" + customerId +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", birthDate='" + birthDate + '\'' +
@@ -177,8 +165,23 @@ public class Customer implements Serializable {
                 ", telNumber='" + telNumber + '\'' +
                 ", mail='" + mail + '\'' +
                 ", password='" + password + '\'' +
-                ", contracts=" + contracts +
                 '}';
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public List<Contract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<Contract> contracts) {
+        this.contracts = contracts;
     }
 }
 

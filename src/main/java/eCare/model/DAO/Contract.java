@@ -1,7 +1,6 @@
 package eCare.model.DAO;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by echerkas on 20.10.2017.
@@ -9,80 +8,45 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "contract")
-public class Contract implements Serializable {
+public class Contract{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "contract_id", insertable = false, updatable = false)
-    private int id;
+    @Column(name = "contract_id")
+    private int contractId;
 
     @Column(name = "t_number")
     private String tNumber;
 
-    @Column(name = "tarif_tarif_id")
-    private int tarifId;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_customer_id", nullable = false)
-    @Id
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="customer_customer_id")
     private Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tarif_tarif_id", nullable = false, insertable = false, updatable = false)
-    @Id
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="tarif_tarif_id")
     private Tarif tarif;
-
-    public int getTarifId() {
-        return tarifId;
-    }
-
-    public void setTarifId(int tarifId) {
-        this.tarifId = tarifId;
-    }
 
     public Contract(){
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Contract(String tNumber, int tarifId) {
+    public Contract(String tNumber, Customer customer, Tarif tarif) {
         this.tNumber = tNumber;
-        this.tarifId = tarifId;
-    }
-
-    @Override
-    public String toString() {
-
-        return "Contract{" +
-                "id=" + id +
-                ", tNumber='" + tNumber + '\'' +
-                ", tarifId=" + tarifId +
-                ", customer=" + customer +
-                ", tarif=" + tarif +
-                '}';
-    }
-
-    public Tarif getTarif() {
-        return tarif;
-    }
-
-    public void setTarif(Tarif tarif) {
+        this.customer = customer;
         this.tarif = tarif;
     }
 
-    public Customer getCustomer() {
+    public Contract(String tNumber, Tarif tarif) {
 
-        return customer;
+        this.tNumber = tNumber;
+        this.tarif = tarif;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public int getContractId() {
+        return contractId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setContractId(int contractId) {
+        this.contractId = contractId;
     }
 
     public String gettNumber() {
@@ -93,8 +57,34 @@ public class Contract implements Serializable {
         this.tNumber = tNumber;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Tarif getTarif() {
+        return tarif;
+    }
+
+    public void setTarif(Tarif tarif) {
+        this.tarif = tarif;
+    }
+
     public Contract(String tNumber) {
         this.tNumber = tNumber;
 
+    }
+
+    @Override
+    public String toString() {
+        return "Contract{" +
+                "contractId=" + contractId +
+                ", tNumber='" + tNumber + '\'' +
+                ", customer=" + customer +
+                ", tarif=" + tarif +
+                '}';
     }
 }
