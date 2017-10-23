@@ -16,7 +16,7 @@ public class App {
 
     public static void main(String[] args) {
         CustomerService customerService = new CustomerService();
-        Customer customer1 = new Customer("Katty", "Blood", "1990-01-21", "7890890", "qerty", "lonely@com.ru");
+        Customer customer1 = new Customer("Katty", "Blood", "1990-01-21", "6855687865673456", "qerty", "lonely@com.ru");
         Customer customer2 = new Customer("Ann", "Wayne", "2000-06-06", "@com", "pass");
         System.out.println("*** Persist - start ***");
         customerService.persist(customer1);
@@ -39,8 +39,8 @@ public class App {
         System.out.println("*** Find - end ***");
 
         TarifService tarifService = new TarifService();
-        Tarif tarif1 = new Tarif("bezlimit1");
-        Tarif tarif2 = new Tarif("more sms1");
+        Tarif tarif1 = new Tarif("bezlimit10");
+        Tarif tarif2 = new Tarif("more sms10");
         System.out.println("*** Persist - start ***");
         tarifService.persist(tarif1);
         tarifService.persist(tarif2);
@@ -52,8 +52,8 @@ public class App {
         System.out.println("*** Persist - end ***");
 
         ContractService contractService = new ContractService();
-        Contract contract1 = new Contract("8-911056475");
-        Contract contract2 = new Contract("8-921-35435");
+        Contract contract1 = new Contract("8-911056475", 1);
+        Contract contract2 = new Contract("8-921-35435", 2);
         System.out.println("*** Persist - start ***");
         contractService.persist(contract1);
         contractService.persist(contract2);

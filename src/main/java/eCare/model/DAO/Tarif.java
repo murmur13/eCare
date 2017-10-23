@@ -13,13 +13,13 @@ import java.util.List;
 @Table(name = "tarif")
 public class Tarif implements Serializable {
 
-    public List<Contract> getContractsTarif() {
-        return contractsTarif;
-    }
-
-    public void setContractsTarif(List<Contract> contractsTarif) {
-        this.contractsTarif = contractsTarif;
-    }
+//    public List<Contract> getContractsTarif() {
+//        return contractsTarif;
+//    }
+//
+//    public void setContractsTarif(List<Contract> contractsTarif) {
+//        this.contractsTarif = contractsTarif;
+//    }
 
     @Override
     public String toString() {
@@ -38,7 +38,7 @@ public class Tarif implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy="tarif")
+    @OneToMany(mappedBy="tarif", fetch = FetchType.EAGER)
     private List<Contract> contractsTarif;
 
     public Tarif(){

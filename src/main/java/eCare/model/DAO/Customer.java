@@ -16,7 +16,7 @@ import java.util.Set;
 public class Customer implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private int id;
 
@@ -52,7 +52,7 @@ public class Customer implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Contract> contracts;
 
     public Customer(String name, String surname, String birthDate, String telNumber, String mail, String password) {

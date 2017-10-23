@@ -13,7 +13,7 @@ public class Contract implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "contract_id")
+    @Column(name = "contract_id", insertable = false, updatable = false)
     private int id;
 
     @Column(name = "t_number")
@@ -22,14 +22,14 @@ public class Contract implements Serializable {
     @Column(name = "tarif_tarif_id")
     private int tarifId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_customer_id", nullable = false, insertable = false, updatable = false)
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_customer_id", nullable = false)
+    @Id
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tarif_tarif_id", nullable = false, insertable = false, updatable = false)
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
     private Tarif tarif;
 
     public int getTarifId() {
@@ -47,8 +47,14 @@ public class Contract implements Serializable {
         return id;
     }
 
+    public Contract(String tNumber, int tarifId) {
+        this.tNumber = tNumber;
+        this.tarifId = tarifId;
+    }
+
     @Override
     public String toString() {
+
         return "Contract{" +
                 "id=" + id +
                 ", tNumber='" + tNumber + '\'' +
