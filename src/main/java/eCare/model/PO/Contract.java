@@ -1,4 +1,4 @@
-package eCare.model.DAO;
+package eCare.model.PO;
 
 import javax.persistence.*;
 

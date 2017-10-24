@@ -1,8 +1,6 @@
-package eCare.model.DAO;
+package eCare.model.PO;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

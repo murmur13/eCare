@@ -12,8 +12,9 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">true</property>
         <property name="hibernate.current_session_context_class">thread</property>
-        <mapping class="eCare.model.DAO.Customer"/>
-        <mapping class="eCare.model.DAO.Tarif"/>
-        <mapping class="eCare.model.DAO.Contract"/>
+        <mapping class="eCare.model.PO.Customer"/>
+        <mapping class="eCare.model.PO.Tarif"/>
+        <mapping class="eCare.model.PO.Contract"/>
+        <mapping class="eCare.model.PO.Option"/>
     </session-factory>
 </hibernate-configuration>

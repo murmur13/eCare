@@ -1,6 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.DAO.Customer;
+import eCare.model.PO.Customer;
 import eCare.model.DAO.CustomerDAO;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package eCare.model.DAO;
 
-import eCare.model.PO.Contract;
+import eCare.model.PO.Option;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,15 +9,15 @@ import org.hibernate.cfg.Configuration;
 import java.util.List;
 
 /**
- * Created by echerkas on 20.10.2017.
+ * Created by echerkas on 24.10.2017.
  */
-public class ContractDAO implements DAOInterface <Contract, Integer> {
+public class OptionDAO implements DAOInterface <Option, Integer> {
 
     private Session currentSession;
 
     private Transaction currentTransaction;
 
-    public ContractDAO() {
+    public OptionDAO() {
     }
 
     public Session openCurrentSession() {
@@ -61,32 +61,32 @@ public class ContractDAO implements DAOInterface <Contract, Integer> {
         this.currentTransaction = currentTransaction;
     }
 
-    public void persist(Contract entity) {
+    public void persist(Option entity) {
         getCurrentSession().save(entity);
     }
 
-    public void update(Contract entity) {
+    public void update(Option entity) {
         getCurrentSession().update(entity);
     }
 
-    public Contract findById(Integer id) {
-        Contract contract = (Contract) getCurrentSession().get(Contract.class, id);
-        return contract;
+    public Option findById(Integer id) {
+        Option option = getCurrentSession().get(Option.class, id);
+        return option;
     }
 
-    public void delete(Contract entity) {
+    public void delete(Option entity) {
         getCurrentSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Contract> findAll() {
-        List<Contract> contracts = (List<Contract>) getCurrentSession().createQuery("from Contract").list();
-        return contracts;
+    public List<Option> findAll() {
+        List<Option> options = (List<Option>) getCurrentSession().createQuery("from Option").list();
+        return options;
     }
 
     public void deleteAll() {
-        List<Contract> entityList = findAll();
-        for (Contract entity : entityList) {
+        List<Option> entityList = findAll();
+        for (Option entity : entityList) {
             delete(entity);
         }
     }

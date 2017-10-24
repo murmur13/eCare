@@ -1,5 +1,6 @@
 package eCare.model.DAO;
 
+import eCare.model.PO.Tarif;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

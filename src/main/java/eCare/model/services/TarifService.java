@@ -1,6 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.DAO.Tarif;
+import eCare.model.PO.Tarif;
 import eCare.model.DAO.TarifDAO;
 
 import java.util.List;
