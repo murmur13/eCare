@@ -4,7 +4,7 @@
 
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db</property>
         <property name="hibernate.connection.username">admin</property>
@@ -15,6 +15,6 @@
         <mapping class="eCare.model.PO.Customer"/>
         <mapping class="eCare.model.PO.Tarif"/>
         <mapping class="eCare.model.PO.Contract"/>
-        <mapping class="eCare.model.PO.Option"/>
+        <mapping class="eCare.model.PO.Feature"/>
     </session-factory>
 </hibernate-configuration>

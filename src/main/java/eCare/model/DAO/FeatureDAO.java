@@ -1,6 +1,6 @@
 package eCare.model.DAO;
 
-import eCare.model.PO.Option;
+import eCare.model.PO.Feature;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -11,13 +11,13 @@ import java.util.List;
 /**
  * Created by echerkas on 24.10.2017.
  */
-public class OptionDAO implements DAOInterface <Option, Integer> {
+public class FeatureDAO implements DAOInterface <Feature, Integer> {
 
     private Session currentSession;
 
     private Transaction currentTransaction;
 
-    public OptionDAO() {
+    public FeatureDAO() {
     }
 
     public Session openCurrentSession() {
@@ -61,32 +61,32 @@ public class OptionDAO implements DAOInterface <Option, Integer> {
         this.currentTransaction = currentTransaction;
     }
 
-    public void persist(Option entity) {
+    public void persist(Feature entity) {
         getCurrentSession().save(entity);
     }
 
-    public void update(Option entity) {
+    public void update(Feature entity) {
         getCurrentSession().update(entity);
     }
 
-    public Option findById(Integer id) {
-        Option option = getCurrentSession().get(Option.class, id);
-        return option;
+    public Feature findById(Integer id) {
+        Feature feature = getCurrentSession().get(Feature.class, id);
+        return feature;
     }
 
-    public void delete(Option entity) {
+    public void delete(Feature entity) {
         getCurrentSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Option> findAll() {
-        List<Option> options = (List<Option>) getCurrentSession().createQuery("from Option").list();
-        return options;
+    public List<Feature> findAll() {
+        List<Feature> featureList = (List<Feature>) getCurrentSession().createQuery("from Feature").list();
+        return featureList;
     }
 
     public void deleteAll() {
-        List<Option> entityList = findAll();
-        for (Option entity : entityList) {
+        List<Feature> entityList = findAll();
+        for (Feature entity : entityList) {
             delete(entity);
         }
     }

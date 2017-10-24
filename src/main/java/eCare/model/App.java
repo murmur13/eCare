@@ -2,11 +2,11 @@ package eCare.model;
 
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
-import eCare.model.PO.Option;
+import eCare.model.PO.Feature;
 import eCare.model.PO.Tarif;
 import eCare.model.services.ContractService;
 import eCare.model.services.CustomerService;
-import eCare.model.services.OptionService;
+import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class App {
 
     public static void main(String[] args) {
         CustomerService customerService = new CustomerService();
-        Customer customer1 = new Customer("Katty", "Blood", "1990-01-21", "56754656765767", "qerty", "lonely@com.ru");
+        Customer customer1 = new Customer("Katty", "Blood", "1990-01-21", "567546765er65767", "qerty", "lonely@com.ru");
         Customer customer2 = new Customer("Ann", "Wayne", "2000-06-06", "@com", "pass");
         System.out.println("*** Persist - start ***");
         customerService.persist(customer1);
@@ -41,8 +41,8 @@ public class App {
         System.out.println("*** Find - end ***");
 
         TarifService tarifService = new TarifService();
-        Tarif tarif1 = new Tarif("bezlimit");
-        Tarif tarif2 = new Tarif("more sms");
+        Tarif tarif1 = new Tarif("bezlimit25");
+        Tarif tarif2 = new Tarif("more sms25");
         System.out.println("*** Persist - start ***");
         tarifService.persist(tarif1);
         tarifService.persist(tarif2);
@@ -54,10 +54,10 @@ public class App {
         System.out.println("*** Persist - end ***");
 
         ContractService contractService = new ContractService();
-        Contract contract1 = new Contract("8-911057gh64675");
+        Contract contract1 = new Contract("8-91107675");
         contract1.setCustomer(customer1);
         contract1.setTarif(tarif1);
-        Contract contract2 = new Contract("8-92671-36635");
+        Contract contract2 = new Contract("8-92771-335");
         contract2.setCustomer(customer2);
         contract2.setTarif(tarif2);
         System.out.println("contract2 has customer (name) = " + contract2 + customer2.getName());
@@ -81,17 +81,14 @@ public class App {
         for(Contract c : contractList){
             System.out.println("-" + c.toString());
         }
-        OptionService optionService = new OptionService();
-        Option option1 = new Option("firstOption", 15.00, 6.3);
-        Option option2 = new Option("second Option", 13.13, 2);
-        System.out.println("*** Persist OPTION - start ***");
-        optionService.persist(option1);
-        optionService.persist(option2);
-        option1.setOptionTarifs(tarifList);
+        FeatureService featureService = new FeatureService();
+        Feature feature1 = new Feature("first feature", 15.00, 6.3);
+        Feature feature2 = new Feature("second feature1", 13.13, 2);
+        System.out.println("*** Persist FEATURE - start ***");
+        featureService.persist(feature1);
+        featureService.persist(feature2);
+        feature1.setFeatureTarifs(tarifList);
         System.out.println("*** Persist - end ***");
-
-
-
 
 //        System.out.println("*** Delete - start ***");
 //        Integer id2 = customer2.getId();
