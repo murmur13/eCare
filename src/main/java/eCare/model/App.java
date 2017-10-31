@@ -1,13 +1,7 @@
 package eCare.model;
 
-import eCare.model.PO.Contract;
-import eCare.model.PO.Customer;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
-import eCare.model.services.ContractService;
-import eCare.model.services.CustomerService;
-import eCare.model.services.FeatureService;
-import eCare.model.services.TarifService;
+import eCare.model.PO.*;
+import eCare.model.services.*;
 
 import java.util.List;
 
@@ -88,7 +82,20 @@ public class App {
         featureService.persist(feature1);
         featureService.persist(feature2);
         feature1.setFeatureTarifs(tarifList);
+        featureService.update(feature1);
         System.out.println("*** Persist - end ***");
+
+        System.out.println("*** BLOCKING FEATURES ***");
+        BlockingFeaturesService blockingFeaturesService = new BlockingFeaturesService();
+        BlockingFeatures block1 = new BlockingFeatures("blocking feature 1");
+        BlockingFeatures block2 = new BlockingFeatures("blocking feature 2");
+        System.out.println("*** Persist blocking features start***");
+        blockingFeaturesService.persist(block1);
+        blockingFeaturesService.persist(block2);
+        List<Feature> featuresList = featureService.findAll();
+        block1.setBlockingFeatures(featuresList);
+        blockingFeaturesService.update(block1);
+        System.out.println("*** BLOCKING FEATURES***");
 
 //        System.out.println("*** Delete - start ***");
 //        Integer id2 = customer2.getId();

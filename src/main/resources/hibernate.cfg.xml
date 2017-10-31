@@ -16,5 +16,6 @@
         <mapping class="eCare.model.PO.Tarif"/>
         <mapping class="eCare.model.PO.Contract"/>
         <mapping class="eCare.model.PO.Feature"/>
+        <mapping class="eCare.model.PO.BlockingFeatures"/>
     </session-factory>
 </hibernate-configuration>
