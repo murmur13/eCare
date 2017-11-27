@@ -1,7 +1,11 @@
 package eCare.model.PO;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by echerkas on 18.10.2017.
@@ -14,7 +18,11 @@ public class Customer{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "customer_id")
-    private int customerId;
+    private Integer customerId;
+
+    @NotEmpty
+    @Column(name="sso_id", unique=true, nullable=false)
+    private String ssoId;
 
     @Column(name = "name")
     private String name;
@@ -42,6 +50,32 @@ public class Customer{
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="customer")
     private List<Contract> contracts;
+
+    public String getSsoId() {
+        return ssoId;
+    }
+
+    public void setSsoId(String ssoId) {
+        this.ssoId = ssoId;
+    }
+
+    public Set<UserProfile> getUserProfiles() {
+        return userProfiles;
+    }
+
+    public void setUserProfiles(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
+    }
+
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    @NotEmpty
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="customer_has_user_profile",
+            joinColumns=@JoinColumn(name="user_id", referencedColumnName="customer_id"),
+            inverseJoinColumns=@JoinColumn(name="user_profile_id", referencedColumnName="profile_id"))
+    private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
 
     public Customer(String name, String surname, String birthDate, String telNumber, String mail, String password) {
         this.name = name;
@@ -81,11 +115,11 @@ public class Customer{
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return customerId;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.customerId = id;
     }
 
@@ -157,6 +191,7 @@ public class Customer{
     public String toString() {
         return "Customer{" +
                 "customerId=" + customerId +
+                ", ssoId='" + ssoId + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", birthDate='" + birthDate + '\'' +
@@ -168,11 +203,11 @@ public class Customer{
                 '}';
     }
 
-    public int getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
 
@@ -182,6 +217,37 @@ public class Customer{
 
     public void setContracts(List<Contract> contracts) {
         this.contracts = contracts;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+        result = prime * result + ((ssoId == null) ? 0 : ssoId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Customer))
+            return false;
+        Customer other = (Customer) obj;
+        if (customerId == null) {
+            if (other.customerId != null)
+                return false;
+        } else if (!customerId.equals(other.customerId))
+            return false;
+        if (ssoId == null) {
+            if (other.ssoId != null)
+                return false;
+        } else if (!ssoId.equals(other.ssoId))
+            return false;
+        return true;
     }
 }
 
