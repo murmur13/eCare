@@ -2,7 +2,7 @@ package eCare.security;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
-import eCare.model.services.SecondCustomerService;
+import eCare.model.services.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
         @Autowired
-        private SecondCustomerService userService;
+        private CustomerService userService;
 
         @Transactional(readOnly=true)
         public UserDetails loadUserByUsername(String ssoId)

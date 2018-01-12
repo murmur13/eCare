@@ -2,7 +2,7 @@ package eCare.controllers;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
-import eCare.model.services.SecondCustomerService;
+import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -33,7 +33,7 @@ import java.util.Locale;
 public class AppController {
 
         @Autowired
-        SecondCustomerService userService;
+        CustomerService userService;
 
         @Autowired
         UserProfileService userProfileService;

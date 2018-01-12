@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service("customerService")
 @Transactional
-public class SecondCustomerServiceImpl implements SecondCustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private SecondCustomerDAO secondCustomerDAO;
