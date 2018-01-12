@@ -36,7 +36,7 @@
         </div>
         <div class="col-sm-8 text-left">
             <h1>Welcome</h1>
-            <p>Welcome to eCare, here you can check your tarif and available options. </p>
+            <h3><p>Welcome to eCare, here you can check your tarif and available options. </p></h3>
             <hr>
             <h3>Test</h3>
             <p>Lorem ipsum...</p>

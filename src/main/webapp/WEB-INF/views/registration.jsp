@@ -10,12 +10,13 @@
     <title>User Registration Form</title>
     <link href="<c:url value='/resources/css/bootstrap.css' />" rel="stylesheet">
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
 </head>
 
 <body>
 <div class="generic-container">
-    <%@include file="authheader.jsp" %>
-
     <div class="well lead">User Registration Form</div>
     <form:form method="POST" modelAttribute="user" class="form-horizontal">
         <form:input type="hidden" path="customerId" id="user"/>

@@ -35,7 +35,7 @@ public class TarifController {
     /**
      * This method will list all existing users.
      */
-    @RequestMapping(value = { "/", "/listTarifs" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/listTarifs" }, method = RequestMethod.GET)
     public String listUsers(ModelMap model) {
 
         List<Tarif> tarifs = tarifService.findAll();

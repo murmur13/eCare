@@ -48,17 +48,17 @@ public class AppController {
         AuthenticationTrustResolver authenticationTrustResolver;
 
     /**
-     * This method will list all existing users.
+     * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
     public String mainPage(ModelMap model) {
-//
-//        List<Customer> users = userService.findAllUsers();
-//        model.addAttribute("users", users);
         model.addAttribute("loggedinuser", getPrincipal());
         return "main";
     }
 
+    /**
+     * This method will list all existing users.
+     */
     @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
     public String listUsers(ModelMap model) {
 
@@ -68,9 +68,35 @@ public class AppController {
             return "userslist";
         }
 
-//        /**
-//         * This method will list all existing users.
-//         */
+    @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
+    public String newRegisteredUser(ModelMap model) {
+        Customer user = new Customer();
+        model.addAttribute("user", user);
+//        model.addAttribute("edit", false);
+        model.addAttribute("loggedinuser");
+        return "registration";
+    }
+
+
+    @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
+    public String registerNewUser(Customer user, BindingResult result,
+                                  ModelMap model) {
+            if (result.hasErrors()) {
+                return "registration";
+            }
+            if(!userService.isUserSSOUnique(user.getId(), user.getSsoId()) || (user.getId()!=null)){
+                FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
+                result.addError(ssoError);
+                return "registration";
+            }
+
+        userService.saveUser(user);
+        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "main";
+    }
+
+
 //        @RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
 //        public String listUsers(ModelMap model) {
 //
@@ -83,14 +109,14 @@ public class AppController {
         /**
          * This method will provide the medium to add a new user.
          */
-//        @RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
-//        public String newUser(ModelMap model) {
-//            Customer user = new Customer();
-//            model.addAttribute("user", user);
-//            model.addAttribute("edit", false);
-//            model.addAttribute("loggedinuser", getPrincipal());
-//            return "registration";
-//        }
+        @RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
+        public String newUser(ModelMap model) {
+            Customer user = new Customer();
+            model.addAttribute("user", user);
+            model.addAttribute("edit", false);
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "registration";
+        }
 
         /**
          * This method will be called on form submission, handling POST request for
@@ -117,9 +143,6 @@ public class AppController {
                 result.addError(ssoError);
                 return "registration";
             }
-
-//            if(!userService.fi
-//            }
 
             userService.saveUser(user);
 
