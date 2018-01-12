@@ -33,10 +33,10 @@ public class TarifController {
     MessageSource messageSource;
 
     /**
-     * This method will list all existing users.
+     * This method will list all existing tarifs.
      */
     @RequestMapping(value = {"/listTarifs" }, method = RequestMethod.GET)
-    public String listUsers(ModelMap model) {
+    public String listTarifs(ModelMap model) {
 
         List<Tarif> tarifs = tarifService.findAll();
         model.addAttribute("tarifs", tarifs);

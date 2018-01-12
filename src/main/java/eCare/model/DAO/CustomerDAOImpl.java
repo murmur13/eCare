@@ -19,12 +19,12 @@ import java.util.List;
  */
 
 @Repository("secondCustomerDAO")
-public class SecondCustomerDAOImpl extends AbstractDao <Integer, Customer> implements SecondCustomerDAO {
+public class CustomerDAOImpl extends AbstractDao <Integer, Customer> implements CustomerDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    static final Logger logger = LoggerFactory.getLogger(SecondCustomerDAOImpl.class);
+    static final Logger logger = LoggerFactory.getLogger(CustomerDAOImpl.class);
 
     public Customer findById(int id) {
         Customer user = getByKey(id);

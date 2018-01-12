@@ -16,17 +16,17 @@
 <div class="generic-container">
     <%@include file="authheader.jsp" %>
 
-    <div class="well lead">Add new Tarif</div>
-    <form:form method="POST" modelAttribute="tarif" class="form-horizontal">
-        <form:input type="hidden" path="tarifId" id="tarif"/>
+    <div class="well lead">Add new Option</div>
+    <form:form method="POST" modelAttribute="feature" class="form-horizontal">
+        <form:input type="hidden" path="featureId" id="feature"/>
 
         <div class="row">
             <div class="form-group col-md-12">
                 <label class="col-md-3 control-lable" for="name">Name</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="name" id="name" class="form-control input-sm"/>
+                    <form:input type="text" path="featureName" id="name" class="form-control input-sm"/>
                     <div class="has-error">
-                        <form:errors path="name" class="help-inline"/>
+                        <form:errors path="featureName" class="help-inline"/>
                     </div>
                 </div>
             </div>
@@ -36,10 +36,10 @@
             <div class="form-actions floatRight">
                 <c:choose>
                     <c:when test="${edit}">
-                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
+                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/features/listFeatures' />">Cancel</a>
                     </c:when>
                     <c:otherwise>
-                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
+                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/features/listFeatures' />">Cancel</a>
                     </c:otherwise>
                 </c:choose>
             </div>

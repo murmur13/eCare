@@ -33,7 +33,15 @@
                         <li><a href="<c:url value='tarifs/listTarifs' />">See all tarifs</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Options</a></li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Options
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value='features/listFeatures' />">See all options</a></li>
+                    </ul>
+                </li>
+                <%--<li><a href="#">Options</a></li>--%>
             </ul>
             <%--<span class="caret"></span></a>--%>
             <div class="dropdown float-right">

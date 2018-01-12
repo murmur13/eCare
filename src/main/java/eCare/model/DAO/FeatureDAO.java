@@ -1,87 +1,67 @@
 package eCare.model.DAO;
 
 import eCare.model.PO.Feature;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by echerkas on 24.10.2017.
  */
+@Repository("featureDAO")
 public class FeatureDAO implements DAOInterface <Feature, Integer> {
 
-    private Session currentSession;
+    static final Logger logger = LoggerFactory.getLogger(TarifDAO.class);
 
-    private Transaction currentTransaction;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public FeatureDAO() {
-    }
-
-    public Session openCurrentSession() {
-        currentSession = getSessionFactory().openSession();
-        return currentSession;
-    }
-
-    public Session openCurrentSessionwithTransaction() {
-        currentSession = getSessionFactory().openSession();
-        currentTransaction = currentSession.beginTransaction();
-        return currentSession;
-    }
-
-    public void closeCurrentSession() {
-        currentSession.close();
-    }
-
-    public void closeCurrentSessionwithTransaction() {
-        currentTransaction.commit();
-        currentSession.close();
-    }
-
-    private static SessionFactory getSessionFactory() {
-        SessionFactory session = new Configuration().configure().buildSessionFactory();
-        return session;
-    }
-
-    public Session getCurrentSession() {
-        return currentSession;
-    }
-
-    public void setCurrentSession(Session currentSession) {
-        this.currentSession = currentSession;
-    }
-
-    public Transaction getCurrentTransaction() {
-        return currentTransaction;
-    }
-
-    public void setCurrentTransaction(Transaction currentTransaction) {
-        this.currentTransaction = currentTransaction;
+    protected Session getSession(){
+        return sessionFactory.getCurrentSession();
     }
 
     public void persist(Feature entity) {
-        getCurrentSession().save(entity);
+        getSession().save(entity);
     }
 
     public void update(Feature entity) {
-        getCurrentSession().update(entity);
+        getSession().update(entity);
     }
 
     public Feature findById(Integer id) {
-        Feature feature = getCurrentSession().get(Feature.class, id);
+        Feature feature = (Feature) getSession().get(Feature.class, id);
         return feature;
     }
 
+    public List<Feature> findByName(String name) {
+        logger.info("FeatureName : {}", name);
+        Query query = sessionFactory.getCurrentSession().createQuery("select f from Feature f where f.featureName = :name");
+        query.setParameter("name", name);
+        List results = query.list();
+        return  results;
+    }
+
+//    public void deleteById(Integer id){
+//        Tarif tarif = getSession().find(Tarif.class, id);
+//        delete(tarif);
+//    }
+
     public void delete(Feature entity) {
-        getCurrentSession().delete(entity);
+        getSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
     public List<Feature> findAll() {
-        List<Feature> featureList = (List<Feature>) getCurrentSession().createQuery("from Feature").list();
-        return featureList;
+        List<Feature> features = (List<Feature>) getSession().createQuery("from Feature").list();
+        return features;
     }
 
     public void deleteAll() {

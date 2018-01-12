@@ -68,5 +68,4 @@ public class TarifDAO  implements DAOInterface <Tarif, Integer>{
             delete(entity);
         }
     }
-
 }

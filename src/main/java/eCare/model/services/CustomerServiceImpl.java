@@ -1,6 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.DAO.SecondCustomerDAO;
+import eCare.model.DAO.CustomerDAO;
 import eCare.model.PO.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,23 +18,23 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
-    private SecondCustomerDAO secondCustomerDAO;
+    private CustomerDAO customerDAO;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Customer findById(Integer id) {
-        return secondCustomerDAO.findById(id);
+        return customerDAO.findById(id);
     }
 
     public Customer findBySSO(String sso) {
-        Customer user = secondCustomerDAO.findBySSO(sso);
+        Customer user = customerDAO.findBySSO(sso);
         return user;
     }
 
     public void saveUser(Customer user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        secondCustomerDAO.save(user);
+        customerDAO.save(user);
     }
 
     /*
@@ -43,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
      * It will be updated in db once transaction ends.
      */
     public void updateUser(Customer user) {
-        Customer entity = secondCustomerDAO.findById(user.getId());
+        Customer entity = customerDAO.findById(user.getId());
         if(entity!=null){
             entity.setSsoId(user.getSsoId());
             if(!user.getPassword().equals(entity.getPassword())){
@@ -58,11 +58,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     public void deleteUserBySSO(String sso) {
-        secondCustomerDAO.deleteBySSO(sso);
+        customerDAO.deleteBySSO(sso);
     }
 
     public List<Customer> findAllUsers() {
-        return secondCustomerDAO.findAllUsers();
+        return customerDAO.findAllUsers();
     }
 
     public boolean isUserSSOUnique(Integer id, String sso) {
@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public List<Customer> findByName(String name) {
-        List<Customer> customers = secondCustomerDAO.findByName(name);
+        List<Customer> customers = customerDAO.findByName(name);
         return customers;
     }
 }

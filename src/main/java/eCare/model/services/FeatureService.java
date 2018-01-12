@@ -8,54 +8,24 @@ import java.util.List;
 /**
  * Created by echerkas on 24.10.2017.
  */
-public class FeatureService {
+public interface FeatureService {
 
-    private static FeatureDAO featureDAO;
 
-    public FeatureService() {
-        featureDAO = new FeatureDAO();
-    }
+    List<Feature> findByName(String name);
 
-    public void persist(Feature entity) {
-        featureDAO.openCurrentSessionwithTransaction();
-        featureDAO.persist(entity);
-        featureDAO.closeCurrentSessionwithTransaction();
-    }
+    void persist(Feature entity);
 
-    public void update(Feature entity) {
-        featureDAO.openCurrentSessionwithTransaction();
-        featureDAO.update(entity);
-        featureDAO.closeCurrentSessionwithTransaction();
-    }
+    void update(Feature entity);
 
-    public Feature findById(Integer id) {
-        featureDAO.openCurrentSession();
-        Feature feature = featureDAO.findById(id);
-        featureDAO.closeCurrentSession();
-        return feature;
-    }
+    Feature findById(Integer id);
 
-    public void delete(Integer id) {
-        featureDAO.openCurrentSessionwithTransaction();
-        Feature feature = featureDAO.findById(id);
-        featureDAO.delete(feature);
-        featureDAO.closeCurrentSessionwithTransaction();
-    }
+//    void deleteById(Integer id);
 
-    public List<Feature> findAll() {
-        featureDAO.openCurrentSession();
-        List<Feature> featureList = featureDAO.findAll();
-        featureDAO.closeCurrentSession();
-        return featureList;
-    }
+    void delete(Integer id);
 
-    public void deleteAll() {
-        featureDAO.openCurrentSessionwithTransaction();
-        featureDAO.deleteAll();
-        featureDAO.closeCurrentSessionwithTransaction();
-    }
+    List<Feature> findAll();
 
-    public FeatureDAO featureDAO() {
-        return featureDAO;
-    }
+    void deleteAll();
+
+    boolean isFeatureUnique(String name);
 }
