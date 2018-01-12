@@ -2,11 +2,11 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<%@include file="authheader.jsp" %>
 <div class="container-fluid">
 <nav class="navbar navbar-inverse">
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">eCare</a>
             </div>
@@ -32,7 +32,7 @@
             </ul>
             <%--<span class="caret"></span></a>--%>
             <div class="dropdown float-right">
-                <button class="btn btn-primary dropdown-toggle pull-right" type="button" style = "" data-toggle="dropdown">Logout
+                <button class="btn btn-primary dropdown-toggle pull-right" type="button" data-toggle="dropdown">Logout
                     <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href="<c:url value='/edit-user-${loggedinuser}' />">Edit your profile</a></li>
@@ -42,9 +42,9 @@
                 </ul>
             </div>
         </div>
-        <div class="inverse">
-            <%--<%@include file="logout.jsp" %>--%>
-        </div>
+        <%--<div class="inverse">--%>
+            <%--&lt;%&ndash;<%@include file="logout.jsp" %>&ndash;%&gt;--%>
+        <%--</div>--%>
     </nav>
 </nav>
 </div><!-- /.container-fluid -->

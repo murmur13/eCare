@@ -13,8 +13,9 @@
 </head>
 
 <body>
-<%@ include file="menu.jsp" %>
+        <%@ include file="menu.jsp" %>
 <div class="generic-container">
+
     <div class="panel panel-default">
     <%--<%@include file="authheader.jsp" %>--%>
         <!-- Default panel contents -->

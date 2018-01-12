@@ -15,7 +15,6 @@
 <body>
 
 <div class="container-fluid">
-    <%@include file="authheader.jsp" %>
     <%@ include file="menu.jsp" %>
 
 <div class="[ container ]">
