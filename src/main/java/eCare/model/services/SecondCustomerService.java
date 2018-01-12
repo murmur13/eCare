@@ -25,4 +25,6 @@ public interface SecondCustomerService {
 
     boolean isUserSSOUnique(Integer id, String sso);
 
+    List<Customer> findByName(String name);
+
 }

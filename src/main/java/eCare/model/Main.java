@@ -11,7 +11,7 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        String password = "abc123";
+        String password = "abc125";
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         System.out.println(passwordEncoder.encode(password));
     }

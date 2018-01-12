@@ -1,87 +1,64 @@
 package eCare.model.DAO;
 
 import eCare.model.PO.Tarif;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by echerkas on 20.10.2017.
  */
+@Repository("tarifDAO")
 public class TarifDAO  implements DAOInterface <Tarif, Integer>{
 
-    private Session currentSession;
+    static final Logger logger = LoggerFactory.getLogger(TarifDAO.class);
 
-    private Transaction currentTransaction;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public TarifDAO() {
-
-    }
-
-    public Session openCurrentSession() {
-        currentSession = getSessionFactory().openSession();
-        return currentSession;
-    }
-
-    public Session openCurrentSessionwithTransaction() {
-        currentSession = getSessionFactory().openSession();
-        currentTransaction = currentSession.beginTransaction();
-        return currentSession;
-    }
-
-    public void closeCurrentSession() {
-        currentSession.close();
-    }
-
-    public void closeCurrentSessionwithTransaction() {
-        currentTransaction.commit();
-        currentSession.close();
-    }
-
-    private static SessionFactory getSessionFactory() {
-        SessionFactory session = new Configuration().configure().buildSessionFactory();
-        return session;
-    }
-
-    public Session getCurrentSession() {
-        return currentSession;
-    }
-
-    public void setCurrentSession(Session currentSession) {
-        this.currentSession = currentSession;
-    }
-
-    public Transaction getCurrentTransaction() {
-        return currentTransaction;
-    }
-
-    public void setCurrentTransaction(Transaction currentTransaction) {
-        this.currentTransaction = currentTransaction;
+    protected Session getSession(){
+        return sessionFactory.getCurrentSession();
     }
 
     public void persist(Tarif entity) {
-        getCurrentSession().save(entity);
+        getSession().save(entity);
     }
 
     public void update(Tarif entity) {
-        getCurrentSession().update(entity);
+        getSession().update(entity);
     }
 
     public Tarif findById(Integer id) {
-        Tarif tarif = (Tarif) getCurrentSession().get(Tarif.class, id);
+        Tarif tarif = (Tarif) getSession().get(Tarif.class, id);
         return tarif;
     }
 
+    public List<Tarif> findByName(String name) {
+        logger.info("TarifName : {}", name);
+        Query query = sessionFactory.getCurrentSession().createQuery("select t from Tarif t where t.name = :name");
+        query.setParameter("name", name);
+        List results = query.list();
+        return  results;
+    }
+
+//    public void deleteById(Integer id){
+//        Tarif tarif = getSession().find(Tarif.class, id);
+//        delete(tarif);
+//    }
+
     public void delete(Tarif entity) {
-        getCurrentSession().delete(entity);
+        getSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
     public List<Tarif> findAll() {
-        List<Tarif> tarifs = (List<Tarif>) getCurrentSession().createQuery("from Tarif").list();
+        List<Tarif> tarifs = (List<Tarif>) getSession().createQuery("from Tarif").list();
         return tarifs;
     }
 
@@ -91,4 +68,5 @@ public class TarifDAO  implements DAOInterface <Tarif, Integer>{
             delete(entity);
         }
     }
+
 }

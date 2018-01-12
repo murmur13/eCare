@@ -24,12 +24,15 @@ public class Customer{
     @Column(name="sso_id", unique=true, nullable=false)
     private String ssoId;
 
+    @NotEmpty
     @Column(name = "name")
     private String name;
 
+    @NotEmpty
     @Column(name = "surname")
     private String surname;
 
+    @NotEmpty
     @Column(name = "birth_date")
     private String birthDate;
 
@@ -42,9 +45,11 @@ public class Customer{
     @Column(name = "tel_number")
     private String telNumber;
 
+    @NotEmpty
     @Column(name = "mail")
     private String mail;
 
+    @NotEmpty
     @Column(name = "password")
     private String password;
 
@@ -67,9 +72,9 @@ public class Customer{
         this.userProfiles = userProfiles;
     }
 
-    @SuppressWarnings("JpaAttributeTypeInspection")
-    @NotEmpty
+//    @SuppressWarnings("JpaAttributeTypeInspection")
 
+    @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="customer_has_user_profile",

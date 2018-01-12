@@ -18,4 +18,6 @@ public interface SecondCustomerDAO {
     void deleteBySSO(String sso);
 
     List<Customer> findAllUsers();
+
+    List<Customer> findByName(String name);
 }

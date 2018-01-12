@@ -8,54 +8,33 @@ import java.util.List;
 /**
  * Created by echerkas on 20.10.2017.
  */
-public class TarifService {
+public interface TarifService {
 
-    private static TarifDAO tarifDAO;
+//    private static TarifDAO tarifDAO;
 
-    public TarifService() {
-        tarifDAO = new TarifDAO();
-    }
+//    public TarifService() {
+//        tarifDAO = new TarifDAO();
+//    }
 
-    public void persist(Tarif entity) {
-        tarifDAO.openCurrentSessionwithTransaction();
-        tarifDAO.persist(entity);
-        tarifDAO.closeCurrentSessionwithTransaction();
-    }
+    List<Tarif> findByName(String name);
 
-    public void update(Tarif entity) {
-        tarifDAO.openCurrentSessionwithTransaction();
-        tarifDAO.update(entity);
-        tarifDAO.closeCurrentSessionwithTransaction();
-    }
+    void persist(Tarif entity);
 
-    public Tarif findById(Integer id) {
-        tarifDAO.openCurrentSession();
-        Tarif tarif = tarifDAO.findById(id);
-        tarifDAO.closeCurrentSession();
-        return tarif;
-    }
+    void update(Tarif entity);
 
-    public void delete(Integer id) {
-        tarifDAO.openCurrentSessionwithTransaction();
-        Tarif tarif = tarifDAO.findById(id);
-        tarifDAO.delete(tarif);
-        tarifDAO.closeCurrentSessionwithTransaction();
-    }
+     Tarif findById(Integer id);
 
-    public List<Tarif> findAll() {
-        tarifDAO.openCurrentSession();
-        List<Tarif> tarifList = tarifDAO.findAll();
-        tarifDAO.closeCurrentSession();
-        return tarifList;
-    }
+//    void deleteById(Integer id);
 
-    public void deleteAll() {
-        tarifDAO.openCurrentSessionwithTransaction();
-        tarifDAO.deleteAll();
-        tarifDAO.closeCurrentSessionwithTransaction();
-    }
+    void delete(Integer id);
 
-    public TarifDAO tarifDAO() {
-        return tarifDAO;
-    }
+    List<Tarif> findAll();
+
+    void deleteAll();
+
+    boolean isTarifUnique(String name);
+
+//    TarifDAO tarifDAO() {
+//        return tarifDAO;
+//    }
 }

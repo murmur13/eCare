@@ -69,4 +69,9 @@ public class SecondCustomerServiceImpl implements SecondCustomerService{
         Customer user = findBySSO(sso);
         return ( user == null || ((id != null) && (user.getId() == id)));
     }
+
+    public List<Customer> findByName(String name) {
+        List<Customer> customers = secondCustomerDAO.findByName(name);
+        return customers;
+    }
 }

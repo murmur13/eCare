@@ -29,12 +29,12 @@ public class Tarif{
         this.name = name;
     }
 
-    public int getId() {
+    public int getTarifId() {
         return tarifId;
     }
 
-    public void setId(int id) {
-        this.tarifId = id;
+    public void setTarifId(int tarifId) {
+        this.tarifId = tarifId;
     }
 
     public String getName() {

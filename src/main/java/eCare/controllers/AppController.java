@@ -2,7 +2,6 @@ package eCare.controllers;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
-import eCare.model.services.CustomerService;
 import eCare.model.services.SecondCustomerService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +47,20 @@ public class AppController {
         @Autowired
         AuthenticationTrustResolver authenticationTrustResolver;
 
+    /**
+     * This method will list all existing users.
+     */
+    @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
+    public String mainPage(ModelMap model) {
+//
+//        List<Customer> users = userService.findAllUsers();
+//        model.addAttribute("users", users);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "main";
+    }
 
-        /**
-         * This method will list all existing users.
-         */
-        @RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
-        public String listUsers(ModelMap model) {
+    @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
+    public String listUsers(ModelMap model) {
 
             List<Customer> users = userService.findAllUsers();
             model.addAttribute("users", users);
@@ -61,17 +68,29 @@ public class AppController {
             return "userslist";
         }
 
+//        /**
+//         * This method will list all existing users.
+//         */
+//        @RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
+//        public String listUsers(ModelMap model) {
+//
+//            List<Customer> users = userService.findAllUsers();
+//            model.addAttribute("users", users);
+//            model.addAttribute("loggedinuser", getPrincipal());
+//            return "userslist";
+//        }
+
         /**
          * This method will provide the medium to add a new user.
          */
-        @RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
-        public String newUser(ModelMap model) {
-            Customer user = new Customer();
-            model.addAttribute("user", user);
-            model.addAttribute("edit", false);
-            model.addAttribute("loggedinuser", getPrincipal());
-            return "registration";
-        }
+//        @RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
+//        public String newUser(ModelMap model) {
+//            Customer user = new Customer();
+//            model.addAttribute("user", user);
+//            model.addAttribute("edit", false);
+//            model.addAttribute("loggedinuser", getPrincipal());
+//            return "registration";
+//        }
 
         /**
          * This method will be called on form submission, handling POST request for
@@ -98,6 +117,9 @@ public class AppController {
                 result.addError(ssoError);
                 return "registration";
             }
+
+//            if(!userService.fi
+//            }
 
             userService.saveUser(user);
 

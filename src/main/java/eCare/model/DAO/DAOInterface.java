@@ -8,17 +8,19 @@ import java.util.List;
  */
 public interface DAOInterface <T, Id extends Serializable>{
 
-        public void persist(T entity);
+        void persist(T entity);
 
-        public void update(T entity);
+        void update(T entity);
 
-        public T findById(Id id);
+         T findById(Id id);
 
-        public void delete(T entity);
+//        void deleteById(Id id);
 
-        public List<T> findAll();
+        void delete(T entity);
 
-        public void deleteAll();
+        List<T> findAll();
+
+         void deleteAll();
 
     }
 
