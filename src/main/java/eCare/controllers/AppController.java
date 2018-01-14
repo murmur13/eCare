@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,12 @@ public class AppController {
         return "main";
     }
 
+    @RequestMapping(value = {"/search" }, method = RequestMethod.GET)
+    public String search(ModelMap model) {
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "search";
+    }
+
     /**
      * This method will list all existing users.
      */
@@ -68,11 +75,35 @@ public class AppController {
             return "userslist";
         }
 
+    /**
+     * This method will find the user by name.
+     */
+    @RequestMapping(value = { "/findByName" }, method = RequestMethod.GET)
+    public String findByName(@RequestAttribute String name, ModelMap model) {
+        List<Customer> users = userService.findByName(name);
+        model.addAttribute("user", users);
+        model.addAttribute("name", name);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "search";
+    }
+
+    @RequestMapping(value = { "/findByName" }, method = RequestMethod.POST)
+    @ResponseBody
+    public String userFound(List<Customer> user, BindingResult result,
+                                  ModelMap model) {
+        if (result.hasErrors()) {
+            return "error";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userslist";
+    }
+
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
     public String newRegisteredUser(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
-//        model.addAttribute("edit", false);
+        model.addAttribute("edit", false);
         model.addAttribute("loggedinuser");
         return "registration";
     }
@@ -130,14 +161,6 @@ public class AppController {
                 return "registration";
             }
 
-		/*
-		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation
-		 * and applying it on field [sso] of Model class [User].
-		 *
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
-		 * framework as well while still using internationalized messages.
-		 *
-		 */
             if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
                 FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
                 result.addError(ssoError);
@@ -229,7 +252,7 @@ public class AppController {
             if (isCurrentAuthenticationAnonymous()) {
                 return "login";
             } else {
-                return "redirect:/list";
+                return "redirect:/mainPage";
             }
         }
 

@@ -80,5 +80,10 @@ body, #mainWrapper, .form-control{
 }
 
 .authbar{
+    margin-top: 15px;
     margin-bottom:15px;
+}
+
+.logout-button {
+    margin-top: 8px;
 }

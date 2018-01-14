@@ -15,7 +15,7 @@
 </head>
 <body>
 <div class="generic-container">
-    <%@include file="authheader.jsp" %>
+    <%@include file="menu.jsp" %>
 
     <div class="alert alert-success lead">
         ${success}
@@ -26,7 +26,6 @@
             <%--Go to <a href="<c:url value='/tarifs/listTarifs' />">Tarifs List</a>--%>
 		<%--</span>--%>
 </div>
-<c:redirect url="main.jsp"/>
 </body>
 
 </html>

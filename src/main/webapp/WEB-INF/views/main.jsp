@@ -14,8 +14,7 @@
 
 <body>
 
-<div class="container-fluid">
-    <%@ include file="menu.jsp" %>
+<%@ include file="menu.jsp" %>
 
 <div class="[ container ]">
     <div class="[ row ]">
@@ -36,7 +35,8 @@
         </div>
         <div class="col-sm-8 text-left">
             <h1>Welcome</h1>
-            <h3><p>Welcome to eCare, here you can check your tarif and available options. </p></h3>
+            <h4><p>Welcome to eCare, here you can check your tarif and available options. </p></h4>
+
             <hr>
             <h3>Test</h3>
             <p>Lorem ipsum...</p>

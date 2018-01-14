@@ -40,7 +40,7 @@
             <tbody>
             <c:forEach items="${features}" var="feature">
                 <tr>
-                    <td>${feature.name}</td>
+                    <td>${feature.featureName}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>

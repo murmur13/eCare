@@ -21,7 +21,7 @@
                     </sec:authorize>
                     <ul class="dropdown-menu">
                         <li><a href="<c:url value='/list' />">Users List</a></li>
-                        <li><a href="#">Find user</a></li>
+                        <li><a href="<c:url value='/search' />">Find user</a></li>
                     </ul>
                 </li>
 
@@ -30,7 +30,7 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tarifs
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="<c:url value='tarifs/listTarifs' />">See all tarifs</a></li>
+                        <li><a href="<c:url value='/tarifs/listTarifs' />">See all tarifs</a></li>
                     </ul>
                 </li>
 
@@ -38,14 +38,23 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Options
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="<c:url value='features/listFeatures' />">See all options</a></li>
+                        <li><a href="<c:url value='/features/listFeatures' />">See all options</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Language
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Russian</a></li>
+                        <li><a href="#">English</a></li>
                     </ul>
                 </li>
                 <%--<li><a href="#">Options</a></li>--%>
             </ul>
             <%--<span class="caret"></span></a>--%>
             <div class="dropdown float-right">
-                <button class="btn btn-primary dropdown-toggle pull-right" type="button" data-toggle="dropdown">${loggedinuser}
+                <button class="btn btn-primary dropdown-toggle pull-right logout-button" type="button" data-toggle="dropdown">${loggedinuser}
                     <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href="<c:url value='/edit-user-${loggedinuser}' />">Edit your profile</a></li>

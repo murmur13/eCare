@@ -19,9 +19,9 @@
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <div class="panel panel-default">
-    <%--<%@include file="authheader.jsp" %>--%>
+        <%--<%@include file="authheader.jsp" %>--%>
         <!-- Default panel contents -->
-        <div class="panel-heading"><span class="lead">List of Users </span></div>
+        <div class="panel-heading"><span class="lead">User</span></div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -39,7 +39,9 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${users}" var="user">
+
+            <%--<c:forEach items="${users}" var="user">--%>
+            <%--<c:set var="user" scope="request" value="${user.name}--%>
                 <tr>
                     <td>${user.name}</td>
                     <td>${user.surname}</td>
@@ -52,15 +54,10 @@
                         <td><a href="<c:url value='/delete-user-${user.ssoId}' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
-            </c:forEach>
+            <%--</c:forEach>--%>
             </tbody>
         </table>
     </div>
-    <sec:authorize access="hasRole('ADMIN')">
-        <div class="well">
-            <a href="<c:url value='/newuser' />">Add New User</a>
-        </div>
-    </sec:authorize>
 
 </div>
 </body>
