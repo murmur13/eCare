@@ -18,12 +18,12 @@
 <body>
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
-    <form:form method="POST" modelAttribute="name" class="form-horizontal">
-    <form:input type="hidden" path="name" id="name"/>
+    <form:form method="POST" modelAttribute="user" class="form-horizontal">
+    <form:input type="hidden" path="name" id="user"/>
         <input type="text" placeholder="Search.." name="search">
         <button type="submit"><i class="fa fa-search"></i></button>
         <div class="has-error">
-            <form:errors path="name" class="help-inline"/>
+            <%--<form:errors path="name" class="help-inline"/>--%>
             </form:form>
     </form>
 </div>

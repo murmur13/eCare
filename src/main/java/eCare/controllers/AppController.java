@@ -59,6 +59,8 @@ public class AppController {
 
     @RequestMapping(value = {"/search" }, method = RequestMethod.GET)
     public String search(ModelMap model) {
+        Customer user = new Customer();
+        model.addAttribute("user", user);
         model.addAttribute("loggedinuser", getPrincipal());
         return "search";
     }
@@ -78,22 +80,21 @@ public class AppController {
     /**
      * This method will find the user by name.
      */
-    @RequestMapping(value = { "/findByName" }, method = RequestMethod.GET)
-    public String findByName(@RequestAttribute String name, ModelMap model) {
-        List<Customer> users = userService.findByName(name);
-        model.addAttribute("user", users);
-        model.addAttribute("name", name);
-        model.addAttribute("loggedinuser", getPrincipal());
-        return "search";
-    }
+//    @RequestMapping(value = { "/findByName" }, method = RequestMethod.GET)
+//    public String findByName(ModelMap model) {
+////        model.addAttribute("name", user.getName());
+//        model.addAttribute("loggedinuser", getPrincipal());
+//        return "search";
+//    }
 
-    @RequestMapping(value = { "/findByName" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "/search" }, method = RequestMethod.POST)
     @ResponseBody
-    public String userFound(List<Customer> user, BindingResult result,
+    public String userFound(@ModelAttribute ("name") String name, @RequestBody List<Customer> user, BindingResult result,
                                   ModelMap model) {
         if (result.hasErrors()) {
             return "error";
         }
+        user = userService.findByName(name);
         model.addAttribute("user", user);
         model.addAttribute("loggedinuser", getPrincipal());
         return "userslist";
