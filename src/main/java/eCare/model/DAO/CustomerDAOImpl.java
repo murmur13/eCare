@@ -78,4 +78,12 @@ public class CustomerDAOImpl extends AbstractDao <Integer, Customer> implements 
         List results = query.list();
         return results;
     }
+
+    public List<Customer> findByTelNumber(String telNumber){
+        logger.info("CustomerTelNumber : {}", telNumber);
+        Query query = sessionFactory.getCurrentSession().createQuery("select t from Customer t where t.telNumber = :telNumber");
+        query.setParameter("telNumber", telNumber);
+        List result = query.list();
+        return result;
+    }
 }

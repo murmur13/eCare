@@ -27,4 +27,6 @@ public interface CustomerService {
 
     List<Customer> findByName(String name);
 
+    List<Customer> findByTelNumber(String telNumber);
+
 }

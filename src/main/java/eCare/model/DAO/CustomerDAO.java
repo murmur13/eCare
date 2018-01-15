@@ -20,4 +20,6 @@ public interface CustomerDAO {
     List<Customer> findAllUsers();
 
     List<Customer> findByName(String name);
+
+    List<Customer> findByTelNumber(String telNumber);
 }

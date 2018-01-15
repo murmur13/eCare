@@ -19,11 +19,11 @@
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <form:form method="POST" modelAttribute="user" class="form-horizontal">
-    <form:input type="hidden" path="name" id="user"/>
-        <input type="text" placeholder="Search.." name="search">
-        <button type="submit"><i class="fa fa-search"></i></button>
+    <%--<form:input type="hidden" path="name" id="user"/>--%>
+        <input type="text" placeholder="Search with user's name or telNumber" name="nameOrPhone">
+        <button type="submit"><i class="fa fa-search"></i><a href="<c:url value='/list' />"></a></button>
         <div class="has-error">
-            <%--<form:errors path="name" class="help-inline"/>--%>
+            <form:errors path="name" class="help-inline"/>
             </form:form>
     </form>
 </div>

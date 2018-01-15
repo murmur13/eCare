@@ -74,4 +74,9 @@ public class CustomerServiceImpl implements CustomerService {
         List<Customer> customers = customerDAO.findByName(name);
         return customers;
     }
+
+    public List<Customer> findByTelNumber(String telNumber){
+        List<Customer> customers = customerDAO.findByTelNumber(telNumber);
+        return customers;
+    }
 }

@@ -57,48 +57,67 @@ public class AppController {
         return "main";
     }
 
+    /**
+     * This method will list all existing users.
+     */
+
+    @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
+    public String listUsers(ModelMap model) {
+
+        List<Customer> users = userService.findAllUsers();
+        model.addAttribute("users", users);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userslist";
+    }
+
+
+    /**
+     * This method will find the user by name.
+     */
+
     @RequestMapping(value = {"/search" }, method = RequestMethod.GET)
     public String search(ModelMap model) {
+//        List<Customer> user = userService.findAllUsers();
         Customer user = new Customer();
         model.addAttribute("user", user);
         model.addAttribute("loggedinuser", getPrincipal());
         return "search";
     }
 
-    /**
-     * This method will list all existing users.
-     */
-    @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
-    public String listUsers(ModelMap model) {
-
-            List<Customer> users = userService.findAllUsers();
-            model.addAttribute("users", users);
-            model.addAttribute("loggedinuser", getPrincipal());
-            return "userslist";
-        }
-
-    /**
-     * This method will find the user by name.
-     */
-//    @RequestMapping(value = { "/findByName" }, method = RequestMethod.GET)
-//    public String findByName(ModelMap model) {
-////        model.addAttribute("name", user.getName());
-//        model.addAttribute("loggedinuser", getPrincipal());
-//        return "search";
-//    }
-
     @RequestMapping(value = { "/search" }, method = RequestMethod.POST)
-    @ResponseBody
-    public String userFound(@ModelAttribute ("name") String name, @RequestBody List<Customer> user, BindingResult result,
-                                  ModelMap model) {
-        if (result.hasErrors()) {
-            return "error";
+    public String findByNameOrTel(@RequestParam ("nameOrPhone") String nameOrPhone,
+                             ModelMap model) {
+            List<Customer> users = userService.findByName(nameOrPhone);
+        if(users.isEmpty()){
+            users = userService.findByTelNumber(nameOrPhone);
+            model.addAttribute("users", users);
+            model.addAttribute("name", nameOrPhone);
         }
-        user = userService.findByName(name);
-        model.addAttribute("user", user);
+        else {
+            model.addAttribute("users", users);
+            model.addAttribute("name", nameOrPhone);
+        }
+        model.addAttribute("edit", false);
+
+//        if (result.hasErrors()) {
+//            return "error";
+//        }
+
         model.addAttribute("loggedinuser", getPrincipal());
         return "userslist";
     }
+
+
+//    @ResponseBody
+//    public String userFound(@ModelAttribute ("name") String name, @RequestBody List<Customer> user, BindingResult result,
+//                                  ModelMap model) {
+//        if (result.hasErrors()) {
+//            return "error";
+//        }
+//        user = userService.findByName(name);
+//        model.addAttribute("user", user);
+//        model.addAttribute("loggedinuser", getPrincipal());
+//        return "userslist";
 
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
     public String newRegisteredUser(ModelMap model) {
@@ -127,16 +146,6 @@ public class AppController {
         model.addAttribute("loggedinuser", getPrincipal());
         return "main";
     }
-
-
-//        @RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
-//        public String listUsers(ModelMap model) {
-//
-//            List<Customer> users = userService.findAllUsers();
-//            model.addAttribute("users", users);
-//            model.addAttribute("loggedinuser", getPrincipal());
-//            return "userslist";
-//        }
 
         /**
          * This method will provide the medium to add a new user.
