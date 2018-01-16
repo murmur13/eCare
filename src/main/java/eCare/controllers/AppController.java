@@ -107,18 +107,6 @@ public class AppController {
         return "userslist";
     }
 
-
-//    @ResponseBody
-//    public String userFound(@ModelAttribute ("name") String name, @RequestBody List<Customer> user, BindingResult result,
-//                                  ModelMap model) {
-//        if (result.hasErrors()) {
-//            return "error";
-//        }
-//        user = userService.findByName(name);
-//        model.addAttribute("user", user);
-//        model.addAttribute("loggedinuser", getPrincipal());
-//        return "userslist";
-
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
     public String newRegisteredUser(ModelMap model) {
         Customer user = new Customer();
@@ -144,7 +132,7 @@ public class AppController {
         userService.saveUser(user);
         model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
         model.addAttribute("loggedinuser", getPrincipal());
-        return "main";
+        return "redirect: /mainPage";
     }
 
         /**
@@ -182,7 +170,7 @@ public class AppController {
             model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
             model.addAttribute("loggedinuser", getPrincipal());
             //return "success";
-            return "registrationsuccess";
+            return "redirect: /mainPage";
         }
 
 
