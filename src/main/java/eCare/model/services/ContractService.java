@@ -2,60 +2,29 @@ package eCare.model.services;
 
 import eCare.model.PO.Contract;
 import eCare.model.DAO.ContractDAO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by echerkas on 20.10.2017.
  */
-public class ContractService {
+public interface ContractService {
 
-    private static ContractDAO contractDAO;
+    List<Contract> findByPhone(String telNumber);
 
-    public ContractService() {
-        contractDAO = new ContractDAO();
-    }
+    void persist(Contract entity);
 
-    public void persist(Contract entity) {
-        contractDAO.openCurrentSessionwithTransaction();
-        contractDAO.persist(entity);
-        contractDAO.closeCurrentSessionwithTransaction();
-    }
+    void update(Contract entity);
 
-    public void update(Contract entity) {
-        contractDAO.openCurrentSessionwithTransaction();
-        contractDAO.update(entity);
-        contractDAO.closeCurrentSessionwithTransaction();
-    }
+    Contract findById(Integer id);
 
-    public Contract findById(Integer id) {
-        contractDAO.openCurrentSession();
-        Contract contract = contractDAO.findById(id);
-        contractDAO.closeCurrentSession();
-        return contract;
-    }
+//    void deleteById(Integer id);
 
-    public void delete(Integer id) {
-        contractDAO.openCurrentSessionwithTransaction();
-        Contract contract = contractDAO.findById(id);
-        contractDAO.delete(contract);
-        contractDAO.closeCurrentSessionwithTransaction();
-    }
+    void delete(Integer id);
 
-    public List<Contract> findAll() {
-        contractDAO.openCurrentSession();
-        List<Contract> contractList = contractDAO.findAll();
-        contractDAO.closeCurrentSession();
-        return contractList;
-    }
+    List<Contract> findAll();
 
-    public void deleteAll() {
-        contractDAO.openCurrentSessionwithTransaction();
-        contractDAO.deleteAll();
-        contractDAO.closeCurrentSessionwithTransaction();
-    }
+    void deleteAll();
 
-    public ContractDAO contractDAO() {
-        return contractDAO;
-    }
 }

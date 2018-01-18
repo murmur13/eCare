@@ -43,6 +43,14 @@
                 </li>
 
                 <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Contracts
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value='/contracts/listContracts' />">See all contracts</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Language
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">

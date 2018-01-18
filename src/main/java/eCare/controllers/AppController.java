@@ -6,6 +6,7 @@ import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,7 +33,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping("/")
-@SessionAttributes("roles")
+@SessionAttributes(value = {"roles", "user"})
 public class AppController {
 
         @Autowired
@@ -85,8 +88,7 @@ public class AppController {
     }
 
     @RequestMapping(value = { "/search" }, method = RequestMethod.POST)
-    public String findByNameOrTel(@RequestParam ("nameOrPhone") String nameOrPhone,
-                             ModelMap model) {
+    public String findByNameOrTel(@RequestParam ("nameOrPhone") String nameOrPhone, ModelMap model) {
             List<Customer> users = userService.findByName(nameOrPhone);
         if(users.isEmpty()){
             users = userService.findByTelNumber(nameOrPhone);
@@ -108,18 +110,17 @@ public class AppController {
     }
 
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
-    public String newRegisteredUser(ModelMap model) {
+    public String newRegisteredUser(HttpSession session, ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
+        session.setAttribute("user", user);
         model.addAttribute("edit", false);
         model.addAttribute("loggedinuser");
         return "registration";
     }
 
-
     @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
-    public String registerNewUser(Customer user, BindingResult result,
-                                  ModelMap model) {
+    public String registerNewUser(HttpSession session, Customer user, BindingResult result, ModelMap model) {
             if (result.hasErrors()) {
                 return "registration";
             }
@@ -128,11 +129,13 @@ public class AppController {
                 result.addError(ssoError);
                 return "registration";
             }
-
         userService.saveUser(user);
-        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
-        return "redirect: /mainPage";
+        model.addAttribute("user", user);
+        session.setAttribute("user", user);
+        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully. Please, login with your account!");
+        model.addAttribute("loggedinuser", user);
+
+        return "redirect: /login";
     }
 
         /**
@@ -243,7 +246,7 @@ public class AppController {
 
         /**
          * This method handles login GET requests.
-         * If users is already logged-in and tries to goto login page again, will be redirected to list page.
+         * If users is already logged-in and tries to goto login page again, will be redirected to main page.
          */
         @RequestMapping(value = "/login", method = RequestMethod.GET)
         public String loginPage() {

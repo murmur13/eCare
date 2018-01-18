@@ -19,16 +19,15 @@
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <div class="panel panel-default">
-        <%--<%@include file="authheader.jsp" %>--%>
         <!-- Default panel contents -->
-        <div class="panel-heading"><span class="lead">User</span></div>
+        <div class="panel-heading"><span class="lead">List of Contracts </span></div>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Email</th>
-                <th>SSO ID</th>
+                <%--<th>name</th>--%>
+                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
+                <%--<jsp:forward page="main.jsp"/>--%>
+                <%--</sec:authorize>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -39,26 +38,33 @@
             </tr>
             </thead>
             <tbody>
-
-            <%--<c:forEach items="${users}" var="user">--%>
-            <%--<c:set var="user" scope="request" value="${user.name}--%>
+            <c:forEach items="${contracts}" var="contract">
                 <tr>
-                    <td>${user.name}</td>
-                    <td>${user.surname}</td>
-                    <td>${user.mail}</td>
-                    <td>${user.ssoId}</td>
+                    <td>${contract.contractId}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/edit-user-${user.ssoId}' />" class="btn btn-success custom-width">edit</a></td>
+                        <td><a href="<c:url value='/tarifs/edit-tarif-${contract.contractId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/delete-user-${user.ssoId}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/tarifs/delete-tarif-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
-            <%--</c:forEach>--%>
+            </c:forEach>
             </tbody>
         </table>
     </div>
+    <sec:authorize access="hasRole('ADMIN')">
+        <div class="well">
+            <a href="<c:url value='/contracts/newcontract' />">Add New Contact</a>
+        </div>
+    </sec:authorize>
 
+    <ul class="pagination">
+        <li><a href="#">1</a></li>
+        <li class="active"><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">5</a></li>
+    </ul>
 </div>
 </body>
 </html>

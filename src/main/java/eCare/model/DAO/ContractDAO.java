@@ -1,86 +1,62 @@
 package eCare.model.DAO;
 
 import eCare.model.PO.Contract;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by echerkas on 20.10.2017.
  */
+
+@Repository("contractDAO")
 public class ContractDAO implements DAOInterface <Contract, Integer> {
 
-    private Session currentSession;
+    static final Logger logger = LoggerFactory.getLogger(ContractDAO.class);
 
-    private Transaction currentTransaction;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public ContractDAO() {
-    }
-
-    public Session openCurrentSession() {
-        currentSession = getSessionFactory().openSession();
-        return currentSession;
-    }
-
-    public Session openCurrentSessionwithTransaction() {
-        currentSession = getSessionFactory().openSession();
-        currentTransaction = currentSession.beginTransaction();
-        return currentSession;
-    }
-
-    public void closeCurrentSession() {
-        currentSession.close();
-    }
-
-    public void closeCurrentSessionwithTransaction() {
-        currentTransaction.commit();
-        currentSession.close();
-    }
-
-    private static SessionFactory getSessionFactory() {
-        SessionFactory session = new Configuration().configure().buildSessionFactory();
-        return session;
-    }
-
-    public Session getCurrentSession() {
-        return currentSession;
-    }
-
-    public void setCurrentSession(Session currentSession) {
-        this.currentSession = currentSession;
-    }
-
-    public Transaction getCurrentTransaction() {
-        return currentTransaction;
-    }
-
-    public void setCurrentTransaction(Transaction currentTransaction) {
-        this.currentTransaction = currentTransaction;
+    protected Session getSession(){
+        return sessionFactory.getCurrentSession();
     }
 
     public void persist(Contract entity) {
-        getCurrentSession().save(entity);
+        getSession().save(entity);
     }
 
     public void update(Contract entity) {
-        getCurrentSession().update(entity);
+        getSession().update(entity);
     }
 
     public Contract findById(Integer id) {
-        Contract contract = (Contract) getCurrentSession().get(Contract.class, id);
+        Contract contract = (Contract) getSession().get(Contract.class, id);
         return contract;
     }
 
+    public List<Contract> findByPhone(String telNumber) {
+        logger.info("ContractTelNumber : {}", telNumber);
+        Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.tNumber = :telNumber");
+        query.setParameter("telNumber", telNumber);
+        List results = query.list();
+        return  results;
+    }
+
     public void delete(Contract entity) {
-        getCurrentSession().delete(entity);
+        getSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
     public List<Contract> findAll() {
-        List<Contract> contracts = (List<Contract>) getCurrentSession().createQuery("from Contract").list();
+        List<Contract> contracts = (List<Contract>) getSession().createQuery("from Contract").list();
         return contracts;
     }
 

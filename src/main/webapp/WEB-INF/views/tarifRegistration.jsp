@@ -14,7 +14,7 @@
 
 <body>
 <div class="generic-container">
-    <%@include file="authheader.jsp" %>
+    <%@include file="menu.jsp" %>
 
     <div class="well lead">Add new Tarif</div>
     <form:form method="POST" modelAttribute="tarif" class="form-horizontal">

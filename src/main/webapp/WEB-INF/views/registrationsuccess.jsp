@@ -18,7 +18,7 @@
     <%@include file="menu.jsp" %>
 
     <div class="alert alert-success lead">
-        ${success}
+       <span> ${success}</span>
     </div>
 
     <%--<span class="well floatRight">--%>
