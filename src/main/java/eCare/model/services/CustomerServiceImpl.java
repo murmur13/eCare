@@ -28,8 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public Customer findBySSO(String sso) {
-        Customer user = customerDAO.findBySSO(sso);
-        return user;
+        return customerDAO.findBySSO(sso);
     }
 
     public void saveUser(Customer user) {

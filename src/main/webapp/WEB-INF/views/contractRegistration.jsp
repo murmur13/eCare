@@ -24,7 +24,7 @@
             <div class="form-group col-md-12">
                 <label class="col-md-3 control-lable" for="phone">Phone number</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="tNumber" id="phone" class="form-control input-sm"/>
+                    <form:input type="text" path="tNumber" id="tNumber" name="phone" class="form-control input-sm"/>
                     <div class="has-error">
                         <form:errors path="tNumber" class="help-inline"/>
                     </div>
@@ -34,9 +34,9 @@
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-3 control-lable" for="customerSSO">Customer sso</label>
+                <label class="col-md-3 control-lable" for="customer">Customer sso</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="customer" name="customerSSO" class="form-control input-sm"/>
+                    <form:input type="text" path="customer" id="customer" name="customer" class="form-control input-sm"/>
                     <div class="has-error">
                         <form:errors path="customer" class="help-inline"/>
                     </div>
@@ -46,9 +46,9 @@
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-3 control-lable" for="tarifId">Tarif Id</label>
+                <label class="col-md-3 control-lable" for="tarif">Tarif Id</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="tarif" name="tarifId" class="form-control input-sm"/>
+                    <form:input type="text" path="tarif" name="tarif" class="form-control input-sm"/>
                     <div class="has-error">
                         <form:errors path="tarif" class="help-inline"/>
                     </div>

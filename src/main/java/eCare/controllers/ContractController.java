@@ -69,23 +69,30 @@ public class ContractController {
      * This method will be called on form submission, handling POST request for
      * saving contract in database. It also validates the user input
      */
-
+    @ModelAttribute
     @RequestMapping(value = { "/newcontract" }, method = RequestMethod.POST)
-    public String saveContract(@RequestParam("customerSSO") String customerSSO, @RequestParam("tarifId") String tarif, @Valid Contract contract, BindingResult result,
+    public String saveContract(@RequestParam(value = "tNumber", required = false) String phone, @RequestParam(value = "customer", required = false) String sso,
+                               @RequestParam(value = "tarif", required = false) String tarif,
                                ModelMap model) {
 
-        Customer customer = userService.findBySSO(customerSSO);
+
+        Customer customer = userService.findBySSO(sso);
         Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
-        contract.setCustomer(customer);
-        contract.setTarif(tarif1);
-        if (result.hasErrors()) {
-            return "contractRegistration";
-        }
+        Contract contract = new Contract(phone, customer, tarif1);
+//        contract.setCustomer(customer);
+//        contract.setTarif(tarif1);
+//        contract.settNumber(phone);
+        model.addAttribute("customer", customer);
+        model.addAttribute("tNumber", phone);
+//        if (result.hasErrors()) {
+//            return "contractRegistration";
+//        }
+
+        model.addAttribute("contract", contract);
+//        model.addAttribute("sso", sso);
 
         contractService.persist(contract);
-        model.addAttribute("name", customerSSO);
-        model.addAttribute("customer", customer);
-        model.addAttribute("tarifId", tarif1);
+        model.addAttribute("tarif", tarif1);
         model.addAttribute("success", "Contract " + contract.getContractId() + " " + " added successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         //return "success";
