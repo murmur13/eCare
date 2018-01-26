@@ -26,7 +26,7 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/contracts")
-@SessionAttributes("contract")
+//@SessionAttributes("contract")
 public class ContractController {
 
     @Autowired
@@ -79,9 +79,6 @@ public class ContractController {
         Customer customer = userService.findBySSO(sso);
         Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
         Contract contract = new Contract(phone, customer, tarif1);
-//        contract.setCustomer(customer);
-//        contract.setTarif(tarif1);
-//        contract.settNumber(phone);
         model.addAttribute("customer", customer);
         model.addAttribute("tNumber", phone);
 //        if (result.hasErrors()) {
@@ -89,7 +86,6 @@ public class ContractController {
 //        }
 
         model.addAttribute("contract", contract);
-//        model.addAttribute("sso", sso);
 
         contractService.persist(contract);
         model.addAttribute("tarif", tarif1);
@@ -97,6 +93,45 @@ public class ContractController {
         model.addAttribute("loggedinuser", getPrincipal());
         //return "success";
         return "registrationsuccess";
+    }
+
+    @RequestMapping(value = {"/contract/{id}/details" }, method = RequestMethod.GET)
+    public String seeContractDetails(@PathVariable("id") int id, ModelMap model) {
+
+        Contract contract = contractService.findById(id);
+        model.addAttribute("contract", contract);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "contactslist";
+    }
+
+    /**
+     * This method will provide the medium to update an existing contract.
+     */
+    @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.GET)
+    public String editContract(@PathVariable String contractId, ModelMap model) {
+        Contract contract = contractService.findById(Integer.parseInt(contractId));
+        model.addAttribute("contract", contract);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "contractRegistration";
+    }
+
+    /**
+     * This method will be called on form submission, handling POST request for
+     * updating contract in database. It also validates the user input
+     */
+    @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.POST)
+    public String updateUser(Contract contract, BindingResult result,
+                             ModelMap model, @PathVariable String contractId) {
+
+        if (result.hasErrors()) {
+            return "error/error";
+        }
+
+        contractService.update(contract);
+        model.addAttribute("success", "Contract " + contract.getContractId() + " "+ " updated successfully");
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "contactslist";
     }
 
     /**

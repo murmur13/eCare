@@ -4,18 +4,6 @@
 
 <hibernate-configuration>
     <session-factory>
-        <!--<property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>-->
-        <!--<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>-->
-        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db</property>-->
-        <!--<property name="hibernate.connection.username">admin</property>-->
-        <!--<property name="hibernate.connection.password">adminP</property>-->
         <property name="hibernate.hbm2ddl.auto">update</property>
-        <!--<property name="show_sql">true</property>-->
-        <!--<property name="hibernate.current_session_context_class">thread</property>-->
-        <!--<mapping class="eCare.model.PO.Customer"/>-->
-        <!--<mapping class="eCare.model.PO.Tarif"/>-->
-        <!--<mapping class="eCare.model.PO.Contract"/>-->
-        <!--<mapping class="eCare.model.PO.Feature"/>-->
-        <!--<mapping class="eCare.model.PO.BlockingFeatures"/>-->
     </session-factory>
 </hibernate-configuration>

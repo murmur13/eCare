@@ -19,11 +19,11 @@
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <div class="panel panel-default">
-        <%--<%@include file="authheader.jsp" %>--%>
         <!-- Default panel contents -->
-        <div class="panel-heading"><span class="lead">Contracts</span></div>
+        <div class="panel-heading"><span class="lead">Contract details </span></div>
         <table class="table table-hover">
             <thead>
+            <tr>
             <tr>
                 <th>Contract Id</th>
                 <th>Customer</th>
@@ -36,29 +36,43 @@
                 </sec:authorize>
 
             </tr>
+                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
+                <%--<jsp:forward page="main.jsp"/>--%>
+                <%--</sec:authorize>--%>
+                <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                    <th width="100"></th>
+                </sec:authorize>
+                <sec:authorize access="hasRole('ADMIN')">
+                    <th width="100"></th>
+                </sec:authorize>
+
+            </tr>
             </thead>
             <tbody>
-            <c:forEach items="${contracts}" var="contract">
-                <tr>
-                    <td>${contract.contractId}</td>
-                    <td>${contract.customer.ssoId}</td>
-                    <td>${contract.tarif.name}</td>
-                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contract-${contract.contractId}' />" class="btn btn-success custom-width">edit</a></td>
-                    </sec:authorize>
-                    <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
-                    </sec:authorize>
-                </tr>
-            </c:forEach>
+
+            <%--<c:forEach items="${contract}" var="contract">--%>
+            <h1>User Detail</h1>
+            <br />
+
+            <div class="row">
+                <label class="col-sm-2">Contract ID</label>
+                <div class="col-sm-10">${contract.id}</div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Customer</label>
+                <div class="col-sm-10">${contract.customer}</div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Tarif</label>
+                <div class="col-sm-10">${contract.tarif}</div>
+            </div>
+
+            <%--</c:forEach>--%>
             </tbody>
         </table>
     </div>
-    <sec:authorize access="hasRole('ADMIN')">
-        <div class="well">
-            <a href="<c:url value='/contracts/newcontract' />">Add New Contract</a>
-        </div>
-    </sec:authorize>
 
 </div>
 </body>
