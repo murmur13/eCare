@@ -9,6 +9,7 @@ import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +46,9 @@ public class ContractController {
     @Autowired
     ContractService contractService;
 
+    @Autowired
+    AppController appController;
+
     /**
      * This method will list all existing contracts.
      */
@@ -53,7 +58,16 @@ public class ContractController {
         List<Contract> contracts = contractService.findAll();
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "contactslist";
+        return "contractslist";
+    }
+
+    @RequestMapping(value = {"/getMyContract" }, method = RequestMethod.GET)
+    public String getMyContract(ModelMap model, HttpSession session) {
+        Customer user = (Customer) session.getAttribute("user");
+        List<Contract> contracts = contractService.findByCustomerId(user);
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userContract";
     }
 
     @RequestMapping(value = { "/newcontract" }, method = RequestMethod.GET)
@@ -101,7 +115,7 @@ public class ContractController {
         Contract contract = contractService.findById(id);
         model.addAttribute("contract", contract);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "contactslist";
+        return "contractslist";
     }
 
     /**
@@ -110,6 +124,10 @@ public class ContractController {
     @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.GET)
     public String editContract(@PathVariable String contractId, ModelMap model) {
         Contract contract = contractService.findById(Integer.parseInt(contractId));
+        String customer = contract.getCustomer().getSsoId();
+        String tarif = contract.getTarif().getName();
+        model.addAttribute("tarif", tarif);
+        model.addAttribute("customer", customer);
         model.addAttribute("contract", contract);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
@@ -121,17 +139,17 @@ public class ContractController {
      * updating contract in database. It also validates the user input
      */
     @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.POST)
-    public String updateUser(Contract contract, BindingResult result,
+    public String updateContract(Contract contract, BindingResult result,
                              ModelMap model, @PathVariable String contractId) {
 
         if (result.hasErrors()) {
-            return "error/error";
+            return "error";
         }
 
         contractService.update(contract);
         model.addAttribute("success", "Contract " + contract.getContractId() + " "+ " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
-        return "contactslist";
+        return "contractslist";
     }
 
     /**

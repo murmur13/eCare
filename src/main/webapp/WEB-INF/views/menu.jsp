@@ -43,10 +43,22 @@
                 </li>
 
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Contracts
-                        <span class="caret"></span></a>
+                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Contracts
+                            <span class="caret"></span></a>
+                    </sec:authorize>
                     <ul class="dropdown-menu">
                         <li><a href="<c:url value='/contracts/listContracts' />">See all contracts</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <sec:authorize access="hasRole('USER')">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Contract
+                            <span class="caret"></span></a>
+                    </sec:authorize>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value='/contracts/getMyContract' />">See my contracts</a></li>
                     </ul>
                 </li>
 

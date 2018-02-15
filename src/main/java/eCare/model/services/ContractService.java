@@ -2,6 +2,7 @@ package eCare.model.services;
 
 import eCare.model.PO.Contract;
 import eCare.model.DAO.ContractDAO;
+import eCare.model.PO.Customer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.List;
 public interface ContractService {
 
     List<Contract> findByPhone(String telNumber);
+
+    List<Contract> findByCustomerId(Customer customerId);
 
     void persist(Contract entity);
 

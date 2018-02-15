@@ -13,7 +13,7 @@ public class Contract{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "contract_id")
-    private int contractId;
+    private Integer contractId;
 
     @Column(name = "t_number")
     private String tNumber;
@@ -41,11 +41,11 @@ public class Contract{
         this.tarif = tarif;
     }
 
-    public int getContractId() {
+    public Integer getContractId() {
         return contractId;
     }
 
-    public void setContractId(int contractId) {
+    public void setContractId(Integer contractId) {
         this.contractId = contractId;
     }
 

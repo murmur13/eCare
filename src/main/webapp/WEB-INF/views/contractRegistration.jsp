@@ -10,10 +10,15 @@
     <title>User Registration Form</title>
     <link href="<c:url value='/resources/css/bootstrap.css' />" rel="stylesheet">
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
 </head>
 
 <body>
+
 <%@ include file="menu.jsp" %>
+
 <div class="generic-container">
 
     <div class="well lead">Add new Contract</div>
@@ -46,7 +51,7 @@
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-3 control-lable" for="tarif">Tarif Id</label>
+                <label class="col-md-3 control-lable" for="tarif">Tarif name</label>
                 <div class="col-md-7">
                     <form:input type="text" path="tarif" name="tarif" class="form-control input-sm"/>
                     <div class="has-error">

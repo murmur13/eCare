@@ -1,7 +1,9 @@
 package eCare.model.services;
 
 import eCare.model.DAO.ContractDAO;
+import eCare.model.DAO.CustomerDAO;
 import eCare.model.PO.Contract;
+import eCare.model.PO.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,9 @@ public class ContractServiceImpl implements ContractService{
 
     @Autowired
     ContractDAO contractDAO;
+
+    @Autowired
+    CustomerDAO customerDAO;
 
     public Contract findById(Integer id) {
         return contractDAO.findById(id);
@@ -47,5 +52,11 @@ public class ContractServiceImpl implements ContractService{
     public List<Contract> findByPhone(String telNumber) {
         List<Contract> contract = contractDAO.findByPhone(telNumber);
         return contract;
+    }
+
+    public List<Contract> findByCustomerId(Customer customerId){
+        Customer customer = customerDAO.findById(customerId.getId());
+        List<Contract> contracts = contractDAO.findByCustomerId(customerId);
+        return contracts;
     }
 }

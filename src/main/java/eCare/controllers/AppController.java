@@ -6,6 +6,8 @@ import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +37,7 @@ import java.util.Locale;
 
 @Controller
 @RequestMapping("/")
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @SessionAttributes(value = {"roles", "user"})
 public class AppController {
 
@@ -55,8 +60,11 @@ public class AppController {
      * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
-    public String mainPage(ModelMap model) {
+    public String mainPage(ModelMap model, HttpServletRequest request) {
         model.addAttribute("loggedinuser", getPrincipal());
+        String name = getPrincipal();
+        Customer user = userService.findBySSO(name);
+            request.getSession().setAttribute("user", user);
         return "main";
     }
 
@@ -262,9 +270,11 @@ public class AppController {
          * Toggle the handlers if you are RememberMe functionality is useless in your app.
          */
         @RequestMapping(value="/logout", method = RequestMethod.GET)
-        public String logoutPage (HttpServletRequest request, HttpServletResponse response){
+        public String logoutPage (HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status){
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null){
+                status.setComplete();
+                webR.removeAttribute("user", webR.SCOPE_SESSION);
                 //new SecurityContextLogoutHandler().logout(request, response, auth);
                 persistentTokenBasedRememberMeServices.logout(request, response, auth);
                 SecurityContextHolder.getContext().setAuthentication(null);

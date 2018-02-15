@@ -1,6 +1,7 @@
 package eCare.model.DAO;
 
 import eCare.model.PO.Contract;
+import eCare.model.PO.Customer;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,6 +49,14 @@ public class ContractDAO implements DAOInterface <Contract, Integer> {
         query.setParameter("telNumber", telNumber);
         List results = query.list();
         return  results;
+    }
+
+    public List<Contract> findByCustomerId(Customer customerId){
+        logger.info("ContractCustomerId : {}", customerId);
+        Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.customer = :customerId");
+        query.setParameter("customerId", customerId);
+        List results = query.list();
+        return results;
     }
 
     public void delete(Contract entity) {
