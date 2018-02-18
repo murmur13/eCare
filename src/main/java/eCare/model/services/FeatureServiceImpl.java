@@ -1,6 +1,8 @@
 package eCare.model.services;
 
+import eCare.model.DAO.CustomerDAO;
 import eCare.model.DAO.FeatureDAO;
+import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,15 @@ public class FeatureServiceImpl implements FeatureService {
     @Autowired
     private FeatureDAO featureDAO;
 
+    @Autowired
+    private CustomerDAO customerDAO;
+
     public Feature findById(Integer id) {
         return featureDAO.findById(id);
     }
 
-    public void persist(Feature tarif) {
-        featureDAO.persist(tarif);
+    public void persist(Feature feature) {
+        featureDAO.persist(feature);
     }
 
     public void delete(Integer id){
@@ -38,6 +43,17 @@ public class FeatureServiceImpl implements FeatureService {
 
     public List<Feature> findAll() {
         return featureDAO.findAll();
+    }
+
+//    public List<Feature> findByTarif(Integer tarifId){
+//        List<Feature> feature = featureDAO.findByTarif(tarifId);
+//        return feature;
+//    }
+
+    public List<Feature> findFeatureByCustomer(Customer customer){
+        Customer user = customerDAO.findById(customer.getId());
+        List<Feature> features = featureDAO.findFeatureByCustomer(user);
+        return features;
     }
 
     public void deleteAll(){

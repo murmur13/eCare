@@ -1,5 +1,6 @@
 package eCare.model.DAO;
 
+import eCare.model.PO.Contract;
 import eCare.model.PO.Tarif;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;

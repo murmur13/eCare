@@ -1,6 +1,7 @@
 package eCare.model.services;
 
 import eCare.model.DAO.TarifDAO;
+import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Tarif;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,4 +58,5 @@ public class TarifServiceImpl implements  TarifService{
         List<Tarif> tarif = tarifDAO.findByName(name);
         return tarif;
     }
+
     }

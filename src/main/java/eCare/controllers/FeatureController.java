@@ -1,7 +1,12 @@
 package eCare.controllers;
 
+import eCare.model.PO.Contract;
+import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
+import eCare.model.PO.Tarif;
+import eCare.model.services.ContractService;
 import eCare.model.services.FeatureService;
+import eCare.model.services.TarifService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,10 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,6 +37,12 @@ public class FeatureController {
 
     @Autowired
     MessageSource messageSource;
+
+    @Autowired
+    ContractService contractService;
+
+    @Autowired
+    TarifService tarifService;
 
     /**
      * This method will list all existing users.
@@ -75,6 +89,62 @@ public class FeatureController {
             //return "success";
             return "registrationsuccess";
         }
+
+    @RequestMapping(value = {"/chooseFeature-{id}"}, method = RequestMethod.GET)
+    public String changeFeature(@PathVariable Integer id, ModelMap model, HttpSession session){
+        Customer user = (Customer) session.getAttribute("user");
+        List<Contract> contracts = contractService.findByCustomerId(user);
+        Contract contract = contracts.get(0);
+        List<Tarif> tarif = new ArrayList<Tarif>();
+        tarif.add(contract.getTarif());
+//        Integer  myTarif = tarif.get(0).getTarifId();
+        List<Feature> features = new ArrayList<Feature>();
+        features.add(featureService.findById(id));
+        Feature newFeature = features.get(features.size() - 1);
+        newFeature.setFeatureTarifs(tarif);
+        featureService.persist(newFeature);
+        model.addAttribute("tarif", tarif);
+        model.addAttribute("userFeatures", features);
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userContract";
+    }
+
+    /**
+     * This method will provide the medium to update an existing feature.
+     */
+    @RequestMapping(value = { "/edit-feature-{id}" }, method = RequestMethod.GET)
+    public String editTarif(@PathVariable Integer id, ModelMap model) {
+        Feature feature = featureService.findById(id);
+        model.addAttribute("feature", feature);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "featureRegistration";
+    }
+
+    /**
+     * This method will be called on form submission, handling POST request for
+     * updating user in database. It also validates the user input
+     */
+    @RequestMapping(value = { "/edit-feature-{id}" }, method = RequestMethod.POST)
+    public String updateFeature(@Valid Feature feature, BindingResult result,
+                              ModelMap model, @PathVariable Integer id) {
+
+        if (result.hasErrors()) {
+            return "featureRegistration";
+        }
+        featureService.persist(feature);
+        model.addAttribute("success", "Feature " + feature.getFeatureName() + " " + " updated successfully");
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "registrationsuccess";
+    }
+
+    @RequestMapping(value = { "/delete-feature-{id}" }, method = RequestMethod.GET)
+    public String deleteFeature(@PathVariable Integer id) {
+        featureService.delete(id);
+        return "redirect:/features/listFeatures";
+    }
+
 
     /**
      * This method returns the principal[user-name] of logged-in user.

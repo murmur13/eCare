@@ -25,11 +25,11 @@
             <thead>
             <tr>
                 <th>name</th>
-                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
-                    <%--<jsp:forward page="main.jsp"/>--%>
-                <%--</sec:authorize>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
+                </sec:authorize>
+                <sec:authorize access="hasRole('USER')">
+                    <th width="200"></th>
                 </sec:authorize>
                 <sec:authorize access="hasRole('ADMIN')">
                     <th width="100"></th>
@@ -41,6 +41,9 @@
             <c:forEach items="${tarifs}" var="tarif">
                 <tr>
                     <td>${tarif.name}</td>
+                    <sec:authorize access="hasRole('USER')">
+                        <td><a href="<c:url value='/contracts/changeTarif-${tarif.tarifId}' />" class="btn btn-success custom-width">Change tarif</a></td>
+                    </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/tarifs/edit-tarif-${tarif.tarifId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>

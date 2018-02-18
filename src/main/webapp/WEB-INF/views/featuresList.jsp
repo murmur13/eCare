@@ -34,6 +34,10 @@
                 <sec:authorize access="hasRole('ADMIN')">
                     <th width="100"></th>
                 </sec:authorize>
+                <sec:authorize access="hasRole('USER')">
+                    <th width="300"></th>
+                </sec:authorize>
+
 
             </tr>
             </thead>
@@ -41,6 +45,9 @@
             <c:forEach items="${features}" var="feature">
                 <tr>
                     <td>${feature.featureName}</td>
+                    <sec:authorize access="hasRole('USER')">
+                        <td><a href="<c:url value='/features/chooseFeature-${feature.featureId}' />" class="btn btn-success custom-width">Choose option</a></td>
+                    </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>

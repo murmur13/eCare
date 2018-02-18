@@ -4,6 +4,8 @@ import eCare.model.DAO.ContractDAO;
 import eCare.model.DAO.CustomerDAO;
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
+import eCare.model.PO.Feature;
+import eCare.model.PO.Tarif;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,4 +61,5 @@ public class ContractServiceImpl implements ContractService{
         List<Contract> contracts = contractDAO.findByCustomerId(customerId);
         return contracts;
     }
+
 }

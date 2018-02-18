@@ -2,16 +2,20 @@ package eCare.model.DAO;
 
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
+import eCare.model.PO.Feature;
+import eCare.model.PO.Tarif;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.annotations.QueryBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**

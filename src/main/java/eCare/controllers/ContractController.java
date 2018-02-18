@@ -2,6 +2,7 @@ package eCare.controllers;
 
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
+import eCare.model.PO.Feature;
 import eCare.model.PO.Tarif;
 import eCare.model.services.ContractService;
 import eCare.model.services.CustomerService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,6 +67,10 @@ public class ContractController {
     public String getMyContract(ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
+//        Contract contract = contracts.get(0);
+//        Tarif tarif = contract.getTarif();
+        List <Feature> features = featureService.findFeatureByCustomer(user);
+        model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
         return "userContract";
@@ -116,6 +122,21 @@ public class ContractController {
         model.addAttribute("contract", contract);
         model.addAttribute("loggedinuser", getPrincipal());
         return "contractslist";
+    }
+
+    @RequestMapping(value = {"/changeTarif-{id}"}, method = RequestMethod.GET)
+    public String changeTarif(@PathVariable Integer id,  ModelMap model, HttpSession session){
+        Customer user = (Customer) session.getAttribute("user");
+        List<Contract> contracts = contractService.findByCustomerId(user);
+        Tarif tarif = tarifService.findById(id);
+        model.addAttribute("tarif", tarif);
+        contracts.get(0).setTarif(tarif);
+        List<Feature> features = null;
+        contractService.update(contracts.get(0));
+        model.addAttribute("features", features);
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userContract";
     }
 
     /**

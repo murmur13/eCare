@@ -1,5 +1,6 @@
 package eCare.model.services;
 
+import eCare.model.PO.Contract;
 import eCare.model.PO.Tarif;
 
 import java.util.List;
@@ -8,12 +9,6 @@ import java.util.List;
  * Created by echerkas on 20.10.2017.
  */
 public interface TarifService {
-
-//    private static TarifDAO tarifDAO;
-
-//    public TarifService() {
-//        tarifDAO = new TarifDAO();
-//    }
 
     List<Tarif> findByName(String name);
 
@@ -33,7 +28,4 @@ public interface TarifService {
 
     boolean isTarifUnique(String name);
 
-//    TarifDAO tarifDAO() {
-//        return tarifDAO;
-//    }
 }

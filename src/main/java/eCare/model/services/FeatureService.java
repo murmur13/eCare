@@ -1,6 +1,7 @@
 package eCare.model.services;
 
 import eCare.model.DAO.FeatureDAO;
+import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
 
 import java.util.List;
@@ -28,4 +29,9 @@ public interface FeatureService {
     void deleteAll();
 
     boolean isFeatureUnique(String name);
+
+    List<Feature> findFeatureByCustomer(Customer customer);
+
+//    List<Feature> findByTarif(Integer tarifId);
+
 }

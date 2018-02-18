@@ -2,10 +2,13 @@ package eCare.controllers;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
+import eCare.model.PO.UserProfileType;
 import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
+import org.hibernate.collection.internal.PersistentSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpRequest;
@@ -27,9 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by echerkas on 15.11.2017.
@@ -56,11 +57,13 @@ public class AppController {
         @Autowired
         AuthenticationTrustResolver authenticationTrustResolver;
 
+
     /**
      * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
-    public String mainPage(ModelMap model, HttpServletRequest request) {
+    public String mainPage(ModelMap model, HttpSession session, HttpServletRequest request){
+//    Customer user = (Customer) session.getAttribute("user");
         model.addAttribute("loggedinuser", getPrincipal());
         String name = getPrincipal();
         Customer user = userService.findBySSO(name);
@@ -73,12 +76,15 @@ public class AppController {
      */
 
     @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
-    public String listUsers(ModelMap model) {
-
+    public String listUsers(ModelMap model, HttpSession session) {
+        Customer user = (Customer) session.getAttribute("user");
         List<Customer> users = userService.findAllUsers();
         model.addAttribute("users", users);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "userslist";
+        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
+            return "main";
+        } else return "userslist";
+
     }
 
 
@@ -88,7 +94,6 @@ public class AppController {
 
     @RequestMapping(value = {"/search" }, method = RequestMethod.GET)
     public String search(ModelMap model) {
-//        List<Customer> user = userService.findAllUsers();
         Customer user = new Customer();
         model.addAttribute("user", user);
         model.addAttribute("loggedinuser", getPrincipal());
@@ -129,6 +134,10 @@ public class AppController {
 
     @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
     public String registerNewUser(HttpSession session, Customer user, BindingResult result, ModelMap model) {
+        UserProfile role = userProfileService.findByType("USER");
+        HashSet <UserProfile> userProfiles = new HashSet<UserProfile>();
+        userProfiles.add(role);
+        user.setUserProfiles(userProfiles);
             if (result.hasErrors()) {
                 return "registration";
             }
@@ -140,10 +149,10 @@ public class AppController {
         userService.saveUser(user);
         model.addAttribute("user", user);
         session.setAttribute("user", user);
-        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully. Please, login with your account!");
+//        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully. Please, login with your account!");
         model.addAttribute("loggedinuser", user);
 
-        return "redirect: /login";
+        return "redirect: /mainPage";
     }
 
         /**

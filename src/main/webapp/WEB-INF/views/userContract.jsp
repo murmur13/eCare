@@ -37,6 +37,7 @@
 
             </tr>
             </thead>
+
             <tbody>
             <c:forEach items="${contracts}" var="contract">
                 <tr>
@@ -48,6 +49,38 @@
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
                         <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
+                    </sec:authorize>
+                </tr>
+            </c:forEach>
+            <br>
+            <br>
+            <br>
+            </tbody>
+            <thead>
+            <tr>
+                <th>Feature Id</th>
+                <th>Feature name</th>
+                <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                    <th width="100"></th>
+                </sec:authorize>
+                <sec:authorize access="hasRole('ADMIN')">
+                    <th width="100"></th>
+                </sec:authorize>
+
+            </tr>
+        </thead>
+
+            <tbody>
+            <c:forEach items="${userFeatures}" var="feature">
+                <tr>
+                    <td>${feature.featureId}</td>
+                    <td>${feature.featureName}</td>
+                    <%--<td>${contract.tarif.name}</td>--%>
+                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                        <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
+                    </sec:authorize>
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
             </c:forEach>

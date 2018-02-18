@@ -46,9 +46,9 @@ body{
     box-shadow: 0 0 30px black;
 }
 
-.custom-width {
-    width: 80px !important;
-}
+/*.custom-width {*/
+    /*width: 100%*/
+/*}*/
 
 body, #mainWrapper, .form-control{
     font-size:12px!important;

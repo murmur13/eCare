@@ -3,6 +3,8 @@ package eCare.model.services;
 import eCare.model.PO.Contract;
 import eCare.model.DAO.ContractDAO;
 import eCare.model.PO.Customer;
+import eCare.model.PO.Feature;
+import eCare.model.PO.Tarif;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
