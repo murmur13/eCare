@@ -28,6 +28,7 @@
                 <th>Contract Id</th>
                 <th>Customer</th>
                 <th>Tarif</th>
+                <th>Phone number</th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -67,6 +68,11 @@
             <div class="row">
                 <label class="col-sm-2">Tarif</label>
                 <div class="col-sm-10">${contract.tarif}</div>
+            </div>
+
+            <div class="row">
+                <label class="col-sm-2">Phone number</label>
+                <div class="col-sm-10">${contract.tNumber}</div>
             </div>
 
             <%--</c:forEach>--%>

@@ -2,6 +2,7 @@ package eCare.controllers;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.Tarif;
+import eCare.model.services.ContractService;
 import eCare.model.services.TarifService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -31,6 +32,9 @@ public class TarifController {
 
     @Autowired
     MessageSource messageSource;
+
+    @Autowired
+    ContractService contractService;
 
     /**
      * This method will list all existing tarifs.
@@ -102,14 +106,21 @@ public class TarifController {
         if (result.hasErrors()) {
             return "tarifRegistration";
         }
-        tarifService.persist(tarif);
+        tarifService.update(tarif);
         model.addAttribute("success", "Tarif " + tarif.getName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";
     }
 
     @RequestMapping(value = { "/delete-tarif-{id}" }, method = RequestMethod.GET)
-    public String deleteTarif(@PathVariable Integer id) {
+    public String deleteTarif(@PathVariable Integer id, ModelMap model) {
+        Tarif tarif = tarifService.findById(id);
+        if(!contractService.findContractByTarif(tarif).isEmpty()){
+            String tarifNotDeleted = messageSource.getMessage("tarif.not.deletable", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
+            model.addAttribute("message", tarifNotDeleted);
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "notDeletableTarif";
+        }
         tarifService.delete(id);
         return "redirect:/tarifs/listTarifs";
     }

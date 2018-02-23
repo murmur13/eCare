@@ -32,6 +32,13 @@ public class Feature {
             inverseJoinColumns=@JoinColumn(name="tarif_tarif_id", referencedColumnName="tarif_id"))
     private List<Tarif> featureTarifs;
 
+    @ManyToMany
+    @JoinTable(
+            name="contract_has_feature",
+            joinColumns=@JoinColumn(name="contractFeature", referencedColumnName="feature_id"),
+            inverseJoinColumns=@JoinColumn(name="contractId", referencedColumnName="contract_id"))
+    private List<Contract> featureContracts;
+
     @Override
     public String toString() {
         return "feature{" +
@@ -40,6 +47,14 @@ public class Feature {
                 ", featurePrice=" + featurePrice +
                 ", connectionCost=" + connectionCost +
                 '}';
+    }
+
+    public List<Contract> getFeatureContracts() {
+        return featureContracts;
+    }
+
+    public void setFeatureContracts(List<Contract> featureContracts) {
+        this.featureContracts = featureContracts;
     }
 
     public Feature() {

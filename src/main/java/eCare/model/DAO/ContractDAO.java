@@ -63,6 +63,14 @@ public class ContractDAO implements DAOInterface <Contract, Integer> {
         return results;
     }
 
+    public List<Contract> findContractByTarif(Tarif tarifId){
+        logger.info("TarifId : {}, tarifId");
+        Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.tarif = :tarifId");
+        query.setParameter("tarifId", tarifId);
+        List result = query.list();
+        return result;
+    }
+
     public void delete(Contract entity) {
         getSession().delete(entity);
     }

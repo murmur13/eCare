@@ -1,6 +1,7 @@
 package eCare.model.services;
 
 import eCare.model.DAO.FeatureDAO;
+import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
 
@@ -30,8 +31,10 @@ public interface FeatureService {
 
     boolean isFeatureUnique(String name);
 
-    List<Feature> findFeatureByCustomer(Customer customer);
+//    List<Feature> findFeatureByCustomer(Customer customer);
 
-//    List<Feature> findByTarif(Integer tarifId);
+    List<Feature> findFeatureByContract(Integer contract);
+
+    List<Feature> findFeatureByTarif(Integer tarifId);
 
 }

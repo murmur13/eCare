@@ -67,11 +67,21 @@ public class ContractController {
     public String getMyContract(ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
+        Contract contract = contracts.get(0);
+        List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
+            model.addAttribute("userFeatures", features);
+            model.addAttribute("contracts", contracts);
+//        for (Contract contract: contracts){
+//            List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
+//            model.addAttribute("userFeatures", features);
+//            model.addAttribute("contracts", contracts);
+//        }
+
 //        Contract contract = contracts.get(0);
 //        Tarif tarif = contract.getTarif();
-        List <Feature> features = featureService.findFeatureByCustomer(user);
-        model.addAttribute("userFeatures", features);
-        model.addAttribute("contracts", contracts);
+
+//        model.addAttribute("userFeatures", features);
+//        model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
         return "userContract";
     }
@@ -99,6 +109,7 @@ public class ContractController {
         Customer customer = userService.findBySSO(sso);
         Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
         Contract contract = new Contract(phone, customer, tarif1);
+        customer.setTelNumber(phone);
         model.addAttribute("customer", customer);
         model.addAttribute("tNumber", phone);
 //        if (result.hasErrors()) {
@@ -130,8 +141,12 @@ public class ContractController {
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
         model.addAttribute("tarif", tarif);
-        contracts.get(0).setTarif(tarif);
-        List<Feature> features = null;
+        Contract contract = contracts.get(0);
+        contract.setTarif(tarif);
+        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
+        for (Feature feature: features){
+            featureService.delete(feature.getFeatureId());
+        }
         contractService.update(contracts.get(0));
         model.addAttribute("features", features);
         model.addAttribute("contracts", contracts);

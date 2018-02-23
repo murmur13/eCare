@@ -18,6 +18,8 @@ public interface ContractService {
 
     List<Contract> findByCustomerId(Customer customerId);
 
+    List<Contract> findContractByTarif(Tarif tarifId);
+
     void persist(Contract entity);
 
     void update(Contract entity);

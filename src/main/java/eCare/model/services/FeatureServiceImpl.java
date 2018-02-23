@@ -1,7 +1,9 @@
 package eCare.model.services;
 
+import eCare.model.DAO.ContractDAO;
 import eCare.model.DAO.CustomerDAO;
 import eCare.model.DAO.FeatureDAO;
+import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Autowired
     private CustomerDAO customerDAO;
+
+    @Autowired
+    private ContractDAO contractDAO;
 
     public Feature findById(Integer id) {
         return featureDAO.findById(id);
@@ -50,10 +55,15 @@ public class FeatureServiceImpl implements FeatureService {
 //        return feature;
 //    }
 
-    public List<Feature> findFeatureByCustomer(Customer customer){
-        Customer user = customerDAO.findById(customer.getId());
-        List<Feature> features = featureDAO.findFeatureByCustomer(user);
+    public List<Feature> findFeatureByTarif(Integer tarifId){
+        List<Feature> features = featureDAO.findFeatureByTarif(tarifId);
         return features;
+    }
+
+    public List<Feature> findFeatureByContract(Integer contract){
+        Contract userContract = contractDAO.findById(contract);
+        List<Feature> featureList = featureDAO.findFeatureByContract(userContract.getContractId());
+        return featureList;
     }
 
     public void deleteAll(){

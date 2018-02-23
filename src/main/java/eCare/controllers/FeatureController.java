@@ -1,12 +1,10 @@
 package eCare.controllers;
 
-import eCare.model.PO.Contract;
-import eCare.model.PO.Customer;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
+import eCare.model.PO.*;
 import eCare.model.services.ContractService;
 import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
+import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by echerkas on 13.01.2018.
@@ -44,14 +40,32 @@ public class FeatureController {
     @Autowired
     TarifService tarifService;
 
+    @Autowired
+    UserProfileService userProfileService;
+
     /**
      * This method will list all existing users.
      */
     @RequestMapping(value = {"/listFeatures" }, method = RequestMethod.GET)
-    public String listFeatures(ModelMap model) {
+    public String listFeatures(ModelMap model, HttpSession session) {
+        Customer user = (Customer) session.getAttribute("user");
+        UserProfile userRole = userProfileService.findByType("USER");
+        UserProfile adminRole = userProfileService.findByType("ADMIN");
+        if(user.getUserProfiles().contains(userRole)){
+            Contract contract = user.getContracts().get(0);
+            Tarif tarif = contract.getTarif();
+            List<Feature> features = featureService.findFeatureByTarif(tarif.getTarifId());
+            model.addAttribute("features", features);
 
-        List<Feature> features = featureService.findAll();
-        model.addAttribute("features", features);
+        }
+        if(user.getContracts() == null || user.getUserProfiles().contains(adminRole)){
+            List<Feature> features = featureService.findAll();
+//                Set featuresSet = new HashSet();
+//                featuresSet.add(features);
+            model.addAttribute("features", features);
+        }
+//        List<Feature> features = featureService.findAll();
+//        model.addAttribute("features", features);
         model.addAttribute("loggedinuser", getPrincipal());
         return "featuresList";
     }
@@ -91,19 +105,15 @@ public class FeatureController {
         }
 
     @RequestMapping(value = {"/chooseFeature-{id}"}, method = RequestMethod.GET)
-    public String changeFeature(@PathVariable Integer id, ModelMap model, HttpSession session){
+    public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session){
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Contract contract = contracts.get(0);
-        List<Tarif> tarif = new ArrayList<Tarif>();
-        tarif.add(contract.getTarif());
-//        Integer  myTarif = tarif.get(0).getTarifId();
-        List<Feature> features = new ArrayList<Feature>();
-        features.add(featureService.findById(id));
-        Feature newFeature = features.get(features.size() - 1);
-        newFeature.setFeatureTarifs(tarif);
-        featureService.persist(newFeature);
-        model.addAttribute("tarif", tarif);
+        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
+        Feature chosenFeature = featureService.findById(id);
+        features.add(chosenFeature);
+        chosenFeature.setFeatureContracts(contracts);
+        featureService.persist(chosenFeature);
         model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
@@ -133,7 +143,8 @@ public class FeatureController {
         if (result.hasErrors()) {
             return "featureRegistration";
         }
-        featureService.persist(feature);
+//        if(featureService.isFeatureUnique())
+        featureService.update(feature);
         model.addAttribute("success", "Feature " + feature.getFeatureName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";

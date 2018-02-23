@@ -2,6 +2,7 @@ package eCare.model.services;
 
 import eCare.model.DAO.ContractDAO;
 import eCare.model.DAO.CustomerDAO;
+import eCare.model.DAO.TarifDAO;
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
@@ -25,6 +26,9 @@ public class ContractServiceImpl implements ContractService{
 
     @Autowired
     CustomerDAO customerDAO;
+
+    @Autowired
+    TarifDAO tarifDAO;
 
     public Contract findById(Integer id) {
         return contractDAO.findById(id);
@@ -59,6 +63,12 @@ public class ContractServiceImpl implements ContractService{
     public List<Contract> findByCustomerId(Customer customerId){
         Customer customer = customerDAO.findById(customerId.getId());
         List<Contract> contracts = contractDAO.findByCustomerId(customerId);
+        return contracts;
+    }
+
+    public List<Contract> findContractByTarif(Tarif tarifId){
+        Tarif tarif = tarifDAO.findById(tarifId.getTarifId());
+        List<Contract>contracts = contractDAO.findContractByTarif(tarif);
         return contracts;
     }
 

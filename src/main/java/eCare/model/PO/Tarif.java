@@ -14,7 +14,7 @@ public class Tarif{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tarif_id")
-    private int tarifId;
+    private Integer tarifId;
 
     @Column(name = "name")
     private String name;
@@ -33,7 +33,7 @@ public class Tarif{
         return tarifId;
     }
 
-    public void setTarifId(int tarifId) {
+    public void setTarifId(Integer tarifId) {
         this.tarifId = tarifId;
     }
 
@@ -43,5 +43,35 @@ public class Tarif{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Tarif{" +
+                "tarifId=" + tarifId +
+                ", name='" + name + '\'' +
+                ", tarifContracts=" + tarifContracts +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tarif tarif = (Tarif) o;
+
+        if (tarifId != tarif.tarifId) return false;
+        if (!name.equals(tarif.name)) return false;
+        return tarifContracts != null ? tarifContracts.equals(tarif.tarifContracts) : tarif.tarifContracts == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tarifId;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (tarifContracts != null ? tarifContracts.hashCode() : 0);
+        return result;
     }
 }
