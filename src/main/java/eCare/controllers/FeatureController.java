@@ -60,12 +60,8 @@ public class FeatureController {
         }
         if(user.getContracts() == null || user.getUserProfiles().contains(adminRole)){
             List<Feature> features = featureService.findAll();
-//                Set featuresSet = new HashSet();
-//                featuresSet.add(features);
             model.addAttribute("features", features);
         }
-//        List<Feature> features = featureService.findAll();
-//        model.addAttribute("features", features);
         model.addAttribute("loggedinuser", getPrincipal());
         return "featuresList";
     }
@@ -105,20 +101,28 @@ public class FeatureController {
         }
 
     @RequestMapping(value = {"/chooseFeature-{id}"}, method = RequestMethod.GET)
-    public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session){
+    public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Contract contract = contracts.get(0);
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         Feature chosenFeature = featureService.findById(id);
-        features.add(chosenFeature);
-        chosenFeature.setFeatureContracts(contracts);
-        featureService.persist(chosenFeature);
-        model.addAttribute("userFeatures", features);
-        model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", getPrincipal());
-        return "userContract";
-    }
+        for (Feature feature : features) {
+            if (feature.getFeatureName().equals(chosenFeature.getFeatureName())) {
+                String featureIsAlreadyChosen = messageSource.getMessage("feature.is.already.chosen", new String[]{Integer.toString(chosenFeature.getFeatureId())}, Locale.getDefault());
+                model.addAttribute("message", featureIsAlreadyChosen);
+                model.addAttribute("loggedinuser", getPrincipal());
+                return "errorPage";
+            }
+        }
+            features.add(chosenFeature);
+            chosenFeature.setFeatureContracts(contracts);
+            featureService.persist(chosenFeature);
+            model.addAttribute("userFeatures", features);
+            model.addAttribute("contracts", contracts);
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "userContract";
+        }
 
     /**
      * This method will provide the medium to update an existing feature.

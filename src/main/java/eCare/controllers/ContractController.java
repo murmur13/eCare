@@ -8,6 +8,7 @@ import eCare.model.services.ContractService;
 import eCare.model.services.CustomerService;
 import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpRequest;
@@ -71,17 +72,6 @@ public class ContractController {
         List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
             model.addAttribute("userFeatures", features);
             model.addAttribute("contracts", contracts);
-//        for (Contract contract: contracts){
-//            List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
-//            model.addAttribute("userFeatures", features);
-//            model.addAttribute("contracts", contracts);
-//        }
-
-//        Contract contract = contracts.get(0);
-//        Tarif tarif = contract.getTarif();
-
-//        model.addAttribute("userFeatures", features);
-//        model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
         return "userContract";
     }
@@ -99,7 +89,6 @@ public class ContractController {
      * This method will be called on form submission, handling POST request for
      * saving contract in database. It also validates the user input
      */
-    @ModelAttribute
     @RequestMapping(value = { "/newcontract" }, method = RequestMethod.POST)
     public String saveContract(@RequestParam(value = "tNumber", required = false) String phone, @RequestParam(value = "customer", required = false) String sso,
                                @RequestParam(value = "tarif", required = false) String tarif,
@@ -109,20 +98,20 @@ public class ContractController {
         Customer customer = userService.findBySSO(sso);
         Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
         Contract contract = new Contract(phone, customer, tarif1);
-        customer.setTelNumber(phone);
-        model.addAttribute("customer", customer);
-        model.addAttribute("tNumber", phone);
 //        if (result.hasErrors()) {
 //            return "contractRegistration";
 //        }
-
-        model.addAttribute("contract", contract);
-
+        customer.setTelNumber(phone);
+        userService.updateUser(customer);
         contractService.persist(contract);
+        List<Contract> tarifContracts = contractService.findContractByTarif(tarif1);
+        tarifContracts.add(contract);
         model.addAttribute("tarif", tarif1);
+        model.addAttribute("customer", customer);
+        model.addAttribute("phone", customer.getTelNumber());
+        model.addAttribute("contract", contract);
         model.addAttribute("success", "Contract " + contract.getContractId() + " " + " added successfully");
         model.addAttribute("loggedinuser", getPrincipal());
-        //return "success";
         return "registrationsuccess";
     }
 
@@ -136,22 +125,29 @@ public class ContractController {
     }
 
     @RequestMapping(value = {"/changeTarif-{id}"}, method = RequestMethod.GET)
-    public String changeTarif(@PathVariable Integer id,  ModelMap model, HttpSession session){
+    public String changeTarif(@PathVariable Integer id,  ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
         model.addAttribute("tarif", tarif);
         Contract contract = contracts.get(0);
-        contract.setTarif(tarif);
-        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
-        for (Feature feature: features){
-            featureService.delete(feature.getFeatureId());
+        if (!contract.getTarif().getName().equals(tarif.getName())) {
+            contract.setTarif(tarif);
+            List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
+            for (Feature feature : features) {
+                featureService.delete(feature.getFeatureId());
+            }
+            contractService.update(contracts.get(0));
+            model.addAttribute("features", features);
+            model.addAttribute("contracts", contracts);
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "userContract";
+        } else {
+            String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
+            model.addAttribute("message", tarifIsAlreadyChosen);
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
         }
-        contractService.update(contracts.get(0));
-        model.addAttribute("features", features);
-        model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", getPrincipal());
-        return "userContract";
     }
 
     /**

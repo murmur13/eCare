@@ -51,7 +51,7 @@
 
         <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-3 control-lable" for="tarif">Tarif name</label>
+                <label class="col-md-3 control-lable" for="tarif">Tarif Id</label>
                 <div class="col-md-7">
                     <form:input type="text" path="tarif" name="tarif" class="form-control input-sm"/>
                     <div class="has-error">

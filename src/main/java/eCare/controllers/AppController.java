@@ -64,10 +64,10 @@ public class AppController {
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
     public String mainPage(ModelMap model, HttpSession session, HttpServletRequest request){
 //    Customer user = (Customer) session.getAttribute("user");
-        model.addAttribute("loggedinuser", getPrincipal());
         String name = getPrincipal();
         Customer user = userService.findBySSO(name);
             request.getSession().setAttribute("user", user);
+        model.addAttribute("loggedinuser", getPrincipal());
         return "main";
     }
 

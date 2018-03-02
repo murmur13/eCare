@@ -14,18 +14,13 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
 </head>
 <body>
+<%@include file="menu.jsp" %>
 <div class="generic-container">
-    <%@include file="menu.jsp" %>
 
     <div class="alert alert-success lead">
-       <span> ${success}</span>
+        <span> ${success}</span>
     </div>
 
-    <%--<span class="well floatRight">--%>
-			<%--Go to <a href="<c:url value='/list' />">Users List</a>--%>
-            <%--Go to <a href="<c:url value='/tarifs/listTarifs' />">Tarifs List</a>--%>
-		<%--</span>--%>
 </div>
 </body>
-
 </html>

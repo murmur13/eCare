@@ -50,6 +50,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
             entity.setName(user.getName());
             entity.setSurname(user.getSurname());
+            entity.setTelNumber(user.getTelNumber());
+            entity.setBirthDate(user.getBirthDate());
+            entity.setPassportData(user.getPassportData());
+            entity.setAddress(user.getAddress());
             entity.setMail(user.getMail());
             entity.setUserProfiles(user.getUserProfiles());
         }

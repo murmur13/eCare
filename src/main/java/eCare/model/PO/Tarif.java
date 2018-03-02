@@ -19,6 +19,14 @@ public class Tarif{
     @Column(name = "name")
     private String name;
 
+    public List<Contract> getTarifContracts() {
+        return tarifContracts;
+    }
+
+    public void setTarifContracts(List<Contract> tarifContracts) {
+        this.tarifContracts = tarifContracts;
+    }
+
     @OneToMany(mappedBy="tarif")
     private List<Contract> tarifContracts;
 
@@ -41,17 +49,16 @@ public class Tarif{
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return "Tarif{" +
                 "tarifId=" + tarifId +
                 ", name='" + name + '\'' +
-                ", tarifContracts=" + tarifContracts +
                 '}';
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

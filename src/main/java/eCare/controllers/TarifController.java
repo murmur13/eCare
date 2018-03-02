@@ -119,7 +119,7 @@ public class TarifController {
             String tarifNotDeleted = messageSource.getMessage("tarif.not.deletable", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifNotDeleted);
             model.addAttribute("loggedinuser", getPrincipal());
-            return "notDeletableTarif";
+            return "errorPage";
         }
         tarifService.delete(id);
         return "redirect:/tarifs/listTarifs";
