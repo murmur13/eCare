@@ -5,6 +5,7 @@ import eCare.model.PO.Tarif;
 import eCare.model.services.ContractService;
 import eCare.model.services.TarifService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,10 +42,22 @@ public class TarifController {
      * This method will list all existing tarifs.
      */
     @RequestMapping(value = {"/listTarifs" }, method = RequestMethod.GET)
-    public String listTarifs(ModelMap model) {
-
+    public String listTarifs(@RequestParam(required = false) Integer page, ModelMap model) {
         List<Tarif> tarifs = tarifService.findAll();
-        model.addAttribute("tarifs", tarifs);
+
+        PagedListHolder<Tarif> pagedListHolder = new PagedListHolder<Tarif>(tarifs);
+        pagedListHolder.setPageSize(15);
+        model.addAttribute("maxPages", pagedListHolder.getPageCount());
+        model.addAttribute("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            model.addAttribute("tarifs", pagedListHolder.getPageList());
+        }
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("tarifs", pagedListHolder.getPageList());
+        }
+//        model.addAttribute("tarifs", tarifs);
         model.addAttribute("loggedinuser", getPrincipal());
         return "tarifslist";
     }

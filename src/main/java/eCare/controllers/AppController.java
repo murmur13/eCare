@@ -7,6 +7,7 @@ import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
 import org.hibernate.collection.internal.PersistentSet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.Scope;
@@ -76,10 +77,23 @@ public class AppController {
      */
 
     @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
-    public String listUsers(ModelMap model, HttpSession session) {
+    public String listUsers(@RequestParam(required = false) Integer page, ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         List<Customer> users = userService.findAllUsers();
-        model.addAttribute("users", users);
+
+        PagedListHolder<Customer> pagedListHolder = new PagedListHolder<Customer>(users);
+        pagedListHolder.setPageSize(15);
+        model.addAttribute("maxPages", pagedListHolder.getPageCount());
+        model.addAttribute("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            model.addAttribute("users", pagedListHolder.getPageList());
+        }
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("users", pagedListHolder.getPageList());
+        }
+
         model.addAttribute("loggedinuser", getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
             return "main";

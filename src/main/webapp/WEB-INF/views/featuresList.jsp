@@ -66,11 +66,32 @@
     </sec:authorize>
 
     <ul class="pagination">
-        <li><a href="#">1</a></li>
-        <li class="active"><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
+        <c:url value="/features/listFeatures" var="prev">
+            <c:param name="page" value="${page-1}"/>
+        </c:url>
+        <c:if test="${page > 1}">
+            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+        </c:if>
+
+        <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
+            <c:choose>
+                <c:when test="${page == i.index}">
+                    <li class="active"><span>${i.index}</span><li>
+                </c:when>
+                <c:otherwise>
+                    <c:url value="/features/listFeatures" var="url">
+                        <c:param name="page" value="${i.index}"/>
+                    </c:url>
+                    <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:url value="/features/listFeatures" var="next">
+            <c:param name="page" value="${page + 1}"/>
+        </c:url>
+        <c:if test="${page + 1 <= maxPages}">
+            <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
+        </c:if>
     </ul>
 </div>
 </body>

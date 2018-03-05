@@ -6,6 +6,7 @@ import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -47,20 +49,35 @@ public class FeatureController {
      * This method will list all existing users.
      */
     @RequestMapping(value = {"/listFeatures" }, method = RequestMethod.GET)
-    public String listFeatures(ModelMap model, HttpSession session) {
+    public String listFeatures(@RequestParam(required = false) Integer page, ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
         UserProfile userRole = userProfileService.findByType("USER");
         UserProfile adminRole = userProfileService.findByType("ADMIN");
-        if(user.getUserProfiles().contains(userRole)){
-            Contract contract = user.getContracts().get(0);
-            Tarif tarif = contract.getTarif();
-            List<Feature> features = featureService.findFeatureByTarif(tarif.getTarifId());
-            model.addAttribute("features", features);
 
+        List<Feature> features = new ArrayList<Feature>();
+//        if(user.getUserProfiles().contains(userRole)){
+//            Contract contract = user.getContracts().get(0);
+//            Tarif tarif = contract.getTarif();
+//            features = featureService.findFeatureByTarif(tarif.getTarifId());
+////            model.addAttribute("features", features);
+//
+//        }
+//        if(user.getContracts() == null || user.getUserProfiles().contains(adminRole)){
+           features = featureService.findAll();
+//            model.addAttribute("features", features);
+//        }
+
+        PagedListHolder<Feature> pagedListHolder = new PagedListHolder<Feature>(features);
+        pagedListHolder.setPageSize(15);
+        model.addAttribute("maxPages", pagedListHolder.getPageCount());
+        model.addAttribute("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            model.addAttribute("features", pagedListHolder.getPageList());
         }
-        if(user.getContracts() == null || user.getUserProfiles().contains(adminRole)){
-            List<Feature> features = featureService.findAll();
-            model.addAttribute("features", features);
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("features", pagedListHolder.getPageList());
         }
         model.addAttribute("loggedinuser", getPrincipal());
         return "featuresList";
@@ -158,6 +175,24 @@ public class FeatureController {
     public String deleteFeature(@PathVariable Integer id) {
         featureService.delete(id);
         return "redirect:/features/listFeatures";
+    }
+
+    @RequestMapping(value = { "/delete-feature-{id}/fromContract" }, method = RequestMethod.GET)
+    public String deleteFeatureFromContract(@PathVariable Integer id, HttpSession session, ModelMap model) {
+        Customer user = (Customer) session.getAttribute("user");
+        Contract contract = user.getContracts().get(0);
+        List<Feature> userFeatures = featureService.findFeatureByContract(contract.getContractId());
+        Feature featureToDelete = featureService.findById(id);
+        int index = userFeatures.indexOf(featureToDelete);
+        userFeatures.remove(index);
+        List<Contract> featureContracts = featureToDelete.getFeatureContracts();
+        int contractIndex = featureContracts.indexOf(contract);
+        featureContracts.remove(contractIndex);
+        contractService.update(contract);
+        featureService.update(featureToDelete);
+        model.addAttribute("userFeatures", userFeatures);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/contracts/getMyContract";
     }
 
 

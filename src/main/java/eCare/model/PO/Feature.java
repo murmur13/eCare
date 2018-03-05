@@ -32,7 +32,7 @@ public class Feature {
             inverseJoinColumns=@JoinColumn(name="tarif_tarif_id", referencedColumnName="tarif_id"))
     private List<Tarif> featureTarifs;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
             name="contract_has_feature",
             joinColumns=@JoinColumn(name="contractFeature", referencedColumnName="feature_id"),
@@ -88,6 +88,33 @@ public class Feature {
 
     public void setFeaturePrice(double featurePrice) {
         this.featurePrice = featurePrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Feature feature = (Feature) o;
+
+        if (featureId != feature.featureId) return false;
+        if (Double.compare(feature.featurePrice, featurePrice) != 0) return false;
+        if (Double.compare(feature.connectionCost, connectionCost) != 0) return false;
+        return featureName.equals(feature.featureName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = featureId;
+        result = 31 * result + featureName.hashCode();
+        temp = Double.doubleToLongBits(featurePrice);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(connectionCost);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     public double getConnectionCost() {

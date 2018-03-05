@@ -19,9 +19,6 @@
 <div class="[ container ]">
     <div class="[ row ]">
         <div class="[ col-xs-12 col-md-offset-1 col-md-10 text-center ]">
-            <%--<hd6>--%>
-            <%--<p>Hello, this is eCare project <3 </p>--%>
-            <%--</hd6>--%>
         </div>
     </div>
 </div>

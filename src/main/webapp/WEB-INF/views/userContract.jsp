@@ -56,6 +56,7 @@
             <br>
             <br>
             </tbody>
+
             <thead>
             <tr>
                 <th>Feature Id</th>
@@ -69,7 +70,6 @@
 
             </tr>
         </thead>
-
             <tbody>
             <c:forEach items="${userFeatures}" var="feature">
                 <tr>
@@ -81,6 +81,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
                         <td><a href="<c:url value='/features/delete-feature-${feature.featureId}' />" class="btn btn-danger custom-width">delete</a></td>
+                    </sec:authorize>
+                    <sec:authorize access="hasRole('USER')">
+                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}/fromContract' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
             </c:forEach>

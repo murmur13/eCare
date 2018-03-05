@@ -79,6 +79,7 @@ public class Contract{
 
     }
 
+
     @Override
     public String toString() {
         return "Contract{" +
@@ -87,5 +88,22 @@ public class Contract{
                 ", customer=" + customer +
                 ", tarif=" + tarif +
                 '}';
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Contract contract = (Contract) o;
+
+        return contractId.equals(contract.contractId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return contractId.hashCode();
     }
 }

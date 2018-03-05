@@ -10,6 +10,7 @@ import eCare.model.services.FeatureService;
 import eCare.model.services.TarifService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,10 +57,24 @@ public class ContractController {
      * This method will list all existing contracts.
      */
     @RequestMapping(value = {"/listContracts" }, method = RequestMethod.GET)
-    public String listContracts(ModelMap model) {
-
+    public String listContracts(@RequestParam(required = false) Integer page, ModelMap model) {
         List<Contract> contracts = contractService.findAll();
-        model.addAttribute("contracts", contracts);
+        PagedListHolder<Contract> pagedListHolder = new PagedListHolder<Contract>(contracts);
+        pagedListHolder.setPageSize(10);
+        model.addAttribute("maxPages", pagedListHolder.getPageCount());
+//        if(page==null || page < 1 || page > pagedListHolder.getPageCount()){
+//            page=1;
+//        }
+        model.addAttribute("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            model.addAttribute("contracts", pagedListHolder.getPageList());
+        }
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("contracts", pagedListHolder.getPageList());
+        }
+//        model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
         return "contractslist";
     }

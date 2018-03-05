@@ -7,7 +7,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Users List</title>
+    <title>Tarifs List</title>
     <link href="<c:url value='/resources/css/bootstrap.css' />" rel="stylesheet"></link>
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -60,14 +60,34 @@
             <a href="<c:url value='/tarifs/newtarif' />">Add New Tarif</a>
         </div>
     </sec:authorize>
-    <a href="tarifslist.jsp">Back</a>
 
     <ul class="pagination">
-        <li><a href="#">1</a></li>
-        <li class="active"><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
+        <c:url value="/tarifs/listTarifs" var="prev">
+            <c:param name="page" value="${page-1}"/>
+        </c:url>
+        <c:if test="${page > 1}">
+            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+        </c:if>
+
+        <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
+            <c:choose>
+                <c:when test="${page == i.index}">
+                    <li class="active"><span>${i.index}</span><li>
+                </c:when>
+                <c:otherwise>
+                    <c:url value="/tarifs/listTarifs" var="url">
+                        <c:param name="page" value="${i.index}"/>
+                    </c:url>
+                    <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:url value="/tarifs/listTarifs" var="next">
+            <c:param name="page" value="${page + 1}"/>
+        </c:url>
+        <c:if test="${page + 1 <= maxPages}">
+            <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
+        </c:if>
     </ul>
 </div>
 </body>

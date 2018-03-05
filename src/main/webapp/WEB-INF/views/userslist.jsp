@@ -62,6 +62,35 @@
         </div>
     </sec:authorize>
 
+    <ul class="pagination">
+        <c:url value="/list" var="prev">
+            <c:param name="page" value="${page-1}"/>
+        </c:url>
+        <c:if test="${page > 1}">
+            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+        </c:if>
+
+        <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
+            <c:choose>
+                <c:when test="${page == i.index}">
+                    <li class="active"><span>${i.index}</span><li>
+                </c:when>
+                <c:otherwise>
+                    <c:url value="/list" var="url">
+                        <c:param name="page" value="${i.index}"/>
+                    </c:url>
+                    <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:url value="/list" var="next">
+            <c:param name="page" value="${page + 1}"/>
+        </c:url>
+        <c:if test="${page + 1 <= maxPages}">
+            <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
+        </c:if>
+    </ul>
+
 </div>
 </body>
 </html>
