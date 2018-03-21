@@ -73,20 +73,6 @@ public class FeatureDAO implements DAOInterface <Feature, Integer> {
         }
     }
 
-//    public List<Feature> findFeatureByCustomer(Customer customer) {
-//        logger.info("customerId : {}", customer);
-////        Query query = sessionFactory.getCurrentSession().createQuery("select f from Feature f join f.featureTarifs ft where ft.tarifId = :tarifId");
-//        Query query = sessionFactory
-//                .getCurrentSession()
-//                .createQuery("select f from Feature f join f.featureTarifs ft where ft.tarifId = " +
-//                        "(select t.id from Tarif t join t.tarifContracts c where c.customer = :customer)");
-//        query.setParameter("customer", customer);
-//        List results = query.list();
-////        CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
-//
-//        return  results;
-//    }
-
     public List<Feature> findFeatureByTarif(Integer tarifId) {
         logger.info("tarifId : {}", tarifId);
 //        Query query = sessionFactory.getCurrentSession().createQuery("select f from Feature f join f.featureTarifs ft where ft.tarifId = :tarifId");

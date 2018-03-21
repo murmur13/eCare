@@ -132,14 +132,15 @@ public class FeatureController {
                 return "errorPage";
             }
         }
-            features.add(chosenFeature);
-            chosenFeature.setFeatureContracts(contracts);
-            featureService.persist(chosenFeature);
-            model.addAttribute("userFeatures", features);
-            model.addAttribute("contracts", contracts);
-            model.addAttribute("loggedinuser", getPrincipal());
-            return "userContract";
-        }
+        features.add(chosenFeature);
+        chosenFeature.setFeatureContracts(contracts);
+        featureService.persist(chosenFeature);
+        model.addAttribute("userFeatures", features);
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "userContract";
+    }
+
 
     /**
      * This method will provide the medium to update an existing feature.

@@ -61,6 +61,7 @@
             <tr>
                 <th>Feature Id</th>
                 <th>Feature name</th>
+                <th></th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
