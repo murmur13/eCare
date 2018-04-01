@@ -18,8 +18,9 @@
 <div class="generic-container">
 
     <div class="alert alert-success lead">
-        <span> ${success}</span>
+        <span> ${message}</span>
     </div>
+
 
 </div>
 </body>

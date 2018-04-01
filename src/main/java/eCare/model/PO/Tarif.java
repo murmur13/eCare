@@ -68,17 +68,12 @@ public class Tarif{
 
         Tarif tarif = (Tarif) o;
 
-        if (tarifId != tarif.tarifId) return false;
-        if (!name.equals(tarif.name)) return false;
-        return tarifContracts != null ? tarifContracts.equals(tarif.tarifContracts) : tarif.tarifContracts == null;
+        return tarifId.equals(tarif.tarifId);
 
     }
 
     @Override
     public int hashCode() {
-        int result = tarifId;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + (tarifContracts != null ? tarifContracts.hashCode() : 0);
-        return result;
+        return tarifId.hashCode();
     }
 }

@@ -1,9 +1,6 @@
 package eCare.controllers;
 
-import eCare.model.PO.Contract;
-import eCare.model.PO.Customer;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
+import eCare.model.PO.*;
 import eCare.model.services.ContractService;
 import eCare.model.services.CustomerService;
 import eCare.model.services.FeatureService;
@@ -30,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -192,35 +190,87 @@ public class ContractController {
      * This method will provide the medium to update an existing contract.
      */
 
-    @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.GET)
-    public String editContract(@PathVariable Integer contractId, ModelMap model, HttpServletRequest request) {
+    @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.GET)
+    public String editContract(@PathVariable Integer contractId, ModelMap model) {
         Contract contract = contractService.findById(contractId);
-        request.getSession().setAttribute("contract", contract);
         List<Tarif> tarifs = tarifService.findAll();
-        List<Feature> features = featureService.findAll();
         Tarif userTarif = contract.getTarif();
-        List <Feature> contractFeatures = featureService.findFeatureByContract(contractId);
-//        Customer customer = contract.getCustomer();
-        model.addAttribute("contract", contract);
+        model.addAttribute("tarif", userTarif);
         model.addAttribute("userTarif", userTarif);
         model.addAttribute("tarifs", tarifs);
-        model.addAttribute("features", features);
-        model.addAttribute("contractFeatures", contractFeatures);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "editContract";
+        return "editContractTarif";
     }
 
-    @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.POST)
-    public String updateContract(@PathVariable Integer contractId, Contract contract,  ModelMap model, HttpServletRequest request, WebRequest webR){
-//        Contract contract = contractService.findById(contractId);
+    @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.POST)
+    public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model){
+        Contract contract = contractService.findById(contractId);
+        Tarif newTarif = tarifService.findById(tarifId);
+        contract.setTarif(newTarif);
         contractService.update(contract);
-        model.get("contractFeatures");
-        model.get("features");
-        webR.removeAttribute("contract", webR.SCOPE_SESSION);
+        model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
         return "redirect:/contracts/listContracts";
     }
+
+    @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.GET)
+    public String editContractOptions(@PathVariable Integer contractId, ModelMap model) {
+        Contract contract = contractService.findById(contractId);
+        List<Feature> features = featureService.findAll();
+        List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(featureService.findAll()));
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", features);
+        model.addAttribute("contract", contract);
+        model.addAttribute("userFeatures", userFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "editContractFeatures";
+    }
+
+    @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.POST)
+    public String updateContractOptions(@PathVariable Integer contractId, @ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
+                                        ModelMap model){
+        Contract contract = contractService.findById(contractId);
+        Tarif tarif = contract.getTarif();
+        List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
+        List<Feature> finalFeatures = selectedFeaturesIds.getSelectedFeatures();
+
+        for (Feature feature: finalFeatures) {
+            if (!userFeatures.contains(feature)) {
+                userFeatures.add(feature);
+                List<Tarif> featureTarifs = feature.getFeatureTarifs();
+                List<Contract> featureContracts = feature.getFeatureContracts();
+                if (!featureContracts.contains(contract)) {
+                    featureContracts.add(contract);
+                    feature.setFeatureContracts(featureContracts);
+                }
+//                for (Tarif featureTarif:featureTarifs) {
+//                    if(featureTarif.getTarifId() != tarif.getTarifId())
+
+                if (!featureTarifs.contains(tarif)) {
+                    featureTarifs.add(tarif);
+                    feature.setFeatureTarifs(featureTarifs);
+                }
+                featureService.update(feature);
+                contractService.update(contract);
+                tarifService.update(tarif);
+            }
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("message", "OOOPS");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        model.addAttribute("userFeatures", userFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/contracts/listContracts";
+    }
+
 
     @RequestMapping(value = {"/setTarifToContract-{id}"}, method = RequestMethod.GET)
     public String setTarif(@PathVariable Integer id,  ModelMap model, HttpSession session) {

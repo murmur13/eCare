@@ -42,7 +42,10 @@
                     <td>${contract.customer.ssoId}</td>
                     <td>${contract.tarif.name}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contract-${contract.contractId}' />" class="btn btn-primary custom-width">edit</a></td>
+                        <td><a href="<c:url value='/contracts/edit-contractTarif-${contract.contractId}' />" class="btn btn-primary custom-width">change tarif</a></td>
+                    </sec:authorize>
+                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                        <td><a href="<c:url value='/contracts/edit-contractOptions-${contract.contractId}' />" class="btn btn-primary custom-width">change options</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
                         <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>

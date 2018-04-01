@@ -121,6 +121,10 @@ public class AppController {
             users = userService.findByTelNumber(nameOrPhone);
             model.addAttribute("users", users);
             model.addAttribute("name", nameOrPhone);
+            if(users.isEmpty()){
+                model.addAttribute("message", "User " + nameOrPhone + " is not found");
+                return "errorPage";
+            }
         }
         else {
             model.addAttribute("users", users);
@@ -242,7 +246,7 @@ public class AppController {
 
             userService.updateUser(user);
 
-            model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " updated successfully");
+            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " updated successfully");
             model.addAttribute("loggedinuser", getPrincipal());
             return "registrationsuccess";
         }

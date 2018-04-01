@@ -122,6 +122,8 @@ public class FeatureController {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Contract contract = contracts.get(0);
+        Tarif tarif = contract.getTarif();
+        List<Feature> tarifOptions = featureService.findFeatureByTarif(tarif.getTarifId());
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         Feature chosenFeature = featureService.findById(id);
         for (Feature feature : features) {
@@ -134,7 +136,13 @@ public class FeatureController {
         }
         features.add(chosenFeature);
         chosenFeature.setFeatureContracts(contracts);
-        featureService.persist(chosenFeature);
+        tarifOptions.add(chosenFeature);
+        List <Tarif> featureTarifs = chosenFeature.getFeatureTarifs();
+        featureTarifs.add(tarif);
+        chosenFeature.setFeatureTarifs(featureTarifs);
+//        contractService.update(contract);
+        featureService.update(chosenFeature);
+//        tarifService.update(tarif);
         model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());

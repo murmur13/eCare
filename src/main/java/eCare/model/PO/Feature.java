@@ -1,5 +1,8 @@
 package eCare.model.PO;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -25,14 +28,15 @@ public class Feature {
     @Column(name = "connection_cost")
     private double connectionCost;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
             name="tarif_x_feature",
             joinColumns=@JoinColumn(name="feature_feature_id", referencedColumnName="feature_id"),
             inverseJoinColumns=@JoinColumn(name="tarif_tarif_id", referencedColumnName="tarif_id"))
     private List<Tarif> featureTarifs;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(
             name="contract_has_feature",
             joinColumns=@JoinColumn(name="contractFeature", referencedColumnName="feature_id"),
@@ -97,24 +101,13 @@ public class Feature {
 
         Feature feature = (Feature) o;
 
-        if (featureId != feature.featureId) return false;
-        if (Double.compare(feature.featurePrice, featurePrice) != 0) return false;
-        if (Double.compare(feature.connectionCost, connectionCost) != 0) return false;
-        return featureName.equals(feature.featureName);
+        return featureId == feature.featureId;
 
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = featureId;
-        result = 31 * result + featureName.hashCode();
-        temp = Double.doubleToLongBits(featurePrice);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(connectionCost);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return featureId;
     }
 
     public double getConnectionCost() {
