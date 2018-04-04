@@ -25,6 +25,7 @@
             <thead>
             <tr>
                 <th>name</th>
+                <th>price (&#8381)</th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -41,6 +42,7 @@
             <c:forEach items="${tarifs}" var="tarif">
                 <tr>
                     <td>${tarif.name}</td>
+                    <td>${tarif.price}</td>
                     <sec:authorize access="hasRole('USER')">
                         <td><a href="<c:url value='/contracts/changeTarif-${tarif.tarifId}' />" class="btn btn-success custom-width">Change tarif</a></td>
                     </sec:authorize>

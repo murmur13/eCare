@@ -21,12 +21,36 @@
         <form:input type="hidden" path="featureId" id="feature"/>
 
         <div class="row">
+        <div class="form-group col-md-12">
+            <label class="col-md-3 control-lable" for="featureName">Name</label>
+            <div class="col-md-7">
+                <form:input type="text" path="featureName" id="featureName" class="form-control input-sm"/>
+                <div class="has-error">
+                    <form:errors path="featureName" class="help-inline"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="row">
             <div class="form-group col-md-12">
-                <label class="col-md-3 control-lable" for="featureName">Name</label>
+                <label class="col-md-3 control-lable" for="featureName">Price</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="featureName" id="featureName" class="form-control input-sm"/>
+                    <form:input type="text" path="featurePrice" id="featurePrice" class="form-control input-sm"/>
                     <div class="has-error">
-                        <form:errors path="featureName" class="help-inline"/>
+                        <form:errors path="featurePrice" class="help-inline"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="col-md-3 control-lable" for="featureName">Connection cost</label>
+                <div class="col-md-7">
+                    <form:input type="text" path="connectionCost" id="connectionCost" class="form-control input-sm"/>
+                    <div class="has-error">
+                        <form:errors path="connectionCost" class="help-inline"/>
                     </div>
                 </div>
             </div>

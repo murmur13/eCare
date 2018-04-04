@@ -30,10 +30,10 @@
             <div class="form-group">
                 <td>List of tarifs:<td>
                 <form:select class="form-control" path="tarifId" id="tarifId">
-                    <c:forEach items="${tarifs}" var="tarif">
-                        <form:option value="${tarif.tarifId}">${tarif.name}</form:option>
-                    </c:forEach>
-                    </form:select>
+                <c:forEach items="${tarifs}" var="tarif">
+                <form:option value="${tarif.tarifId}">${tarif.name} &#8195 &#8195 &#8195 &#8195 &#8195 ${tarif.price}</form:option>
+                </c:forEach>
+                </form:select>
             </div>
         </div>
             <%--</div>--%>
@@ -66,14 +66,3 @@
 </body>
 
 </html>
-
-
-<%--<c:choose>--%>
-<%--<c:when test="${tarif.tarifId == userTarif.tarifId}">--%>
-<%--<form:option selected="true" value="${tarif.name}"> </form:option>--%>
-<%--</c:when>--%>
-<%--<c:otherwise>--%>
-<%--&lt;%&ndash;<form:input path="${tarif.tarifId}" />&ndash;%&gt;--%>
-<%--<form:option value="${tarif.name}"></form:option>--%>
-<%--</c:otherwise>--%>
-<%--</c:choose>--%>

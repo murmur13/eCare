@@ -29,6 +29,7 @@
                 <th>Lastname</th>
                 <th>Email</th>
                 <th>SSO ID</th>
+                <th>Phone</th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -45,6 +46,7 @@
                     <td>${user.surname}</td>
                     <td>${user.mail}</td>
                     <td>${user.ssoId}</td>
+                    <td>${user.telNumber}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/edit-user-${user.ssoId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>

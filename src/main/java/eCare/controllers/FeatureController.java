@@ -135,6 +135,10 @@ public class FeatureController {
             }
         }
         features.add(chosenFeature);
+        Cart cart = new Cart();
+        cart.setOptionsInCart(features);
+        session.setAttribute("cart", cart);
+        session.setAttribute("optionsInCart", features);
         chosenFeature.setFeatureContracts(contracts);
         tarifOptions.add(chosenFeature);
         List <Tarif> featureTarifs = chosenFeature.getFeatureTarifs();
@@ -146,7 +150,8 @@ public class FeatureController {
         model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "userContract";
+        return "redirect: /cart";
+//        return "userContract";
     }
 
 
@@ -175,7 +180,7 @@ public class FeatureController {
         }
 //        if(featureService.isFeatureUnique())
         featureService.update(feature);
-        model.addAttribute("success", "Feature " + feature.getFeatureName() + " " + " updated successfully");
+        model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";
     }

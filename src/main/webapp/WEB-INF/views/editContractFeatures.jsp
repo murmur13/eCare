@@ -34,10 +34,10 @@
                         <c:forEach items="${selectedFeatures.selectedFeatures}" var="feature">
                                 <c:choose>
                                     <c:when test="${userFeatures.contains(feature)}">
-                                        <option selected value="${feature.featureId}">${feature.featureName}</option>
+                                        <option selected value="${feature.featureId}">${feature.featureName}  ${feature.featurePrice}</option>
                                     </c:when>
                                     <c:otherwise>
-                                        <option value="${feature.featureId}">${feature.featureName}</option>
+                                        <option value="${feature.featureId}">${feature.featureName}  ${feature.featurePrice}</option>
                                     </c:otherwise>
                                 </c:choose>
                         </c:forEach>

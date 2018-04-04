@@ -121,7 +121,7 @@ public class TarifController {
             return "tarifRegistration";
         }
         tarifService.update(tarif);
-        model.addAttribute("success", "Tarif " + tarif.getName() + " " + " updated successfully");
+        model.addAttribute("message", "Tarif " + tarif.getName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";
     }

@@ -1,6 +1,7 @@
 package eCare.model.PO;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,6 +20,9 @@ public class Tarif{
     @Column(name = "name")
     private String name;
 
+    @Column(name = "price")
+    private Double price;
+
     public List<Contract> getTarifContracts() {
         return tarifContracts;
     }
@@ -31,6 +35,14 @@ public class Tarif{
     private List<Contract> tarifContracts;
 
     public Tarif(){
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Tarif(String name) {
@@ -54,6 +66,7 @@ public class Tarif{
         return "Tarif{" +
                 "tarifId=" + tarifId +
                 ", name='" + name + '\'' +
+                ", price=" + price +
                 '}';
     }
 

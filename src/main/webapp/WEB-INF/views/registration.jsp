@@ -125,12 +125,11 @@
         <input type="hidden" name="${_csrf.parameterName}"  value="${_csrf.token}" />
 
         <div class="row">
-            <div class="form-actions floatRight">
-                <input type="submit" value="Update" class="btn btn-primary btn-sm"/>
-                <td><a href=="<c:url value='/edit-user-${user.ssoId}' />"></a></td>
-                <input type="submit" value="Cancel" class="btn btn-warning btn-sm"/>
-                <a href="redirect:/list"></a>
-                    <%--href="<c:url value='/contracts/listContracts' />"></a>--%>
+            <div class="form-actions">
+                <input type="submit" value="Register" class="btn btn-primary btn-sm"/> <a
+                    href="<c:url value='/register' />"></a>
+                <input type="submit" value="Cancel" class="btn btn-primary btn-sm"/> <a
+                    href="<c:url value='/mainPage' />"></a>
             </div>
         </div>
     </form:form>

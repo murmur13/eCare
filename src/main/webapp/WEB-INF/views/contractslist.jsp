@@ -26,6 +26,8 @@
                 <th>Contract Id</th>
                 <th>Customer</th>
                 <th>Tarif</th>
+                <th>Tarif's price (&#8381)</th>
+                <th>Phone</th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -41,6 +43,8 @@
                     <td>${contract.contractId}</td>
                     <td>${contract.customer.ssoId}</td>
                     <td>${contract.tarif.name}</td>
+                    <td>${contract.tarif.price}</td>
+                    <td>${contract.tNumber}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/contracts/edit-contractTarif-${contract.contractId}' />" class="btn btn-primary custom-width">change tarif</a></td>
                     </sec:authorize>

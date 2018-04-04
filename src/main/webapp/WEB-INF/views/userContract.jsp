@@ -28,6 +28,7 @@
                 <th>Contract Id</th>
                 <th>Customer</th>
                 <th>Tarif</th>
+                <th>Tarif's price (&#8381)</th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -44,6 +45,7 @@
                     <td>${contract.contractId}</td>
                     <td>${contract.customer.ssoId}</td>
                     <td>${contract.tarif.name}</td>
+                    <td>${contract.tarif.price}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/contracts/edit-contract-${contract.contractId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
@@ -56,11 +58,15 @@
             <br>
             <br>
             </tbody>
+            </table>
 
+            <table class="table table-hover">
             <thead>
             <tr>
                 <th>Feature Id</th>
                 <th>Feature name</th>
+                <th>Feature price (&#8381)</th>
+                <th>Connection cost (&#8381)</th>
                 <th></th>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
@@ -76,6 +82,8 @@
                 <tr>
                     <td>${feature.featureId}</td>
                     <td>${feature.featureName}</td>
+                    <td>${feature.featurePrice}</td>
+                    <td>${feature.connectionCost}</td>
                     <%--<td>${contract.tarif.name}</td>--%>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>

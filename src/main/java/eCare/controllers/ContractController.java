@@ -165,19 +165,26 @@ public class ContractController {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
+        Cart cart = new Cart();
+        session.setAttribute("cart", cart);
         model.addAttribute("tarif", tarif);
         Contract contract = contracts.get(0);
-        if (!contract.getTarif().getName().equals(tarif.getName())) {
+        if (!contract.getTarif().equals(tarif)) {
             contract.setTarif(tarif);
+            cart.setTarifInCart(tarif);
+            session.setAttribute("tarifInCart", tarif);
             List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
             for (Feature feature : features) {
                 featureService.delete(feature.getFeatureId());
             }
-            contractService.update(contracts.get(0));
+//            contractService.update(contracts.get(0));
             model.addAttribute("features", features);
             model.addAttribute("contracts", contracts);
+            model.addAttribute("optionsInCart", null);
+            model.addAttribute("edit", true);
             model.addAttribute("loggedinuser", getPrincipal());
-            return "userContract";
+            return "redirect: /cart";
+//            return "userContract";
         } else {
             String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifIsAlreadyChosen);
@@ -204,14 +211,16 @@ public class ContractController {
     }
 
     @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.POST)
-    public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model){
+    public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model, HttpSession session){
         Contract contract = contractService.findById(contractId);
         Tarif newTarif = tarifService.findById(tarifId);
         contract.setTarif(newTarif);
+        session.setAttribute("tarifInCart", newTarif);
         contractService.update(contract);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "redirect:/contracts/listContracts";
+        return "redirect: /cart";
+//        return "redirect:/contracts/listContracts";
     }
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.GET)
@@ -237,26 +246,39 @@ public class ContractController {
         Tarif tarif = contract.getTarif();
         List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
         List<Feature> finalFeatures = selectedFeaturesIds.getSelectedFeatures();
-
-        for (Feature feature: finalFeatures) {
-            if (!userFeatures.contains(feature)) {
-                userFeatures.add(feature);
+        if(finalFeatures.isEmpty()) {
+            for (Feature feature : userFeatures) {
                 List<Tarif> featureTarifs = feature.getFeatureTarifs();
                 List<Contract> featureContracts = feature.getFeatureContracts();
-                if (!featureContracts.contains(contract)) {
-                    featureContracts.add(contract);
-                    feature.setFeatureContracts(featureContracts);
-                }
-//                for (Tarif featureTarif:featureTarifs) {
-//                    if(featureTarif.getTarifId() != tarif.getTarifId())
-
-                if (!featureTarifs.contains(tarif)) {
-                    featureTarifs.add(tarif);
-                    feature.setFeatureTarifs(featureTarifs);
-                }
+                featureContracts.remove(contract);
+                feature.setFeatureContracts(featureContracts);
+                featureTarifs.remove(feature);
+                feature.setFeatureTarifs(featureTarifs);
                 featureService.update(feature);
                 contractService.update(contract);
                 tarifService.update(tarif);
+            }
+            userFeatures.clear();
+        }
+        else {
+            for (Feature feature : finalFeatures) {
+                if (!userFeatures.contains(feature)) {
+                    userFeatures.add(feature);
+                    List<Tarif> featureTarifs = feature.getFeatureTarifs();
+                    List<Contract> featureContracts = feature.getFeatureContracts();
+                    if (!featureContracts.contains(contract)) {
+                        featureContracts.add(contract);
+                        feature.setFeatureContracts(featureContracts);
+                    }
+
+                    if (!featureTarifs.contains(tarif)) {
+                        featureTarifs.add(tarif);
+                        feature.setFeatureTarifs(featureTarifs);
+                    }
+                    featureService.update(feature);
+                    contractService.update(contract);
+                    tarifService.update(tarif);
+                }
             }
         }
 
@@ -297,24 +319,6 @@ public class ContractController {
             return "errorPage";
         }
     }
-
-//    /**
-//     * This method will be called on form submission, handling POST request for
-//     * updating contract in database. It also validates the user input
-//     */
-//    @RequestMapping(value = { "/edit-contract-{contractId}" }, method = RequestMethod.POST)
-//    public String updateContract(Contract contract, BindingResult result,
-//                             ModelMap model, @PathVariable String contractId) {
-//
-//        if (result.hasErrors()) {
-//            return "error";
-//        }
-//
-//        contractService.update(contract);
-//        model.addAttribute("success", "Contract " + contract.getContractId() + " "+ " updated successfully");
-//        model.addAttribute("loggedinuser", getPrincipal());
-//        return "contractslist";
-//    }
 
     @RequestMapping(value = { "/delete-contract-{id}" }, method = RequestMethod.GET)
     public String deleteContract(@PathVariable Integer id, ModelMap model) {

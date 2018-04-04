@@ -63,14 +63,15 @@
                 </li>
 
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Language
-                        <span class="caret"></span></a>
+                    <sec:authorize access="hasRole('USER') or hasRole('ADMIN')">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Cart
+                            <span class="caret"></span></a>
+                    </sec:authorize>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Russian</a></li>
-                        <li><a href="#">English</a></li>
+                        <li><a href="<c:url value='/cart' />">Go to cart</a></li>
                     </ul>
                 </li>
-                <%--<li><a href="#">Options</a></li>--%>
+
             </ul>
             <%--<span class="caret"></span></a>--%>
             <div class="dropdown float-right">

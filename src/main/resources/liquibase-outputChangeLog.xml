@@ -237,4 +237,5 @@
         <addForeignKeyConstraint baseColumnNames="user_profile_id" baseTableName="customer_has_user_profile" constraintName="fk_user_profile_has_customer_user_profile1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="profile_id" referencedTableName="user_profile"/>
     </changeSet>
     <include file="src/main/resources/createContractHasFeature.xml"/>
+    <include file="src/main/resources/addTarifPrice.xml"/>
 </databaseChangeLog>

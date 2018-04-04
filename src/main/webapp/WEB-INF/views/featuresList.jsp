@@ -25,6 +25,8 @@
             <thead>
             <tr>
                 <th>name</th>
+                <th>price (&#8381)</th>
+                <th>connection cost (&#8381)</th>
                 <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
                 <%--<jsp:forward page="main.jsp"/>--%>
                 <%--</sec:authorize>--%>
@@ -45,6 +47,8 @@
             <c:forEach items="${features}" var="feature">
                 <tr>
                     <td>${feature.featureName}</td>
+                    <td>${feature.featurePrice}</td>
+                    <td>${feature.connectionCost}</td>
                     <sec:authorize access="hasRole('USER')">
                         <td><a href="<c:url value='/features/chooseFeature-${feature.featureId}' />" class="btn btn-success custom-width">Choose option</a></td>
                     </sec:authorize>

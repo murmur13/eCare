@@ -64,10 +64,11 @@ public class AppController {
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
     public String mainPage(ModelMap model, HttpSession session, HttpServletRequest request){
-//    Customer user = (Customer) session.getAttribute("user");
+//    Customer sessionAttribute  = (Customer) session.getAttribute("user");
         String name = getPrincipal();
         Customer user = userService.findBySSO(name);
-            request.getSession().setAttribute("user", user);
+        request.getSession().setAttribute("user", user);
+//        session.setAttribute();
         model.addAttribute("loggedinuser", getPrincipal());
         return "main";
     }
@@ -165,12 +166,11 @@ public class AppController {
                 return "registration";
             }
         userService.saveUser(user);
-        model.addAttribute("user", user);
+//        model.addAttribute("user", user);
         session.setAttribute("user", user);
-//        model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully. Please, login with your account!");
-        model.addAttribute("loggedinuser", user);
-
-        return "redirect: /mainPage";
+        model.addAttribute("message", "Please, log in with your new account!");
+        model.addAttribute("loggedinuser", user.getSsoId());
+        return "errorPage";
     }
 
         /**
@@ -204,11 +204,10 @@ public class AppController {
             }
 
             userService.saveUser(user);
-
-            model.addAttribute("success", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
+            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
             model.addAttribute("loggedinuser", getPrincipal());
-            //return "success";
-            return "redirect: /mainPage";
+            return "registrationsuccess";
+//            return "redirect: /mainPage";
         }
 
 
@@ -217,11 +216,11 @@ public class AppController {
          */
         @RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.GET)
         public String editUser(@PathVariable String ssoId, ModelMap model) {
-            Customer user = userService.findBySSO(ssoId);
-            model.addAttribute("user", user);
+            Customer editUser = userService.findBySSO(ssoId);
+            model.addAttribute("editUser", editUser);
             model.addAttribute("edit", true);
             model.addAttribute("loggedinuser", getPrincipal());
-            return "registration";
+            return "editUser";
         }
 
         /**
@@ -233,7 +232,7 @@ public class AppController {
                                  ModelMap model, @PathVariable String ssoId) {
 
             if (result.hasErrors()) {
-                return "registration";
+                return "editUser";
             }
 
 		/*//Uncomment below 'if block' if you WANT TO ALLOW UPDATING SSO_ID in UI which is a unique key to a User.
@@ -245,10 +244,9 @@ public class AppController {
 
 
             userService.updateUser(user);
-
-            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " updated successfully");
+//            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " updated successfully");
             model.addAttribute("loggedinuser", getPrincipal());
-            return "registrationsuccess";
+            return "redirect: /list";
         }
 
 
