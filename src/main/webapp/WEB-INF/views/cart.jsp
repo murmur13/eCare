@@ -56,6 +56,7 @@
                 </div>
 
                 <div class="panel-body">
+                    <c:if test="${sessionScope.cart.tarifInCart!=null}">
                     <div class="row">
                         <div class="col-xs-2"><img class="img-responsive" src="http://placehold.it/100x70">
                         </div>
@@ -75,7 +76,7 @@
                             <div class="col-xs-2">
                                 <button type="button" class="btn btn-link btn-xs" style="float:right">
                                     <a href="<c:url value='/cart/deleteTarif' />">
-                                    <span class="glyphicon glyphicon-trash"> </span>
+                                        <span class="glyphicon glyphicon-trash"> </span>
                                     </a>
                                 </button>
                             </div>
@@ -83,81 +84,85 @@
                     </div>
                     <hr>
                     <br/>
+                      </c:if>
 
 
                     <c:if test="${sessionScope.cart.optionsInCart!=null}">
-                        <c:forEach items="${sessionScope.cart.optionsInCart}" var="feature">
-                    <thead>
-                    <th>Option name</th>
-                    <th>Option price (&#8381)</th>
-                    <th>Connection cost (&#8381)</th>
-                    </thead>
-                            <div class="row">
-                                <div class="col-xs-2"><img class="img-responsive" src="http://placehold.it/100x70">
+                    <c:forEach items="${sessionScope.cart.optionsInCart}" var="feature">
+                    <tr>
+                        <div class="row">
+                            <div class="col-xs-2"><img class="img-responsive" src="http://placehold.it/100x70">
+                            </div>
+                            <div class="col-xs-4">
+                                    <%--<thead>--%>
+                                    <%--<th>Option name</th>--%>
+                                    <%--<th>Price (&#8381)</th>--%>
+                                    <%--<th>Connection cost (&#8381)</th>--%>
+                                    <%--</thead>--%>
+                                <h4 class="product-name">
+                                    <strong>${feature.featureName}</strong></h4>
+
+                                <tbody>
+                                    <%--<td>${feature.connectionCost}</td>--%>
+
+                                </tbody>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <div class="col-xs-6 text-center">
+                                    <th>connection cost (&#8381)</th>
+                                    <h6><strong>${feature.connectionCost}<span class="text-muted"></span></strong>
+                                    </h6>
                                 </div>
-                                <div class="col-xs-4">
-                                    <tr>
-
-                                    <tr>
-                                            <%--<td>${feature.featureId}</td>--%>
-                                                <td><c:out value="${feature.featureName}"/></td>
-                                                <td>${it.feature.featurePrice}</td>
-                                                <td>${feature.connectionCost}</td>
-                                    </tr>
-                                    <h4 class="product-name"><strong>${it.feature.featureName}</strong></h4>
-                                    <%--<h4>--%>
-                                        <%--<small>Option description</small>--%>
-                                    <%--</h4>--%>
-
-                                    <div class="col-xs-6">
-                                        <div class="col-xs-6 text-right">
-                                            <h6><strong>${feature.featurePrice}<span class="text-muted"></span></strong>
-                                            </h6>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <button type="button" class="btn btn-link btn-xs" style="float:right">
-                                                <span class="glyphicon glyphicon-trash"> </span>
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div class="col-xs-6 text-right">
+                                    <th>Price (&#8381)</th>
+                                    <h6><strong>${feature.featurePrice}<span class="text-muted"></span></strong>
+                                    </h6>
+                                </div>
+                                <div class="col-xs-2">
+                                    <button type="button" class="btn btn-link btn-xs" style="float:right">
+                                        <a href="<c:url value='/cart/deleteOption-${feature.featureId}' />">
+                                            <span class="glyphicon glyphicon-trash"> </span>
+                                        </a>
+                                    </button>
                                 </div>
                             </div>
+                        </div>
+                        <hr>
                         </c:forEach>
-                    </c:if>
+                        </c:if>
+                        </div>
 
+                            <%--<hr>--%>
 
-                    <br/>
-
-
-                    <hr>
-                    <div class="row">
-                        <div class="text-center">
-                            <div class="col-xs-9">
-                                <h6 class="text-right">Added items?</h6>
-                            </div>
-                            <div class="col-xs-3">
-                                <button type="button" class="btn btn-default btn-sm btn-block">
-                                    <a href="<c:url value='/cart/refresh' />"></a>
-                                    Update cart
-                                </button>
+                        <div class="row">
+                            <div class="text-center">
+                                <div class="col-xs-9">
+                                    <h6 class="text-right">Added items?</h6>
+                                </div>
+                                <div class="col-xs-3">
+                                    <button type="button" class="btn btn-default btn-sm btn-block">
+                                        <a href="<c:url value='/cart/refresh' />"></a>
+                                        Update cart
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <%--</div>--%>
-                    <div class="panel-footer">
-                        <div class="row text-center">
-                            <div class="col-xs-9">
-                                <h4 class="text-right">Total <strong>$50.00</strong></h4>
-                            </div>
-                            <div class="col-xs-3">
-                                <button type="button" class="btn btn-success btn-block">
-                                    <a href="<c:url value='/cart/submit' />">
-                                    Submit
-                                    </a>
-                                </button>
+                        <%--</div>--%>
+                        <div class="panel-footer">
+                            <div class="row text-center">
+                                <div class="col-xs-9">
+                                    <h4 class="text-right">Total <strong>$50.00</strong></h4>
+                                </div>
+                                <div class="col-xs-3">
+                                    <button type="button" class="btn btn-success btn-block">
+                                        <a href="<c:url value='/cart/submit' />">
+                                            Submit
+                                        </a>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

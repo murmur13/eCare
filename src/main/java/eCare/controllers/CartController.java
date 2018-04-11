@@ -48,12 +48,14 @@ public class CartController {
 
     @RequestMapping(value="/cart", method= RequestMethod.GET)
     public String searchResults(Model model, HttpSession session) {
-        if(session.getAttribute("cart")==null){
-            Cart cart = new Cart();
-            model.addAttribute("cart", cart);
+        Cart cart = (Cart) session.getAttribute("cart");
+        if(cart.getTarifInCart()==null && cart.getOptionsInCart().isEmpty()){
+//            model.addAttribute("cart", cart);
+            model.addAttribute("message", "Your cart is empty");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
         }
         else{
-            Cart cart = (Cart) session.getAttribute("cart");
             model.addAttribute("featuresInCart",cart.getOptionsInCart());
             model.addAttribute("tarifInCart",cart.getTarifInCart());
         }
@@ -61,28 +63,61 @@ public class CartController {
         return "cart";
     }
 
-    @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.POST)
+    @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.GET)
     public String addFeatureToCart(@PathVariable Integer featureId, Model model, HttpSession session){
-            Feature featureToAdd = featureService.findById(featureId);
-            List<Feature> cartOptions = new ArrayList<Feature>();
-            cartOptions.add(featureToAdd);
-            session.setAttribute("cart", cartOptions);
-            model.addAttribute("loggedinuser", getPrincipal());
-            return "cart";
-    }
-
-    @RequestMapping(value = "/cart/{tarifId}/addToCart", method = RequestMethod.POST)
-    public String addTarifToCart(@PathVariable Integer tarifId, Model model, HttpSession session){
-        Tarif tarifToAdd = tarifService.findById(tarifId);
-        session.setAttribute("cart", tarifToAdd);
+        Cart cart = (Cart) session.getAttribute("cart");
+        Feature featureToAdd = featureService.findById(featureId);
+        List<Feature> cartOptions = cart.getOptionsInCart();
+            if (!cartOptions.contains(featureToAdd)){
+                cartOptions.add(featureToAdd);
+                cart.setOptionsInCart(cartOptions);
+            }
+        session.setAttribute("cart", cart);
         model.addAttribute("loggedinuser", getPrincipal());
         return "cart";
     }
+
+    @RequestMapping(value = "/cart/{tarifId}/addTarifToCart", method = RequestMethod.GET)
+    public String addTarifToCart(@PathVariable Integer tarifId, Model model, HttpSession session) {
+        Cart cart;
+        if (session.getAttribute("cart") == null) {
+            cart = new Cart();
+        }
+        else{
+            cart = (Cart) session.getAttribute("cart");
+            session.setAttribute("cart", cart);
+            model.addAttribute("loggedinuser", getPrincipal());
+            }
+
+        Tarif tarifToAdd = tarifService.findById(tarifId);
+        cart.setTarifInCart(tarifToAdd);
+        model.addAttribute("tarifInCart", tarifToAdd);
+        model.addAttribute("tarifInCart", tarifToAdd);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "cart";
+        }
 
     @RequestMapping(value = "/cart/deleteTarif", method = RequestMethod.GET)
     public String deleteTarifFromCart(Model model, HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
         cart.setTarifInCart(null);
+        session.setAttribute("cart", cart);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "cart";
+    }
+
+    @RequestMapping(value = "/cart/deleteOption-{featureId}", method = RequestMethod.GET)
+    public String deleteOptionFromCart(@PathVariable Integer featureId, Model model, HttpSession session){
+        Cart cart = (Cart) session.getAttribute("cart");
+        Feature cartFeature = featureService.findById(featureId);
+        List<Feature> cartFeatures = cart.getOptionsInCart();
+        int index = cartFeatures.indexOf(cartFeature);
+        cartFeatures.remove(index);
+        cart.setOptionsInCart(cartFeatures);
+        if(cart.getOptionsInCart() == null){
+            cart.setOptionsInCart(null);
+            session.setAttribute("cart", cart);
+        }
         session.setAttribute("cart", cart);
         model.addAttribute("loggedinuser", getPrincipal());
         return "cart";
@@ -107,21 +142,47 @@ public class CartController {
         cart = (Cart) session.getAttribute("cart");
         List<Tarif> tarifs = new ArrayList<Tarif>();
         List<Feature> submitOptions = cart.getOptionsInCart();
-        Tarif submitTarif = cart.getTarifInCart();
-        contract.setTarif(submitTarif);
-        List<Feature> contractOptions = featureService.findFeatureByContract(contract.getContractId());
-        for (Feature feature:submitOptions) {
-            contractOptions.add(feature);
-            feature.setFeatureContracts(contracts);
-            feature.setFeatureTarifs(tarifs);
-            featureService.update(feature);
+        if(cart.getTarifInCart()!=null) {
+            List<Feature> contractOptions = featureService.findFeatureByContract(contract.getContractId());
+            if(!contractOptions.isEmpty()){
+                for (Feature feature:contractOptions) {
+                    List <Contract> featureContracts = feature.getFeatureContracts();
+                    int index = featureContracts.indexOf(contract);
+                    Contract featureContract = featureContracts.get(index);
+                    featureContracts.remove(index);
+                    featureService.update(feature);
+                    contractService.update(featureContract);
+                }
+            }
+            Tarif submitTarif = cart.getTarifInCart();
+            contract.setTarif(submitTarif);
+            contractOptions.clear();
+            contractService.update(contract);
+            tarifService.update(submitTarif);
+            cart.setTarifInCart(null);
+            model.addAttribute("features", null);
+            model.addAttribute("contracts", contracts);
+            model.addAttribute("optionsInCart", null);
         }
-        contractService.update(contract);
-        tarifService.update(submitTarif);
+        if(cart.getOptionsInCart() !=null && !cart.getOptionsInCart().isEmpty()) {
+            for (Feature feature : submitOptions) {
+                List<Feature> contractOptions = featureService.findFeatureByContract(contract.getContractId());
+                contractOptions.add(feature);
+                feature.setFeatureContracts(contracts);
+                feature.setFeatureTarifs(tarifs);
+                featureService.update(feature);
+                model.addAttribute("features", null);
+                model.addAttribute("contracts", contracts);
+                model.addAttribute("optionsInCart", null);
+                model.addAttribute("userFeatures", contractOptions);
+                contractService.update(contract);
+            }
+        }
         status.setComplete();
-        cart = null;
+        if(submitOptions != null) {
+            submitOptions.clear();
+        }
         model.addAttribute("contracts", contracts);
-        model.addAttribute("userFeatures", contractOptions);
 //        model.addAttribute("tarif",submitTarif );
         model.addAttribute("loggedinuser", getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){

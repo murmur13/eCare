@@ -165,26 +165,27 @@ public class ContractController {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
-        Cart cart = new Cart();
-        session.setAttribute("cart", cart);
+//        Cart cart = (Cart) session.getAttribute("cart");
+//        if(cart == null){
+//            cart = new Cart();
+//        }
         model.addAttribute("tarif", tarif);
         Contract contract = contracts.get(0);
         if (!contract.getTarif().equals(tarif)) {
             contract.setTarif(tarif);
-            cart.setTarifInCart(tarif);
-            session.setAttribute("tarifInCart", tarif);
+//            cart.setTarifInCart(tarif);
+//            session.setAttribute("tarifInCart", tarif);
             List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
-            for (Feature feature : features) {
-                featureService.delete(feature.getFeatureId());
-            }
-//            contractService.update(contracts.get(0));
-            model.addAttribute("features", features);
+            features.clear();
+//            contractService.update(contract);
+//            session.setAttribute("cart", cart);
+            model.addAttribute("features", null);
             model.addAttribute("contracts", contracts);
-            model.addAttribute("optionsInCart", null);
+//            model.addAttribute("optionsInCart", null);
             model.addAttribute("edit", true);
             model.addAttribute("loggedinuser", getPrincipal());
-            return "redirect: /cart";
-//            return "userContract";
+//            return "redirect: /cart";
+            return "userContract";
         } else {
             String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifIsAlreadyChosen);
@@ -224,10 +225,12 @@ public class ContractController {
     }
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.GET)
-    public String editContractOptions(@PathVariable Integer contractId, ModelMap model) {
+    public String editContractOptions(@PathVariable Integer contractId, ModelMap model, HttpSession session) {
         Contract contract = contractService.findById(contractId);
         List<Feature> features = featureService.findAll();
         List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
+        Cart cart = new Cart();
+        session.setAttribute("cart", cart);
         SelectedFeatures selectedFeatures = new SelectedFeatures();
         selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(featureService.findAll()));
         model.addAttribute("selectedFeatures", selectedFeatures);
@@ -241,7 +244,7 @@ public class ContractController {
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.POST)
     public String updateContractOptions(@PathVariable Integer contractId, @ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
-                                        ModelMap model){
+                                        ModelMap model, Cart cart, HttpSession session){
         Contract contract = contractService.findById(contractId);
         Tarif tarif = contract.getTarif();
         List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
@@ -275,6 +278,8 @@ public class ContractController {
                         featureTarifs.add(tarif);
                         feature.setFeatureTarifs(featureTarifs);
                     }
+                    cart.setOptionsInCart(finalFeatures);
+                    session.setAttribute("optionsInCart", finalFeatures);
                     featureService.update(feature);
                     contractService.update(contract);
                     tarifService.update(tarif);

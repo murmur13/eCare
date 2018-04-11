@@ -63,7 +63,7 @@
                 </li>
 
                 <li class="dropdown">
-                    <sec:authorize access="hasRole('USER') or hasRole('ADMIN')">
+                    <sec:authorize access="hasRole('USER')">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Cart
                             <span class="caret"></span></a>
                     </sec:authorize>

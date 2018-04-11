@@ -111,7 +111,7 @@ public class FeatureController {
             }
 
             featureService.persist(feature);
-            model.addAttribute("success", "Feature " + feature.getFeatureName() + " " + " added successfully");
+            model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " added successfully");
             model.addAttribute("loggedinuser", getPrincipal());
             //return "success";
             return "registrationsuccess";
@@ -127,7 +127,7 @@ public class FeatureController {
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         Feature chosenFeature = featureService.findById(id);
         for (Feature feature : features) {
-            if (feature.getFeatureName().equals(chosenFeature.getFeatureName())) {
+            if (feature.getFeatureId()== chosenFeature.getFeatureId()) {
                 String featureIsAlreadyChosen = messageSource.getMessage("feature.is.already.chosen", new String[]{Integer.toString(chosenFeature.getFeatureId())}, Locale.getDefault());
                 model.addAttribute("message", featureIsAlreadyChosen);
                 model.addAttribute("loggedinuser", getPrincipal());
@@ -135,18 +135,22 @@ public class FeatureController {
             }
         }
         features.add(chosenFeature);
-        Cart cart = new Cart();
-        cart.setOptionsInCart(features);
-        session.setAttribute("cart", cart);
-        session.setAttribute("optionsInCart", features);
         chosenFeature.setFeatureContracts(contracts);
         tarifOptions.add(chosenFeature);
         List <Tarif> featureTarifs = chosenFeature.getFeatureTarifs();
         featureTarifs.add(tarif);
         chosenFeature.setFeatureTarifs(featureTarifs);
+        Cart cart = (Cart) session.getAttribute("cart");
 //        contractService.update(contract);
-        featureService.update(chosenFeature);
+//        featureService.update(chosenFeature);
 //        tarifService.update(tarif);
+//        if(session.getAttribute("cart")== null){
+//
+//        }
+//        Cart cart = (Cart)
+        cart.setOptionsInCart(features);
+        session.setAttribute("optionsInCart", features);
+        session.setAttribute("cart", cart);
         model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());

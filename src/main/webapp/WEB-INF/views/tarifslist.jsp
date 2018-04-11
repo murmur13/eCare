@@ -44,6 +44,9 @@
                     <td>${tarif.name}</td>
                     <td>${tarif.price}</td>
                     <sec:authorize access="hasRole('USER')">
+                        <td><a href="<c:url value='/cart/${tarif.tarifId}/addTarifToCart' />" class="btn btn-success custom-width">Add tarif to cart</a></td>
+                    </sec:authorize>
+                    <sec:authorize access="hasRole('ADMIN')">
                         <td><a href="<c:url value='/contracts/changeTarif-${tarif.tarifId}' />" class="btn btn-success custom-width">Change tarif</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">

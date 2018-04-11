@@ -50,7 +50,7 @@
                     <td>${feature.featurePrice}</td>
                     <td>${feature.connectionCost}</td>
                     <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/features/chooseFeature-${feature.featureId}' />" class="btn btn-success custom-width">Choose option</a></td>
+                        <td><a href="<c:url value='/cart/${feature.featureId}/addToCart' />" class="btn btn-success custom-width">Choose option</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
