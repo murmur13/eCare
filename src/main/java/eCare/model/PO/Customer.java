@@ -1,5 +1,6 @@
 package eCare.model.PO;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -53,6 +54,14 @@ public class Customer{
     @Column(name = "password")
     private String password;
 
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @Column(name = "isBlockedByUser", columnDefinition = "TINYINT(1)")
+    private boolean isBlockedByUser;
+
+    @Type(type= "org.hibernate.type.NumericBooleanType")
+    @Column(name = "isBlockedByAdmin", columnDefinition = "TINYINT(1)")
+    private boolean isBlockedByAdmin;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy="customer")
     private List<Contract> contracts;
 
@@ -75,7 +84,7 @@ public class Customer{
 //    @SuppressWarnings("JpaAttributeTypeInspection")
 
     @NotEmpty
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="customer_has_user_profile",
             joinColumns=@JoinColumn(name="user_id", referencedColumnName="customer_id"),
@@ -118,6 +127,22 @@ public class Customer{
         this.mail = mail;
         this.password = password;
         this.name = name;
+    }
+
+    public boolean isBlockedByUser() {
+        return isBlockedByUser;
+    }
+
+    public void setBlockedByUser(boolean blockedByUser) {
+        isBlockedByUser = blockedByUser;
+    }
+
+    public boolean isBlockedByAdmin() {
+        return isBlockedByAdmin;
+    }
+
+    public void setBlockedByAdmin(boolean blockedByAdmin) {
+        isBlockedByAdmin = blockedByAdmin;
     }
 
     public Integer getId() {

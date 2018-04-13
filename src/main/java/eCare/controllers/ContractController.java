@@ -1,10 +1,7 @@
 package eCare.controllers;
 
 import eCare.model.PO.*;
-import eCare.model.services.ContractService;
-import eCare.model.services.CustomerService;
-import eCare.model.services.FeatureService;
-import eCare.model.services.TarifService;
+import eCare.model.services.*;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -57,6 +54,9 @@ public class ContractController {
 
     @Autowired
     AppController appController;
+
+    @Autowired
+    UserProfileService userProfileService;
 
     /**
      * This method will list all existing contracts.
@@ -142,9 +142,10 @@ public class ContractController {
     }
 
     @RequestMapping(value = {"/showOptions-{id}" }, method = RequestMethod.GET)
-    public ModelAndView seeContractOptions(@PathVariable("id") int id) {
-        ModelAndView modelAndView = new ModelAndView("featuresList");
+    public ModelAndView seeContractOptions(@PathVariable("id") int id, HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView("contractFeatures");
         Contract contract = contractService.findById(id);
+        session.setAttribute("contract", contract);
         List<Feature> contractFeatures = featureService.findFeatureByContract(id);
         if(!contractFeatures.isEmpty()){
             modelAndView.addObject("features", contractFeatures);
@@ -165,26 +166,17 @@ public class ContractController {
         Customer user = (Customer) session.getAttribute("user");
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
-//        Cart cart = (Cart) session.getAttribute("cart");
-//        if(cart == null){
-//            cart = new Cart();
-//        }
         model.addAttribute("tarif", tarif);
         Contract contract = contracts.get(0);
         if (!contract.getTarif().equals(tarif)) {
             contract.setTarif(tarif);
-//            cart.setTarifInCart(tarif);
-//            session.setAttribute("tarifInCart", tarif);
             List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
             features.clear();
 //            contractService.update(contract);
-//            session.setAttribute("cart", cart);
             model.addAttribute("features", null);
             model.addAttribute("contracts", contracts);
-//            model.addAttribute("optionsInCart", null);
             model.addAttribute("edit", true);
             model.addAttribute("loggedinuser", getPrincipal());
-//            return "redirect: /cart";
             return "userContract";
         } else {
             String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
@@ -192,6 +184,24 @@ public class ContractController {
             model.addAttribute("loggedinuser", getPrincipal());
             return "errorPage";
         }
+    }
+
+    @RequestMapping(value = {"/deleteFeature/fromContract-{featureId}"}, method = RequestMethod.GET)
+    public String deleteFeatureFromContract(@PathVariable Integer featureId,
+                                            ModelMap model, HttpSession session) {
+//        Contract contract = contractService.findById(contractId);
+        Contract contract = (Contract) session.getAttribute("contract");
+        Feature featureToDelete = featureService.findById(featureId);
+        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
+        List<Contract> featureContracts = featureToDelete.getFeatureContracts();
+        int index = features.indexOf(featureToDelete);
+        features.remove(index);
+        featureContracts.remove(contract);
+        featureService.update(featureToDelete);
+        contractService.update(contract);
+        model.addAttribute("features", features);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "contractFeatures";
     }
 
     /**
@@ -216,12 +226,12 @@ public class ContractController {
         Contract contract = contractService.findById(contractId);
         Tarif newTarif = tarifService.findById(tarifId);
         contract.setTarif(newTarif);
-        session.setAttribute("tarifInCart", newTarif);
+//        session.setAttribute("tarifInCart", newTarif);
         contractService.update(contract);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
-        return "redirect: /cart";
-//        return "redirect:/contracts/listContracts";
+//        return "redirect: /cart";
+        return "redirect:/contracts/listContracts";
     }
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.GET)
@@ -330,6 +340,78 @@ public class ContractController {
         contractService.delete(id);
         model.addAttribute("loggedinuser", getPrincipal());
         return "redirect:/contracts/listContracts";
+    }
+
+    @RequestMapping(value = { "/block-contract-{id}" }, method = RequestMethod.GET)
+    public String blockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
+
+        UserProfile roleUser = userProfileService.findByType("USER");
+        UserProfile roleAdmin = userProfileService.findByType("ADMIN");
+
+        Contract contract = contractService.findById(id);
+        Customer user = contract.getCustomer();
+        Customer sessionUser = (Customer) session.getAttribute("user");
+        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is already blocked");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+
+//        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
+        if (!user.equals(sessionUser)){
+            user.setBlockedByAdmin(true);
+            userService.updateUser(user);
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
+            model.addAttribute("loggedinuser", getPrincipal());
+        }
+        else{
+            user.setBlockedByUser(true);
+            userService.updateUser(user);
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
+            model.addAttribute("loggedinuser", getPrincipal());
+        }
+        return "registrationsuccess";
+    }
+
+    @RequestMapping(value = { "/unblock-contract-{id}" }, method = RequestMethod.GET)
+    public String unblockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
+        Contract contract = contractService.findById(id);
+        Customer user = contract.getCustomer();
+        UserProfile roleUser = userProfileService.findByType("USER");
+        UserProfile roleAdmin = userProfileService.findByType("ADMIN");
+        Customer sessionUser = (Customer) session.getAttribute("user");
+
+        if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is not blocked");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        if(user.isBlockedByAdmin() && user.equals(sessionUser)){
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked by ADMIN. You can't unblock it");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+
+        if(user.equals(sessionUser)){
+            user.setBlockedByUser(false);
+            userService.updateUser(user);
+            model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
+//            model.addAttribute("loggedinuser", getPrincipal());
+//            return "registrationsuccess";
+        }
+
+        if(!user.equals(sessionUser)){
+            user.setBlockedByAdmin(false);
+            userService.updateUser(user);
+            model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
+//            model.addAttribute("loggedinuser", getPrincipal());
+//            return "registrationsuccess";
+        }
+
+
+        model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "registrationsuccess";
     }
 
     /**

@@ -52,6 +52,8 @@
                     <sec:authorize access="hasRole('ADMIN')">
                         <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
+                    <td><a href="<c:url value='/contracts/block-contract-${contract.contractId}' />" class="btn btn-danger custom-width">block</a></td>
+                    <td><a href="<c:url value='/contracts/unblock-contract-${contract.contractId}' />" class="btn btn-success custom-width">unblock</a></td>
                 </tr>
             </c:forEach>
             <br>

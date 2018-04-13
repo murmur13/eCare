@@ -56,6 +56,8 @@ public class CustomerServiceImpl implements CustomerService {
             entity.setAddress(user.getAddress());
             entity.setMail(user.getMail());
             entity.setUserProfiles(user.getUserProfiles());
+            entity.setBlockedByUser(user.isBlockedByUser());
+            entity.setBlockedByAdmin(user.isBlockedByAdmin());
         }
     }
 

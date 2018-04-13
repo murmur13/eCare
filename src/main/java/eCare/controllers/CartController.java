@@ -66,6 +66,11 @@ public class CartController {
     @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.GET)
     public String addFeatureToCart(@PathVariable Integer featureId, Model model, HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
+        Customer user = (Customer) session.getAttribute("user");
+        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Option cannot be chosen :(");
+            return "errorPage";
+        }
         Feature featureToAdd = featureService.findById(featureId);
         List<Feature> cartOptions = cart.getOptionsInCart();
             if (!cartOptions.contains(featureToAdd)){
@@ -89,6 +94,11 @@ public class CartController {
             model.addAttribute("loggedinuser", getPrincipal());
             }
 
+        Customer user = (Customer) session.getAttribute("user");
+        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Tarif cannot be chosen :(");
+            return "errorPage";
+        }
         Tarif tarifToAdd = tarifService.findById(tarifId);
         cart.setTarifInCart(tarifToAdd);
         model.addAttribute("tarifInCart", tarifToAdd);

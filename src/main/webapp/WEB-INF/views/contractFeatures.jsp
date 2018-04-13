@@ -19,47 +19,44 @@
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <div class="panel panel-default">
-        <div class="panel-heading"><span class="lead">Contracts</span></div>
+        <!-- Default panel contents -->
+        <div class="panel-heading"><span class="lead">List of Options </span></div>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Contract Id</th>
-                <th>Customer</th>
-                <th>Tarif</th>
-                <th>Tarif's price (&#8381)</th>
-                <th>Phone</th>
+                <th>name</th>
+                <th>price (&#8381)</th>
+                <th>connection cost (&#8381)</th>
+                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
+                <%--<jsp:forward page="main.jsp"/>--%>
+                <%--</sec:authorize>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
                 <sec:authorize access="hasRole('ADMIN')">
                     <th width="100"></th>
                 </sec:authorize>
+                <sec:authorize access="hasRole('USER')">
+                    <th width="300"></th>
+                </sec:authorize>
+
 
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${contracts}" var="contract">
+            <c:forEach items="${features}" var="feature">
                 <tr>
-                    <td>${contract.contractId}</td>
-                    <td>${contract.customer.ssoId}</td>
-                    <td>${contract.tarif.name}</td>
-                    <td>${contract.tarif.price}</td>
-                    <td>${contract.tNumber}</td>
-                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contractTarif-${contract.contractId}' />" class="btn btn-primary custom-width">change tarif</a></td>
+                    <td>${feature.featureName}</td>
+                    <td>${feature.featurePrice}</td>
+                    <td>${feature.connectionCost}</td>
+                    <sec:authorize access="hasRole('USER')">
+                        <td><a href="<c:url value='/cart/${feature.featureId}/addToCart' />" class="btn btn-success custom-width">Choose option</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contractOptions-${contract.contractId}' />" class="btn btn-primary custom-width">change options</a></td>
+                        <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
-                    </sec:authorize>
-                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/showOptions-${contract.contractId}' />" class="btn btn-warning custom-width">show chosen options</a></td>
-                    </sec:authorize>
-                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                    <td><a href="<c:url value='/contracts/block-contract-${contract.contractId}' />" class="btn btn-danger custom-width">block</a></td>
-                    <td><a href="<c:url value='/contracts/unblock-contract-${contract.contractId}' />" class="btn btn-success custom-width">unblock</a></td>
+                        <td><a href="<c:url value='/contracts/deleteFeature/fromContract-${feature.featureId}' />" class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
             </c:forEach>
@@ -68,16 +65,16 @@
     </div>
     <sec:authorize access="hasRole('ADMIN')">
         <div class="well">
-            <a href="<c:url value='/contracts/newcontract' />">Add New Contract</a>
+            <a href="<c:url value='/features/newfeature' />">Add New Option</a>
         </div>
     </sec:authorize>
 
     <ul class="pagination">
-        <c:url value="/contracts/listContracts" var="prev">
+        <c:url value="/features/listFeatures" var="prev">
             <c:param name="page" value="${page-1}"/>
         </c:url>
         <c:if test="${page > 1}">
-        <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
         </c:if>
 
         <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
@@ -86,21 +83,20 @@
                     <li class="active"><span>${i.index}</span><li>
                 </c:when>
                 <c:otherwise>
-                    <c:url value="/contracts/listContracts" var="url">
+                    <c:url value="/features/listFeatures" var="url">
                         <c:param name="page" value="${i.index}"/>
                     </c:url>
-             <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
+                    <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
-        <c:url value="/contracts/listContracts" var="next">
+        <c:url value="/features/listFeatures" var="next">
             <c:param name="page" value="${page + 1}"/>
         </c:url>
         <c:if test="${page + 1 <= maxPages}">
-        <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
+            <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
         </c:if>
     </ul>
-
 </div>
 </body>
 </html>
