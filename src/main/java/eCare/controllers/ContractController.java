@@ -58,6 +58,9 @@ public class ContractController {
     @Autowired
     UserProfileService userProfileService;
 
+    @Autowired
+    RandomPhoneNumber randomPhoneNumber;
+
     /**
      * This method will list all existing contracts.
      */
@@ -411,6 +414,24 @@ public class ContractController {
 
         model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         model.addAttribute("loggedinuser", getPrincipal());
+        return "registrationsuccess";
+    }
+
+    @RequestMapping(value = { "/generatePhoneNumber-contract-{id}" }, method = RequestMethod.GET)
+    public String generateNumber(@PathVariable Integer id, ModelMap model, HttpSession session) {
+        RandomPhoneNumber numberGenerator = new RandomPhoneNumber();
+        Contract contract = contractService.findById(id);
+        String number = numberGenerator.generateNumber();
+        List<Contract> allContracts = contractService.findAll();
+        for (Contract someContract :allContracts) {
+            String someNumber = contract.gettNumber();
+            if(someNumber.equals(number))
+                number = numberGenerator.generateNumber();
+        }
+        contract.settNumber(number);
+        contractService.update(contract);
+        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("message", "number " + number + " was generated and set to contract");
         return "registrationsuccess";
     }
 

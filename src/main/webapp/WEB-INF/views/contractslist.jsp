@@ -23,7 +23,7 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Contract Id</th>
+                <%--<th>Contract Id</th>--%>
                 <th>Customer</th>
                 <th>Tarif</th>
                 <th>Tarif's price (&#8381)</th>
@@ -40,7 +40,7 @@
             <tbody>
             <c:forEach items="${contracts}" var="contract">
                 <tr>
-                    <td>${contract.contractId}</td>
+                    <%--<td>${contract.contractId}</td>--%>
                     <td>${contract.customer.ssoId}</td>
                     <td>${contract.tarif.name}</td>
                     <td>${contract.tarif.price}</td>
@@ -61,6 +61,9 @@
                     <td><a href="<c:url value='/contracts/block-contract-${contract.contractId}' />" class="btn btn-danger custom-width">block</a></td>
                     <td><a href="<c:url value='/contracts/unblock-contract-${contract.contractId}' />" class="btn btn-success custom-width">unblock</a></td>
                     </sec:authorize>
+                        <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                            <td><a href="<c:url value='/contracts/generatePhoneNumber-contract-${contract.contractId}' />" class="btn btn-primary custom-width">generate number</a></td>
+                        </sec:authorize>
                 </tr>
             </c:forEach>
             </tbody>
