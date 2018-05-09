@@ -23,8 +23,8 @@ public class FeatureServiceImpl implements FeatureService {
     @Autowired
     private FeatureDAO featureDAO;
 
-    @Autowired
-    private CustomerDAO customerDAO;
+//    @Autowired
+//    private CustomerDAO customerDAO;
 
     @Autowired
     private ContractDAO contractDAO;
@@ -49,6 +49,8 @@ public class FeatureServiceImpl implements FeatureService {
     public List<Feature> findAll() {
         return featureDAO.findAll();
     }
+
+    public List<Feature> findAllBlockingFeatures(){return featureDAO.findAllBlockingFeatures();}
 
 //    public List<Feature> findByTarif(Integer tarifId){
 //        List<Feature> feature = featureDAO.findByTarif(tarifId);

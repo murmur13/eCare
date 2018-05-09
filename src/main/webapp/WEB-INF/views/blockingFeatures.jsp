@@ -22,29 +22,30 @@
 
 <body>
 <%@ include file="menu.jsp" %>
-<form:form method="POST" modelAttribute="tarif" class="form-horizontal">
+<form:form method="POST" modelAttribute="selectedFeatures" class="form-horizontal">
+    <%--<form:input type="hidden" path="featureId" id="feature"/>--%>
 <div class="generic-container">
-        <%--<div class="panel panel-default">--%>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="form-group">
-                <td>List of tarifs:<td>
-                <form:select class="form-control" path="tarifId" id="tarifId">
-                <c:forEach items="${tarifs}" var="tarif">
-                <form:option value="${tarif.tarifId}">${tarif.name} &#8195 &#8195 &#8195 &#8195 &#8195 ${tarif.price}</form:option>
-                </c:forEach>
-                </form:select>
+    <div class="panel panel-default">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <td>List of options:</td>
+
+                    <form:select  id= "features" class="form-control" multiple="true" path="selectedFeatures" attribute="selectedFeatures" >
+                        <c:forEach items="${selectedFeatures.selectedFeatures}" var="feature">
+                                    <option value="${feature.featureId}">${feature.featureName}</option>
+                        </c:forEach>
+                    </form:select>
+                </div>
             </div>
         </div>
-            <%--</div>--%>
     </div>
     <div class="row">
         <div class="form-actions">
-            <input type="submit" value="Save tarif to contract" class="btn btn-primary btn-sm"/>
-            <td><a href=="<c:url value='/contracts/edit-contractTarif-${tarif.tarifId}' />"></a></td>
-            <input type="submit" value="Cancel" class="btn btn-warning btn-sm"/>
-            <a href="contractslist.jsp"></a>
-                <%--href="<c:url value='/contracts/listContracts' />"></a>--%>
+            <input type="submit" value="Save options to contract" class="btn btn-primary btn-sm"/> <a
+                href="<c:url value='/contracts/edit-contractOptions-{feature.featureId}' />"></a>
+            <input type="submit" value="Cancel" class="btn btn-primary btn-sm"/> <a
+                href="<c:url value='/contracts/listContracts' />"></a>
         </div>
     </div>
     </form:form>
@@ -52,7 +53,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example-getting-started').multiselect({
+        $('#features').multiselect({
             maxHeight: 400
         });
     });
@@ -61,6 +62,7 @@
             $(this).submit();
         });
     });
+
 </script>
 </div>
 </body>

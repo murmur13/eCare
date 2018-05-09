@@ -1,12 +1,10 @@
 package eCare.controllers;
 
 import eCare.model.PO.*;
-import eCare.model.services.ContractService;
-import eCare.model.services.FeatureService;
-import eCare.model.services.TarifService;
-import eCare.model.services.UserProfileService;
+import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
+import org.springframework.cglib.core.Block;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -44,6 +39,7 @@ public class FeatureController {
 
     @Autowired
     UserProfileService userProfileService;
+
 
     /**
      * This method will list all existing users.
@@ -107,7 +103,8 @@ public class FeatureController {
             if (!featureService.isFeatureUnique(feature.getFeatureName())) {
                 FieldError nameError = new FieldError("feature", "name", messageSource.getMessage("non.unique.name", new String[]{feature.getFeatureName()}, Locale.getDefault()));
                 result.addError(nameError);
-                return "featureRegistration";
+                model.addAttribute("message", "This option already exists");
+                return "errorPage";
             }
 
             featureService.persist(feature);
@@ -211,6 +208,126 @@ public class FeatureController {
         model.addAttribute("userFeatures", userFeatures);
         model.addAttribute("loggedinuser", getPrincipal());
         return "redirect:/contracts/getMyContract";
+    }
+
+    @RequestMapping(value = { "/blockingFeatures/seeAll" }, method = RequestMethod.GET)
+    public String seeBlockingFeatures(ModelMap model) {
+
+        List<Feature> blockingFeatures = featureService.findAllBlockingFeatures();
+        List<MessagesList> messagesList = new ArrayList<MessagesList>();
+        if (blockingFeatures.isEmpty()) {
+            model.addAttribute("message", "There is no blocked features yet");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        Set<Feature> blockingFeaturesSet = new HashSet<Feature>(blockingFeatures);
+
+        for (Feature blockingfeature: blockingFeaturesSet) {
+            List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(blockingfeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+            messagesList.add(message);
+        }
+        model.addAttribute("messages", messagesList);
+        model.addAttribute("features", blockingFeaturesSet);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "blockingFeaturesList";
+    }
+
+    @RequestMapping(value = { "/blockingFeatures" }, method = RequestMethod.GET)
+    public String blockingFeatures(ModelMap model) {
+        List<Feature > features = featureService.findAll();
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(featureService.findAll()));
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", features);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "blockingFeatures";
+    }
+
+    @RequestMapping(value = { "/blockingFeatures" }, method = RequestMethod.POST)
+    public String blockingFeatures (@ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
+                                        ModelMap model){
+        List<Feature> blockingFeatures = selectedFeaturesIds.getSelectedFeatures();
+        if (blockingFeatures.size() > 2) {
+            model.addAttribute("message", "You can choose only two options");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        Feature fisrtFeature = blockingFeatures.get(0);
+        Feature secondFeature = blockingFeatures.get(1);
+        List<Feature> blockedFeatures = fisrtFeature.getBlockingFeatures();
+        blockedFeatures.add(secondFeature);
+        fisrtFeature.setBlockingFeatures(blockedFeatures);
+        featureService.update(fisrtFeature);
+
+        if (result.hasErrors()) {
+            model.addAttribute("message", "OOOPS");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        model.addAttribute("features", blockingFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/features/blockingFeatures/seeAll";
+
+    }
+
+    @RequestMapping(value = { "/unblockFeatures" }, method = RequestMethod.GET)
+    public String unblockFeatures(ModelMap model) {
+        List<Feature > features = featureService.findAllBlockingFeatures();
+        HashSet<Feature> set = new HashSet<Feature>(features);
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
+        for (Feature blockingfeature: features) {
+            List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(blockingfeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+        }
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", set);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "unblockFeatures";
+    }
+
+    @RequestMapping(value = { "/unblockFeatures/{id}_{secondId}" }, method = RequestMethod.GET)
+    public String unblockFeatures (@PathVariable Integer id, @PathVariable Integer secondId,
+                                    ModelMap model){
+
+        List<Feature> blockingFeatures = featureService.findAllBlockingFeatures();
+        Integer index = blockingFeatures.indexOf(featureService.findById(secondId));
+        Feature featureToDelete = blockingFeatures.get(index);
+        List<Feature> features =  featureToDelete.getBlockingFeatures();
+        features.remove(featureService.findById(id));
+        featureToDelete.setBlockingFeatures(features);
+        featureService.update(featureToDelete);
+        blockingFeatures.remove(featureToDelete);
+
+//        if (blockingFeatures.size() > 2) {
+//            model.addAttribute("message", "Something went wrong. There must be two features to unblock..");
+//            model.addAttribute("loggedinuser", getPrincipal());
+//            return "errorPage";
+//        }
+
+        model.addAttribute("features", blockingFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/features/unblockFeatures";
+
     }
 
 

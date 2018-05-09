@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 
@@ -17,19 +18,16 @@
 
 <body>
 <%@ include file="menu.jsp" %>
+<%--<form:form method="POST" modelAttribute="selectedFeatures" class="form-horizontal">--%>
 <div class="generic-container">
     <div class="panel panel-default">
-        <!-- Default panel contents -->
         <div class="panel-heading"><span class="lead">List of Options </span></div>
         <table class="table table-hover">
             <thead>
             <tr>
                 <th>name</th>
-                <th>price (&#8381)</th>
-                <th>connection cost (&#8381)</th>
-                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
-                <%--<jsp:forward page="main.jsp"/>--%>
-                <%--</sec:authorize>--%>
+                <%--<th>price (&#8381)</th>--%>
+                <%--<th>connection cost (&#8381)</th>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -40,34 +38,25 @@
                     <th width="300"></th>
                 </sec:authorize>
 
-
             </tr>
             </thead>
             <tbody>
+
             <c:forEach items="${features}" var="feature">
+                <c:forEach items="${feature.blockingFeatures}" var="blockingFeature">
                 <tr>
                     <td>${feature.featureName}</td>
-                    <td>${feature.featurePrice}</td>
-                    <td>${feature.connectionCost}</td>
-                    <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/cart/${feature.featureId}/addToCart' />" class="btn btn-success custom-width">Choose option</a></td>
-                    </sec:authorize>
-                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
-                    </sec:authorize>
+                    <td>${blockingFeature.featureName}</td>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/deleteFeature/fromContract-${feature.featureId}' />" class="btn btn-danger custom-width">delete</a></td>
+                       <td><a href="<c:url value='/features/unblockFeatures/${blockingFeature.featureId}_${feature.featureId}' />" class="btn btn-success custom-width">Unblock</a></td>
                     </sec:authorize>
                 </tr>
+                </c:forEach>
             </c:forEach>
             </tbody>
         </table>
+        <%--</form:form>--%>
     </div>
-    <sec:authorize access="hasRole('ADMIN')">
-        <div class="well">
-            <a href="<c:url value='/features/newfeature' />">Add New Option</a>
-        </div>
-    </sec:authorize>
 
     <ul class="pagination">
         <c:url value="/features/listFeatures" var="prev">

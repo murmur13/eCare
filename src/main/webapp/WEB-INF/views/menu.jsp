@@ -63,6 +63,18 @@
                 </li>
 
                 <li class="dropdown">
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Blocking options
+                            <span class="caret"></span></a>
+                    </sec:authorize>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value='/features/blockingFeatures/seeAll' />">See blocked options</a></li>
+                        <li><a href="<c:url value='/features/blockingFeatures' />">Block options</a></li>
+                        <li><a href="<c:url value='/features/unblockFeatures' />">Unblock options</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
                     <sec:authorize access="hasRole('USER')">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Cart
                             <span class="caret"></span></a>

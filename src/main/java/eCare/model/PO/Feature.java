@@ -43,6 +43,21 @@ public class Feature {
             inverseJoinColumns=@JoinColumn(name="contractId", referencedColumnName="contract_id"))
     private List<Contract> featureContracts;
 
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="feature_x_blocking_features",
+            joinColumns=@JoinColumn(name="blocking_feature_id", referencedColumnName="feature_id"),
+            inverseJoinColumns=@JoinColumn(name="feature_feature_id", referencedColumnName="feature_id"))
+    private List<Feature> blockingFeatures;
+
+    public List<Feature> getBlockingFeatures() {
+        return blockingFeatures;
+    }
+
+    public void setBlockingFeatures(List<Feature> blockingFeatures) {
+        this.blockingFeatures = blockingFeatures;
+    }
+
     @Override
     public String toString() {
         return "feature{" +

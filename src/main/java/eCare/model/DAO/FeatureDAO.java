@@ -21,7 +21,7 @@ import java.util.List;
 @Repository("featureDAO")
 public class FeatureDAO implements DAOInterface <Feature, Integer> {
 
-    static final Logger logger = LoggerFactory.getLogger(TarifDAO.class);
+    static final Logger logger = LoggerFactory.getLogger(FeatureDAO.class);
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -64,6 +64,11 @@ public class FeatureDAO implements DAOInterface <Feature, Integer> {
     public List<Feature> findAll() {
         List<Feature> features = (List<Feature>) getSession().createQuery("from Feature").list();
         return features;
+    }
+
+    public List<Feature> findAllBlockingFeatures() {
+        List<Feature> blockingFeatures = (List<Feature>) getSession().createQuery("select f from Feature f join f.blockingFeatures").list();
+        return blockingFeatures;
     }
 
     public void deleteAll() {

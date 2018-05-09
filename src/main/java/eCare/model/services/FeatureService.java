@@ -37,4 +37,6 @@ public interface FeatureService {
 
     List<Feature> findFeatureByTarif(Integer tarifId);
 
+    List<Feature> findAllBlockingFeatures();
+
 }
