@@ -75,6 +75,18 @@
                 </li>
 
                 <li class="dropdown">
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Required options
+                            <span class="caret"></span></a>
+                    </sec:authorize>
+                    <ul class="dropdown-menu">
+                        <li><a href="<c:url value='/features/requiredFeatures' />">Make required options</a></li>
+                        <li><a href="<c:url value='/features/dismissRequiredFeatures' />">Dismiss required options</a></li>
+                        <li><a href="<c:url value='/features/requiredFeatures/seeAll' />">See required options</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
                     <sec:authorize access="hasRole('USER')">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Cart
                             <span class="caret"></span></a>

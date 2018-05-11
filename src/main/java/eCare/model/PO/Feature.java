@@ -50,6 +50,21 @@ public class Feature {
             inverseJoinColumns=@JoinColumn(name="feature_feature_id", referencedColumnName="feature_id"))
     private List<Feature> blockingFeatures;
 
+    public List<Feature> getRequiredFeatures() {
+        return requiredFeatures;
+    }
+
+    public void setRequiredFeatures(List<Feature> requiredFeatures) {
+        this.requiredFeatures = requiredFeatures;
+    }
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name="feature_x_requiredfeature",
+            joinColumns=@JoinColumn(name="featureId", referencedColumnName="feature_id"),
+            inverseJoinColumns=@JoinColumn(name="requiredFeatureId", referencedColumnName="feature_id"))
+    private List<Feature> requiredFeatures;
+
     public List<Feature> getBlockingFeatures() {
         return blockingFeatures;
     }

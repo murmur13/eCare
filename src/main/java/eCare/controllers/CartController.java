@@ -71,7 +71,26 @@ public class CartController {
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Option cannot be chosen :(");
             return "errorPage";
         }
+        Contract contract = user.getContracts().get(0);
+        List<Feature> contractFeatures = featureService.findFeatureByContract(contract.getContractId());
         Feature featureToAdd = featureService.findById(featureId);
+        List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
+        List<Feature> allBlockingFeatures = featureService.findAllBlockingFeatures();
+        for (Feature feature: allBlockingFeatures) {
+            if(feature.getBlockingFeatures().contains(featureToAdd) && contractFeatures.contains(feature)){
+                model.addAttribute("message", "You can't add option \"" + featureToAdd.getFeatureName() + "\" together with option \"" + feature.getFeatureName() + "\"");
+                return "errorPage";
+            }
+
+        }
+        for (Feature feature: requiredFeatures) {
+            List<Feature> secondFeatureContainer = feature.getRequiredFeatures();
+            if(secondFeatureContainer.contains(featureToAdd) && !contractFeatures.contains(feature)){
+                model.addAttribute("message", "You can't add option \"" + featureToAdd.getFeatureName() + "\" without adding option \"" + feature.getFeatureName() + "\" first");
+                return "errorPage";
+            }
+
+        }
         List<Feature> cartOptions = cart.getOptionsInCart();
             if (!cartOptions.contains(featureToAdd)){
                 cartOptions.add(featureToAdd);

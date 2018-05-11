@@ -239,4 +239,5 @@
     <include file="src/main/resources/createContractHasFeature.xml"/>
     <include file="src/main/resources/addTarifPrice.xml"/>
     <include file="src/main/resources/userIsBlockedColumn.xml"/>
+    <include file="src/main/resources/createTabeRequiredFeatures.xml"/>
 </databaseChangeLog>

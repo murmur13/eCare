@@ -71,6 +71,21 @@ public class FeatureDAO implements DAOInterface <Feature, Integer> {
         return blockingFeatures;
     }
 
+    public List<Feature> findAllRequiredFeatures(){
+        List<Feature> requiredFeatures = (List<Feature>) getSession().createQuery("select f from Feature f join f.requiredFeatures").list();
+        return requiredFeatures;
+    }
+
+    public List<Feature> findSecondRequiredFeature(Integer id){
+        logger.info("id : {}", id);
+        Query query = sessionFactory
+                .getCurrentSession()
+                .createQuery("select f from Feature f join f.requiredFeatures rf where rf.id = :id");
+        query.setParameter("id", id);
+        List results = query.list();
+        return  results;
+    }
+
     public void deleteAll() {
         List<Feature> entityList = findAll();
         for (Feature entity : entityList) {

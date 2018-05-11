@@ -39,4 +39,8 @@ public interface FeatureService {
 
     List<Feature> findAllBlockingFeatures();
 
+    List <Feature> findAllRequiredFeatures();
+
+    List<Feature> findSecondRequiredFeature(Integer id);
+
 }

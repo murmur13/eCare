@@ -131,20 +131,8 @@ public class FeatureController {
                 return "errorPage";
             }
         }
-        features.add(chosenFeature);
-        chosenFeature.setFeatureContracts(contracts);
-        tarifOptions.add(chosenFeature);
-        List <Tarif> featureTarifs = chosenFeature.getFeatureTarifs();
-        featureTarifs.add(tarif);
-        chosenFeature.setFeatureTarifs(featureTarifs);
+
         Cart cart = (Cart) session.getAttribute("cart");
-//        contractService.update(contract);
-//        featureService.update(chosenFeature);
-//        tarifService.update(tarif);
-//        if(session.getAttribute("cart")== null){
-//
-//        }
-//        Cart cart = (Cart)
         cart.setOptionsInCart(features);
         session.setAttribute("optionsInCart", features);
         session.setAttribute("cart", cart);
@@ -152,7 +140,6 @@ public class FeatureController {
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", getPrincipal());
         return "redirect: /cart";
-//        return "userContract";
     }
 
 
@@ -280,6 +267,75 @@ public class FeatureController {
 
     }
 
+    @RequestMapping(value = { "/requiredFeatures" }, method = RequestMethod.GET)
+    public String requiredFeatures(ModelMap model) {
+        List<Feature > features = featureService.findAll();
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(featureService.findAll()));
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", features);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "requiredFeatures";
+    }
+
+    @RequestMapping(value = { "/requiredFeatures" }, method = RequestMethod.POST)
+    public String requiredFeatures (@ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
+                                    ModelMap model){
+        List<Feature> requiredFeatures = selectedFeaturesIds.getSelectedFeatures();
+        if (requiredFeatures.size() > 2) {
+            model.addAttribute("message", "You can choose only two options");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        Feature fisrtFeature = requiredFeatures.get(0);
+        Feature secondFeature = requiredFeatures.get(1);
+        List<Feature> features = fisrtFeature.getRequiredFeatures();
+        features.add(secondFeature);
+        fisrtFeature.setRequiredFeatures(features);
+        featureService.update(fisrtFeature);
+
+        if (result.hasErrors()) {
+            model.addAttribute("message", "OOOPS");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        model.addAttribute("features", requiredFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/features/requiredFeatures/seeAll";
+    }
+
+    @RequestMapping(value = { "/requiredFeatures/seeAll" }, method = RequestMethod.GET)
+    public String seeRequiredFeatures(ModelMap model) {
+
+        List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
+        List<MessagesList> messagesList = new ArrayList<MessagesList>();
+        if (requiredFeatures.isEmpty()) {
+            model.addAttribute("message", "There is no required features yet");
+            model.addAttribute("loggedinuser", getPrincipal());
+            return "errorPage";
+        }
+        Set<Feature> requiredFeaturesSet = new HashSet<Feature>(requiredFeatures);
+
+        for (Feature requiredfeature: requiredFeaturesSet) {
+            List<Feature> featuresToDisplay = requiredfeature.getRequiredFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(requiredfeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+            messagesList.add(message);
+        }
+        model.addAttribute("messages", messagesList);
+        model.addAttribute("features", requiredFeaturesSet);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "requiredFeaturesList";
+    }
+
     @RequestMapping(value = { "/unblockFeatures" }, method = RequestMethod.GET)
     public String unblockFeatures(ModelMap model) {
         List<Feature > features = featureService.findAllBlockingFeatures();
@@ -317,17 +373,53 @@ public class FeatureController {
         featureService.update(featureToDelete);
         blockingFeatures.remove(featureToDelete);
 
-//        if (blockingFeatures.size() > 2) {
-//            model.addAttribute("message", "Something went wrong. There must be two features to unblock..");
-//            model.addAttribute("loggedinuser", getPrincipal());
-//            return "errorPage";
-//        }
-
         model.addAttribute("features", blockingFeatures);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", getPrincipal());
         return "redirect:/features/unblockFeatures";
+    }
 
+    @RequestMapping(value = { "/dismissRequiredFeatures" }, method = RequestMethod.GET)
+    public String dismissRequiredFeatures(ModelMap model) {
+        List<Feature > features = featureService.findAllRequiredFeatures();
+        HashSet<Feature> set = new HashSet<Feature>(features);
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
+        for (Feature requiredFeature: features) {
+            List<Feature> featuresToDisplay = requiredFeature.getRequiredFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(requiredFeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+        }
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", set);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "dismissRequiredFeatures";
+    }
+
+    @RequestMapping(value = { "/dismissRequiredFeatures/{id}_{secondId}" }, method = RequestMethod.GET)
+    public String dismissRequiredFeatures (@PathVariable Integer id, @PathVariable Integer secondId,
+                                   ModelMap model){
+
+        List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
+        Integer index = requiredFeatures.indexOf(featureService.findById(secondId));
+        Feature featureToDelete = requiredFeatures.get(index);
+        List<Feature> features =  featureToDelete.getRequiredFeatures();
+        features.remove(featureService.findById(id));
+        featureToDelete.setRequiredFeatures(features);
+        featureService.update(featureToDelete);
+        requiredFeatures.remove(featureToDelete);
+
+        model.addAttribute("features", requiredFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", getPrincipal());
+        return "redirect:/features/dismissRequiredFeatures";
     }
 
 
