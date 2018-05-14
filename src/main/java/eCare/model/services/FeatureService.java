@@ -41,6 +41,4 @@ public interface FeatureService {
 
     List <Feature> findAllRequiredFeatures();
 
-    List<Feature> findSecondRequiredFeature(Integer id);
-
 }

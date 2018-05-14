@@ -51,8 +51,6 @@ public class FeatureServiceImpl implements FeatureService {
 
     public List<Feature> findAllRequiredFeatures(){return featureDAO.findAllRequiredFeatures();}
 
-    public List<Feature> findSecondRequiredFeature(Integer id) {return featureDAO.findSecondRequiredFeature(id);}
-
 //    public List<Feature> findByTarif(Integer tarifId){
 //        List<Feature> feature = featureDAO.findByTarif(tarifId);
 //        return feature;

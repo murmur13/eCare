@@ -2,6 +2,8 @@ package eCare.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import javax.servlet.ServletRegistration;
+
 /**
  * Created by echerkas on 15.11.2017.
  */
@@ -21,6 +23,11 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
         protected String[] getServletMappings() {
             return new String[] { "/" };
         }
+
+    @Override
+    public void customizeRegistration(ServletRegistration.Dynamic registration) {
+        registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+    }
 
     }
 

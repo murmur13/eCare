@@ -17,17 +17,9 @@
 <%@include file="menu.jsp" %>
 <div class="generic-container">
 
-    <if class="alert alert-danger lead">
-        <span> ${message}</span>
-        <if
-        ${exception != null}
-        <span> ${exception}</span>
-    </if>
-    <if
-    ${url != null}
-    <span> ${url}</span>
-    </if>
-</div>
+    <div class="alert alert-danger lead">
+        <h2>Resource Not Found Error Occured, please contact support.</h2>
+    </div>
 
 
 </div>
