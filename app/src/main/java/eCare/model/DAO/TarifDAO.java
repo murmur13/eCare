@@ -8,8 +8,10 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -19,6 +21,14 @@ import java.util.List;
 public class TarifDAO  implements DAOInterface <Tarif, Integer>{
 
     static final Logger logger = LoggerFactory.getLogger(TarifDAO.class);
+
+    @Autowired
+    ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void test() {
+        System.out.print(applicationContext);
+    }
 
     @Autowired
     private SessionFactory sessionFactory;

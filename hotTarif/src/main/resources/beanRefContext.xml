@@ -19,8 +19,8 @@
 
 
     <!-- The EJB spring container context -->
-
-    <bean class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <bean id="businessBeanFactory"
+          class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg value="classpath*:simpleContext.xml" />
     </bean>
 </beans>

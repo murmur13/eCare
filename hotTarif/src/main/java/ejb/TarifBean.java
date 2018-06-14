@@ -5,8 +5,8 @@ import eCare.model.services.TarifService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Comparator;
