@@ -120,6 +120,14 @@
             <version>${springsecurity.version}</version>
         </dependency>
 
+        <!-- RabbitMQ -->
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>1.4.5.RELEASE</version>
+        </dependency>
+
         <!-- SLF4J/Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

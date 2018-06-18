@@ -45,4 +45,8 @@
     <bean id="tarifDAO" class="eCare.model.DAO.TarifDAO"/>
 
     <bean id="tarifService" class="eCare.model.services.TarifServiceImpl"/>
+
+    <bean id="rabbitConfiguration" class="eCare.configuration.RabbitConfiguration"/>
+
+    <bean id="rabbitMqListener" class="eCare.configuration.RabbitMqListener"/>
 </beans>
