@@ -67,4 +67,6 @@ public class TarifEjb {
     public TarifDAO getTarifDAO() {
         return tarifDAO;
     }
+
+
 }

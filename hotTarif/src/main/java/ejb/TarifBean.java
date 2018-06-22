@@ -23,6 +23,7 @@ public class TarifBean {
     TarifEjb tarifEjb;
     List<Tarif> cheapTarifs;
     List<Tarif> list;
+    Tarif tarif;
 
     public TarifEjb getTarifEjb() {
         return tarifEjb;
@@ -56,5 +57,10 @@ public class TarifBean {
             ex.printStackTrace();
         }
         return cheapTarifs;
+    }
+
+    public String returnTarifFromQueue(String string){
+        System.out.println("TarifId is received in Ejb = " + string);
+        return string;
     }
 }

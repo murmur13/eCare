@@ -1,6 +1,7 @@
 package eCare.model.PO;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "tarif")
-public class Tarif{
+public class Tarif implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

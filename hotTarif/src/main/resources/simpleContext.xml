@@ -46,7 +46,8 @@
 
     <bean id="tarifService" class="eCare.model.services.TarifServiceImpl"/>
 
-    <bean id="rabbitConfiguration" class="eCare.configuration.RabbitConfiguration"/>
-
-    <bean id="rabbitMqListener" class="eCare.configuration.RabbitMqListener"/>
+    <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="trustedPackages" value="true"/>
+    </bean>
 </beans>

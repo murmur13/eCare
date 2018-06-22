@@ -1,12 +1,12 @@
 package eCare.controllers;
 
+import eCare.configuration.MessageSender;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Tarif;
 import eCare.model.services.ContractService;
 import eCare.model.services.TarifService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
@@ -44,7 +44,7 @@ public class TarifController {
     ContractService contractService;
 
     @Autowired
-    AmqpTemplate template;
+    MessageSender messageSender;
 
     /**
      * This method will list all existing tarifs.
@@ -129,7 +129,7 @@ public class TarifController {
             return "tarifRegistration";
         }
         tarifService.update(tarif);
-        queue1();
+        messageSender.sendMessage(tarif);
         model.addAttribute("message", "Tarif " + tarif.getName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";
@@ -162,12 +162,6 @@ public class TarifController {
             userName = principal.toString();
         }
         return userName;
-    }
-
-    public String queue1() {
-        logger.info("Send to queue1");
-        template.convertAndSend("queue1","Message to queue");
-        return "Send to queue";
     }
 
 }

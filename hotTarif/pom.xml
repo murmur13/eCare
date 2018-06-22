@@ -12,6 +12,35 @@
     <packaging>war</packaging>
 
     <repositories>
+
+            <repository>
+                <id>JBoss repository</id>
+                <name>JBoss</name>
+                <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            </repository>
+
+        <repository>
+            <id>jboss-public-repository-group1</id>
+            <name>JBoss Public Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jboss-enterprise-maven-repository</id>
+            <url>https://maven.repository.redhat.com/ga/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
         <repository>
             <id>jboss-public-repository-group</id>
             <name>JBoss Public Repository Group</name>
@@ -42,20 +71,11 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <properties>
+    <springframework.version>4.3.12.RELEASE</springframework.version>
+    </properties>
+
     <dependencies>
-
-        <!--<dependency>-->
-        <!--<groupId>com.sun.jersey</groupId>-->
-        <!--<artifactId>jersey-client</artifactId>-->
-        <!--<version>1.8</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>io.undertow</groupId>-->
-        <!--<artifactId>undertow-websockets-jsr</artifactId>-->
-        <!--<version>2.0.9.Final</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>com.sys</groupId>
@@ -104,6 +124,20 @@
             <version>2.2.14</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.undertow/undertow-servlet -->
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-servlet</artifactId>
+            <version>2.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -134,35 +168,17 @@
                 </dependencies>
             </plugin>
 
-
-            <!--<plugin>-->
-            <!--<groupId>org.jboss.as.plugins</groupId>-->
-            <!--<artifactId>jboss-as-maven-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<hostname>127.0.0.1</hostname>-->
-            <!--<port>9990</port>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-            <!--<goal>deploy</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.2.1.Final</version>
                 <configuration>
-                    <jbossHome>C:\Users\echerkas\Desktop\Stuff\folder\wildfly-12.0.0.Final</jbossHome>
+                    <jbossHome>C:\Users\echerkas\Desktop\Stuff\folder\tmp\wildfly-12.0.0.Final</jbossHome>
                     <hostname>127.0.0.1</hostname>
-                    <port>10090</port>
+                    <port>9990</port>
                     <username>selina</username>
                     <password>kyle</password>
-                    <serverConfig>standalone.xml</serverConfig>
+                    <serverConfig>standalone-full.xml</serverConfig>
                     <modules-path>
                         <paths>
                             <path>/hotTarif/</path>
@@ -172,11 +188,19 @@
                 <executions>
                     <execution>
                         <phase>install</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
+                        <!--<goals>-->
+                            <!--<goal>deploy</goal>-->
+                        <!--</goals>-->
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
