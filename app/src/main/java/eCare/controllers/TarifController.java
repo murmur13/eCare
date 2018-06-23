@@ -8,6 +8,7 @@ import eCare.model.services.TarifService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -129,7 +130,7 @@ public class TarifController {
             return "tarifRegistration";
         }
         tarifService.update(tarif);
-        messageSender.sendMessage(tarif);
+        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
         model.addAttribute("message", "Tarif " + tarif.getName() + " " + " updated successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";

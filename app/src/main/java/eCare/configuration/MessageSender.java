@@ -20,12 +20,12 @@ public class MessageSender {
     @Autowired
     JmsTemplate jmsTemplate;
 
-    public void sendMessage(final Tarif tarif) {
+    public void sendMessage(final String message) {
 
         jmsTemplate.send(new MessageCreator(){
             @Override
             public Message createMessage(Session session) throws JMSException {
-                ObjectMessage objectMessage = session.createObjectMessage(tarif);
+                ObjectMessage objectMessage = session.createObjectMessage(message);
                 return objectMessage;
             }
         });
