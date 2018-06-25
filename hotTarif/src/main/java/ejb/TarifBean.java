@@ -1,29 +1,27 @@
 package ejb;
 
 import eCare.model.PO.Tarif;
-import eCare.model.services.TarifService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by echerkas on 12.06.2018.
  */
-@ManagedBean(name="tarifBean")
+@ManagedBean
 @RequestScoped
-public class TarifBean {
+public class TarifBean implements Serializable {
 
     @EJB
     TarifEjb tarifEjb;
     List<Tarif> cheapTarifs;
     List<Tarif> list;
     Tarif tarif;
+    String id = null;
 
     public TarifEjb getTarifEjb() {
         return tarifEjb;
@@ -61,6 +59,27 @@ public class TarifBean {
 
     public String returnTarifFromQueue(String string){
         System.out.println("TarifId is received in Ejb = " + string);
-        return string;
+        setId(string);
+        return id;
     }
+
+    public boolean isPollEnabled() {
+        Boolean param = true;
+        System.out.println("Returns " + param);
+        return param;
+    }
+
+    public Date getDate() {
+
+        return new Date();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

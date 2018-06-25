@@ -6,10 +6,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
+import javax.jms.*;
 
 /**
  * Created by echerkas on 21.06.2018.
@@ -25,8 +22,9 @@ public class MessageSender {
         jmsTemplate.send(new MessageCreator(){
             @Override
             public Message createMessage(Session session) throws JMSException {
-                ObjectMessage objectMessage = session.createObjectMessage(message);
-                return objectMessage;
+                TextMessage textMessage = session.createTextMessage(message.toString());
+                System.out.println("Sending message " + message.toString());
+                return textMessage;
             }
         });
     }

@@ -1,8 +1,7 @@
 package ejb;
 
-
-import javax.annotation.Resource;
 import javax.ejb.*;
+import javax.inject.Inject;
 import javax.jms.*;
 import java.util.logging.Logger;
 
@@ -26,12 +25,16 @@ public class MDB implements MessageListener {
     public MDB(){
     }
 
+   @Inject
+    TarifBean tarifBean;
+
     @Override
     public void onMessage(Message message){
         if (message instanceof TextMessage) {
             try {
                 final String text = ((TextMessage) message).getText();
                 LOGGER.info(() -> "Received: " + text);
+                tarifBean.returnTarifFromQueue(text);
             } catch (final JMSException e) {
                 throw new RuntimeException(e);
             }
