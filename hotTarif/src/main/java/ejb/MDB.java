@@ -1,5 +1,7 @@
 package ejb;
 
+import ejb.rest.REST;
+
 import javax.ejb.*;
 import javax.inject.Inject;
 import javax.jms.*;
@@ -28,6 +30,9 @@ public class MDB implements MessageListener {
    @Inject
     TarifBean tarifBean;
 
+    @Inject
+    REST rest;
+
     @Override
     public void onMessage(Message message){
         if (message instanceof TextMessage) {
@@ -35,6 +40,7 @@ public class MDB implements MessageListener {
                 final String text = ((TextMessage) message).getText();
                 LOGGER.info(() -> "Received: " + text);
                 tarifBean.returnTarifFromQueue(text);
+                rest.getTarifs();
             } catch (final JMSException e) {
                 throw new RuntimeException(e);
             }

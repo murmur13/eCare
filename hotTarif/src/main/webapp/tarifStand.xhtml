@@ -39,13 +39,13 @@
     <a4j:region>
     <h:form>
         <a4j:poll id="poll" interval="1000" ajaxSingle="true" limitToList="true" immediate="true"
-                  enabled="#{tarifBean.pollEnabled}" render="poll,any-id" />
+                  enabled="true" render="poll,any-id" />
         </h:form>
         </a4j:region>
 
     <h:form>
         <h:panelGroup id="group">
-            <a4j:outputPanel event="onchange" render=":group" />
+            <!--<a4j:outputPanel event="onchange" render=":group" />-->
             <h:outputText id="serverDate" style="font-size:16px" value="Server Date: #{tarifBean.date}" />
             <table class="table table-hover">
                 <thead class="thead-dark">
@@ -55,9 +55,10 @@
                 </tr>
                 </thead>
                 <tbody>
+
                 <h:panelGroup id="any-id">
-                    <a4j:ajax event="onchange" render=":any-id" />
-                    <ui:repeat var="tarif" value="#{tarifBean.cheap}" varStatus="status">
+                    <ui:repeat var="tarif" value="#{tarifBean.cheap}">
+                        <!--<a4j:ajax event="onchange" render=":any-id" />-->
                         <tr>
                             <h:outputText render="#{tarifBean.cheap}" />
                             <td>#{tarif.name}</td>
@@ -65,6 +66,7 @@
                         </tr>
                     </ui:repeat>
                 </h:panelGroup>
+
                 </tbody>
             </table>
         </h:panelGroup>
