@@ -1,4 +1,4 @@
-package eCare.controllers;
+package eCare.controllers.exceptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,6 +6,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +14,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -22,6 +28,7 @@ import java.sql.SQLException;
  */
 
 @ControllerAdvice
+@Component("globalExceptionController")
 public class GlobalExceptionController {
 
     public static final String DEFAULT_ERROR_VIEW = "error";
@@ -56,9 +63,20 @@ public class GlobalExceptionController {
             throw e;
 
         ModelAndView mav = new ModelAndView();
-        mav.addObject("exception", e);
+
+        mav.addObject("message", e);
+        mav.addObject("loggedinuser", getPrincipal());
         mav.addObject("url", req.getRequestURL());
-        mav.setViewName(DEFAULT_ERROR_VIEW);
+        mav.setViewName("handlerException");
+        return mav;
+    }
+
+    @ExceptionHandler(value = ServletException.class)
+    public ModelAndView handleJspExceptions(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException{
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("loggedinuser", getPrincipal());
+        mav.setViewName("jspError");
+        servletRequest.setAttribute("loggedinuser", getPrincipal());
         return mav;
     }
 

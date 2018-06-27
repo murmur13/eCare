@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>ErrorMessage</title>
+    <title>handlerException</title>
     <link href="<c:url value='/resources/css/bootstrap.css' />" rel="stylesheet"></link>
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -21,6 +21,7 @@
         <span> ${message}</span>
     </div>
 
+    <span> Failed request ${url}</span>
 
 </div>
 </body>

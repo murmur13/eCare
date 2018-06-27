@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>ErrorMessage</title>
+    <title>JspError</title>
     <link href="<c:url value='/resources/css/bootstrap.css' />" rel="stylesheet"></link>
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -17,8 +17,8 @@
 <%@include file="menu.jsp" %>
 <div class="generic-container">
 
-    <div class="alert alert-warning lead">
-        <span> ${message}</span>
+    <div class="alert alert-danger lead">
+        <span> Something went wrong.. Most probably, some parameters were not set</span>
     </div>
 
 
