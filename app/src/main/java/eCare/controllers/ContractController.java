@@ -38,7 +38,7 @@ import java.util.Locale;
 public class ContractController {
 
     @Autowired
-    CustomerService userService;
+    CustomerServiceImpl userService;
 
     @Autowired
     FeatureService featureService;
@@ -50,7 +50,7 @@ public class ContractController {
     TarifService tarifService;
 
     @Autowired
-    ContractService contractService;
+    ContractServiceImpl contractService;
 
     @Autowired
     AppController appController;
@@ -79,20 +79,19 @@ public class ContractController {
             pagedListHolder.setPage(page-1);
             model.addAttribute("contracts", pagedListHolder.getPageList());
         }
-//        model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractslist";
     }
 
     @RequestMapping(value = {"/getMyContract" }, method = RequestMethod.GET)
     public String getMyContract(ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
+        Contract contract = contractService.findUserContract(user);
         List<Contract> contracts = contractService.findByCustomerId(user);
-        Contract contract = contracts.get(0);
         List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
             model.addAttribute("userFeatures", features);
             model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "userContract";
     }
 
@@ -101,7 +100,7 @@ public class ContractController {
         Contract contract = new Contract();
         model.addAttribute("contract", contract);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractRegistration";
     }
 
@@ -114,24 +113,14 @@ public class ContractController {
                                @RequestParam(value = "tarif", required = false) String tarif,
                                ModelMap model) {
 
-
         Customer customer = userService.findBySSO(sso);
-        Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
-        Contract contract = new Contract(phone, customer, tarif1);
-//        if (result.hasErrors()) {
-//            return "contractRegistration";
-//        }
-        customer.setTelNumber(phone);
-        userService.updateUser(customer);
-        contractService.persist(contract);
-        List<Contract> tarifContracts = contractService.findContractByTarif(tarif1);
-        tarifContracts.add(contract);
-        model.addAttribute("tarif", tarif1);
+        Contract newContract = contractService.createNewContract(phone, sso, tarif);
+        model.addAttribute("tarif", newContract.getTarif());
         model.addAttribute("customer", customer);
         model.addAttribute("phone", customer.getTelNumber());
-        model.addAttribute("contract", contract);
-        model.addAttribute("success", "Contract " + contract.getContractId() + " " + " added successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("contract", newContract);
+        model.addAttribute("success", "Contract " + newContract.getContractId() + " " + " added successfully");
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "registrationsuccess";
     }
 
@@ -140,7 +129,7 @@ public class ContractController {
 
         Contract contract = contractService.findById(id);
         model.addAttribute("contract", contract);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractslist";
     }
 
@@ -152,14 +141,14 @@ public class ContractController {
         List<Feature> contractFeatures = featureService.findFeatureByContract(id);
         if(!contractFeatures.isEmpty()){
             modelAndView.addObject("features", contractFeatures);
-            modelAndView.addObject("loggedinuser", getPrincipal());
+            modelAndView.addObject("loggedinuser", userService.getPrincipal());
             return modelAndView;
     }
         else{
             ModelAndView modelAndView2 = new ModelAndView("errorPage");
             String contractWithoutOptions = messageSource.getMessage("contract.not.having.any.options", new String[]{Integer.toString(id)}, Locale.getDefault());
             modelAndView2.addObject("message", contractWithoutOptions);
-            modelAndView2.addObject("loggedinuser", getPrincipal());
+            modelAndView2.addObject("loggedinuser", userService.getPrincipal());
             return modelAndView2;
         }
     }
@@ -179,12 +168,12 @@ public class ContractController {
             model.addAttribute("features", null);
             model.addAttribute("contracts", contracts);
             model.addAttribute("edit", true);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "userContract";
         } else {
             String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifIsAlreadyChosen);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
     }
@@ -203,7 +192,7 @@ public class ContractController {
         featureService.update(featureToDelete);
         contractService.update(contract);
         model.addAttribute("features", features);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractFeatures";
     }
 
@@ -220,7 +209,7 @@ public class ContractController {
         model.addAttribute("userTarif", userTarif);
         model.addAttribute("tarifs", tarifs);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "editContractTarif";
     }
 
@@ -232,7 +221,7 @@ public class ContractController {
 //        session.setAttribute("tarifInCart", newTarif);
         contractService.update(contract);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
 //        return "redirect: /cart";
         return "redirect:/contracts/listContracts";
     }
@@ -251,7 +240,7 @@ public class ContractController {
         model.addAttribute("contract", contract);
         model.addAttribute("userFeatures", userFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "editContractFeatures";
     }
 
@@ -302,12 +291,12 @@ public class ContractController {
 
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         model.addAttribute("userFeatures", userFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/contracts/listContracts";
     }
 
@@ -328,12 +317,12 @@ public class ContractController {
             contractService.update(contract);
             model.addAttribute("features", features);
             model.addAttribute("contracts", contracts);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "userContract";
         } else {
             String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifIsAlreadyChosen);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
     }
@@ -341,7 +330,7 @@ public class ContractController {
     @RequestMapping(value = { "/delete-contract-{id}" }, method = RequestMethod.GET)
     public String deleteContract(@PathVariable Integer id, ModelMap model) {
         contractService.delete(id);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/contracts/listContracts";
     }
 
@@ -356,7 +345,7 @@ public class ContractController {
         Customer sessionUser = (Customer) session.getAttribute("user");
         if(user.isBlockedByUser() || user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is already blocked");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
@@ -365,13 +354,13 @@ public class ContractController {
             user.setBlockedByAdmin(true);
             userService.updateUser(user);
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
         }
         else{
             user.setBlockedByUser(true);
             userService.updateUser(user);
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
         }
         return "registrationsuccess";
     }
@@ -386,12 +375,12 @@ public class ContractController {
 
         if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is not blocked");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         if(user.isBlockedByAdmin() && user.equals(sessionUser)){
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked by ADMIN. You can't unblock it");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
@@ -413,7 +402,7 @@ public class ContractController {
 
 
         model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "registrationsuccess";
     }
 
@@ -430,24 +419,8 @@ public class ContractController {
         }
         contract.settNumber(number);
         contractService.update(contract);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         model.addAttribute("message", "number " + number + " was generated and set to contract");
         return "registrationsuccess";
-    }
-
-
-    /**
-     * This method returns the principal[user-name] of logged-in user.
-     */
-    private String getPrincipal(){
-        String userName = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
     }
 }

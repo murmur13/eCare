@@ -26,43 +26,23 @@ import java.util.*;
 public class FeatureController {
 
     @Autowired
-    FeatureService featureService;
+    FeatureServiceImpl featureService;
+
+    @Autowired
+    CustomerServiceImpl userService;
 
     @Autowired
     MessageSource messageSource;
 
     @Autowired
-    ContractService contractService;
-
-    @Autowired
-    TarifService tarifService;
-
-    @Autowired
-    UserProfileService userProfileService;
-
+    ContractServiceImpl contractService;
 
     /**
      * This method will list all existing users.
      */
     @RequestMapping(value = {"/listFeatures" }, method = RequestMethod.GET)
     public String listFeatures(@RequestParam(required = false) Integer page, ModelMap model, HttpSession session) {
-        Customer user = (Customer) session.getAttribute("user");
-        UserProfile userRole = userProfileService.findByType("USER");
-        UserProfile adminRole = userProfileService.findByType("ADMIN");
-
-        List<Feature> features = new ArrayList<Feature>();
-//        if(user.getUserProfiles().contains(userRole)){
-//            Contract contract = user.getContracts().get(0);
-//            Tarif tarif = contract.getTarif();
-//            features = featureService.findFeatureByTarif(tarif.getTarifId());
-////            model.addAttribute("features", features);
-//
-//        }
-//        if(user.getContracts() == null || user.getUserProfiles().contains(adminRole)){
-           features = featureService.findAll();
-//            model.addAttribute("features", features);
-//        }
-
+        List<Feature> features = featureService.findAll();
         PagedListHolder<Feature> pagedListHolder = new PagedListHolder<Feature>(features);
         pagedListHolder.setPageSize(15);
         model.addAttribute("maxPages", pagedListHolder.getPageCount());
@@ -75,7 +55,7 @@ public class FeatureController {
             pagedListHolder.setPage(page-1);
             model.addAttribute("features", pagedListHolder.getPageList());
         }
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "featuresList";
     }
 
@@ -84,7 +64,7 @@ public class FeatureController {
             Feature feature = new Feature();
             model.addAttribute("feature", feature);
             model.addAttribute("edit", false);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "featureRegistration";
         }
 
@@ -109,25 +89,21 @@ public class FeatureController {
 
             featureService.persist(feature);
             model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " added successfully");
-            model.addAttribute("loggedinuser", getPrincipal());
-            //return "success";
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "registrationsuccess";
         }
 
     @RequestMapping(value = {"/chooseFeature-{id}"}, method = RequestMethod.GET)
     public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session) {
         Customer user = (Customer) session.getAttribute("user");
-        List<Contract> contracts = contractService.findByCustomerId(user);
-        Contract contract = contracts.get(0);
-        Tarif tarif = contract.getTarif();
-        List<Feature> tarifOptions = featureService.findFeatureByTarif(tarif.getTarifId());
+        Contract contract = contractService.findUserContract(user);
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         Feature chosenFeature = featureService.findById(id);
         for (Feature feature : features) {
             if (feature.getFeatureId()== chosenFeature.getFeatureId()) {
                 String featureIsAlreadyChosen = messageSource.getMessage("feature.is.already.chosen", new String[]{Integer.toString(chosenFeature.getFeatureId())}, Locale.getDefault());
                 model.addAttribute("message", featureIsAlreadyChosen);
-                model.addAttribute("loggedinuser", getPrincipal());
+                model.addAttribute("loggedinuser", userService.getPrincipal());
                 return "errorPage";
             }
         }
@@ -137,8 +113,8 @@ public class FeatureController {
         session.setAttribute("optionsInCart", features);
         session.setAttribute("cart", cart);
         model.addAttribute("userFeatures", features);
-        model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("contracts", contractService.findByCustomerId(user));
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect: /cart";
     }
 
@@ -151,7 +127,7 @@ public class FeatureController {
         Feature feature = featureService.findById(id);
         model.addAttribute("feature", feature);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "featureRegistration";
     }
 
@@ -166,10 +142,9 @@ public class FeatureController {
         if (result.hasErrors()) {
             return "featureRegistration";
         }
-//        if(featureService.isFeatureUnique())
         featureService.update(feature);
         model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " updated successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "registrationsuccess";
     }
 
@@ -182,29 +157,20 @@ public class FeatureController {
     @RequestMapping(value = { "/delete-feature-{id}/fromContract" }, method = RequestMethod.GET)
     public String deleteFeatureFromContract(@PathVariable Integer id, HttpSession session, ModelMap model) {
         Customer user = (Customer) session.getAttribute("user");
-        Contract contract = user.getContracts().get(0);
-        List<Feature> userFeatures = featureService.findFeatureByContract(contract.getContractId());
-        Feature featureToDelete = featureService.findById(id);
-        int index = userFeatures.indexOf(featureToDelete);
-        userFeatures.remove(index);
-        List<Contract> featureContracts = featureToDelete.getFeatureContracts();
-        int contractIndex = featureContracts.indexOf(contract);
-        featureContracts.remove(contractIndex);
-        contractService.update(contract);
-        featureService.update(featureToDelete);
+        Contract updatedContract = featureService.deletedFeatureFromContract(id, user);
+        List<Feature> userFeatures = featureService.findFeatureByContract(updatedContract.getContractId());
         model.addAttribute("userFeatures", userFeatures);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/contracts/getMyContract";
     }
 
     @RequestMapping(value = { "/blockingFeatures/seeAll" }, method = RequestMethod.GET)
     public String seeBlockingFeatures(ModelMap model) {
-
         List<Feature> blockingFeatures = featureService.findAllBlockingFeatures();
         List<MessagesList> messagesList = new ArrayList<MessagesList>();
         if (blockingFeatures.isEmpty()) {
             model.addAttribute("message", "There is no blocked features yet");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         Set<Feature> blockingFeaturesSet = new HashSet<Feature>(blockingFeatures);
@@ -223,7 +189,7 @@ public class FeatureController {
         }
         model.addAttribute("messages", messagesList);
         model.addAttribute("features", blockingFeaturesSet);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "blockingFeaturesList";
     }
 
@@ -235,7 +201,7 @@ public class FeatureController {
         model.addAttribute("selectedFeatures", selectedFeatures);
         model.addAttribute("features", features);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "blockingFeatures";
     }
 
@@ -245,24 +211,19 @@ public class FeatureController {
         List<Feature> blockingFeatures = selectedFeaturesIds.getSelectedFeatures();
         if (blockingFeatures.size() > 2) {
             model.addAttribute("message", "You can choose only two options");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
-        Feature fisrtFeature = blockingFeatures.get(0);
-        Feature secondFeature = blockingFeatures.get(1);
-        List<Feature> blockedFeatures = fisrtFeature.getBlockingFeatures();
-        blockedFeatures.add(secondFeature);
-        fisrtFeature.setBlockingFeatures(blockedFeatures);
-        featureService.update(fisrtFeature);
+        featureService.createBlockingFeatures(blockingFeatures);
 
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         model.addAttribute("features", blockingFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/blockingFeatures/seeAll";
 
     }
@@ -275,7 +236,7 @@ public class FeatureController {
         model.addAttribute("selectedFeatures", selectedFeatures);
         model.addAttribute("features", features);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "requiredFeatures";
     }
 
@@ -285,24 +246,19 @@ public class FeatureController {
         List<Feature> requiredFeatures = selectedFeaturesIds.getSelectedFeatures();
         if (requiredFeatures.size() > 2) {
             model.addAttribute("message", "You can choose only two options");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
-        Feature fisrtFeature = requiredFeatures.get(0);
-        Feature secondFeature = requiredFeatures.get(1);
-        List<Feature> features = fisrtFeature.getRequiredFeatures();
-        features.add(secondFeature);
-        fisrtFeature.setRequiredFeatures(features);
-        featureService.update(fisrtFeature);
+        featureService.createRequiredFeatures(requiredFeatures);
 
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         model.addAttribute("features", requiredFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/requiredFeatures/seeAll";
     }
 
@@ -313,11 +269,10 @@ public class FeatureController {
         List<MessagesList> messagesList = new ArrayList<MessagesList>();
         if (requiredFeatures.isEmpty()) {
             model.addAttribute("message", "There is no required features yet");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         Set<Feature> requiredFeaturesSet = new HashSet<Feature>(requiredFeatures);
-
         for (Feature requiredfeature: requiredFeaturesSet) {
             List<Feature> featuresToDisplay = requiredfeature.getRequiredFeatures();
             MessagesList message = new MessagesList();
@@ -332,50 +287,29 @@ public class FeatureController {
         }
         model.addAttribute("messages", messagesList);
         model.addAttribute("features", requiredFeaturesSet);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "requiredFeaturesList";
     }
 
     @RequestMapping(value = { "/unblockFeatures" }, method = RequestMethod.GET)
     public String unblockFeatures(ModelMap model) {
         List<Feature > features = featureService.findAllBlockingFeatures();
+        SelectedFeatures selectedFeatures = featureService.unblockFeatures(features);
         HashSet<Feature> set = new HashSet<Feature>(features);
-        SelectedFeatures selectedFeatures = new SelectedFeatures();
-        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
-        for (Feature blockingfeature: features) {
-            List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
-            MessagesList message = new MessagesList();
-            message.setMessageFeature(blockingfeature);
-            List<String> names = new ArrayList<String>();
-            for (Feature feature : featuresToDisplay) {
-                String name = feature.getFeatureName();
-                names.add(name);
-            }
-            message.setMessageList(names);
-        }
         model.addAttribute("selectedFeatures", selectedFeatures);
         model.addAttribute("features", set);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "unblockFeatures";
     }
 
     @RequestMapping(value = { "/unblockFeatures/{id}_{secondId}" }, method = RequestMethod.GET)
     public String unblockFeatures (@PathVariable Integer id, @PathVariable Integer secondId,
                                     ModelMap model){
-
-        List<Feature> blockingFeatures = featureService.findAllBlockingFeatures();
-        Integer index = blockingFeatures.indexOf(featureService.findById(secondId));
-        Feature featureToDelete = blockingFeatures.get(index);
-        List<Feature> features =  featureToDelete.getBlockingFeatures();
-        features.remove(featureService.findById(id));
-        featureToDelete.setBlockingFeatures(features);
-        featureService.update(featureToDelete);
-        blockingFeatures.remove(featureToDelete);
-
+        List blockingFeatures = featureService.returnUnblockedFeatures(id, secondId);
         model.addAttribute("features", blockingFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/unblockFeatures";
     }
 
@@ -399,42 +333,17 @@ public class FeatureController {
         model.addAttribute("selectedFeatures", selectedFeatures);
         model.addAttribute("features", set);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "dismissRequiredFeatures";
     }
 
     @RequestMapping(value = { "/dismissRequiredFeatures/{id}_{secondId}" }, method = RequestMethod.GET)
     public String dismissRequiredFeatures (@PathVariable Integer id, @PathVariable Integer secondId,
                                    ModelMap model){
-
-        List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
-        Integer index = requiredFeatures.indexOf(featureService.findById(secondId));
-        Feature featureToDelete = requiredFeatures.get(index);
-        List<Feature> features =  featureToDelete.getRequiredFeatures();
-        features.remove(featureService.findById(id));
-        featureToDelete.setRequiredFeatures(features);
-        featureService.update(featureToDelete);
-        requiredFeatures.remove(featureToDelete);
-
+        List<Feature> requiredFeatures = featureService.dismissRequiredFeatures(id, secondId);
         model.addAttribute("features", requiredFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/dismissRequiredFeatures";
-    }
-
-
-    /**
-     * This method returns the principal[user-name] of logged-in user.
-     */
-    private String getPrincipal(){
-        String userName = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
     }
 }

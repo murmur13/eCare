@@ -2,11 +2,17 @@ package eCare.model.services;
 
 import eCare.model.DAO.CustomerDAO;
 import eCare.model.PO.Customer;
+import eCare.model.PO.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -22,6 +28,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationTrustResolver authenticationTrustResolver;
 
     public Customer findById(Integer id) {
         return customerDAO.findById(id);
@@ -83,5 +92,34 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> findByTelNumber(String telNumber){
         List<Customer> customers = customerDAO.findByTelNumber(telNumber);
         return customers;
+    }
+
+    /**
+     * This method returns true if users is already authenticated [logged-in], else false.
+     */
+    public boolean isCurrentAuthenticationAnonymous() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authenticationTrustResolver.isAnonymous(authentication);
+    }
+
+    /**
+     * This method returns the principal[user-name] of logged-in user.
+     */
+    public String getPrincipal(){
+        String userName = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            userName = ((UserDetails)principal).getUsername();
+        } else {
+            userName = principal.toString();
+        }
+        return userName;
+    }
+
+    public HashSet<UserProfile> addUserProfile(UserProfile role){
+        HashSet <UserProfile> userProfiles = new HashSet<UserProfile>();
+        userProfiles.add(role);
+        return userProfiles;
     }
 }

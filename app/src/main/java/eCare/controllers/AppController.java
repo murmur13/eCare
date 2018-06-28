@@ -4,6 +4,7 @@ import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
 import eCare.model.PO.UserProfileType;
 import eCare.model.services.CustomerService;
+import eCare.model.services.CustomerServiceImpl;
 import eCare.model.services.UserProfileService;
 import org.hibernate.collection.internal.PersistentSet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ import java.util.*;
 public class AppController {
 
         @Autowired
-        CustomerService userService;
+        CustomerServiceImpl userService;
 
         @Autowired
         UserProfileService userProfileService;
@@ -55,21 +56,16 @@ public class AppController {
         @Autowired
         PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
 
-        @Autowired
-        AuthenticationTrustResolver authenticationTrustResolver;
-
 
     /**
      * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
-    public String mainPage(ModelMap model, HttpSession session, HttpServletRequest request){
-//    Customer sessionAttribute  = (Customer) session.getAttribute("user");
-        String name = getPrincipal();
+    public String mainPage(ModelMap model, HttpServletRequest request){
+        String name = userService.getPrincipal();
         Customer user = userService.findBySSO(name);
         request.getSession().setAttribute("user", user);
-//        session.setAttribute();
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "main";
     }
 
@@ -95,7 +91,7 @@ public class AppController {
             model.addAttribute("users", pagedListHolder.getPageList());
         }
 
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
             return "main";
         } else return "userslist";
@@ -111,7 +107,7 @@ public class AppController {
     public String search(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "search";
     }
 
@@ -132,12 +128,7 @@ public class AppController {
             model.addAttribute("name", nameOrPhone);
         }
         model.addAttribute("edit", false);
-
-//        if (result.hasErrors()) {
-//            return "error";
-//        }
-
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "userslist";
     }
 
@@ -154,9 +145,8 @@ public class AppController {
     @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
     public String registerNewUser(HttpSession session, Customer user, BindingResult result, ModelMap model) {
         UserProfile role = userProfileService.findByType("USER");
-        HashSet <UserProfile> userProfiles = new HashSet<UserProfile>();
-        userProfiles.add(role);
-        user.setUserProfiles(userProfiles);
+        HashSet<UserProfile> profiles = userService.addUserProfile(role);
+        user.setUserProfiles(profiles);
             if (result.hasErrors()) {
                 return "registration";
             }
@@ -166,7 +156,6 @@ public class AppController {
                 return "registration";
             }
         userService.saveUser(user);
-//        model.addAttribute("user", user);
         session.setAttribute("user", user);
         model.addAttribute("message", "Please, log in with your new account!");
         model.addAttribute("loggedinuser", user.getSsoId());
@@ -181,7 +170,7 @@ public class AppController {
             Customer user = new Customer();
             model.addAttribute("user", user);
             model.addAttribute("edit", false);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "registration";
         }
 
@@ -205,9 +194,8 @@ public class AppController {
 
             userService.saveUser(user);
             model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "registrationsuccess";
-//            return "redirect: /mainPage";
         }
 
 
@@ -219,7 +207,7 @@ public class AppController {
             Customer editUser = userService.findBySSO(ssoId);
             model.addAttribute("editUser", editUser);
             model.addAttribute("edit", true);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "editUser";
         }
 
@@ -242,10 +230,8 @@ public class AppController {
 			return "registration";
 		}*/
 
-
             userService.updateUser(user);
-//            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " updated successfully");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "redirect: /list";
         }
 
@@ -273,7 +259,7 @@ public class AppController {
          */
         @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
         public String accessDeniedPage(ModelMap model) {
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "accessDenied";
         }
 
@@ -283,7 +269,7 @@ public class AppController {
          */
         @RequestMapping(value = "/login", method = RequestMethod.GET)
         public String loginPage() {
-            if (isCurrentAuthenticationAnonymous()) {
+            if (userService.isCurrentAuthenticationAnonymous()) {
                 return "login";
             } else {
                 return "redirect:/mainPage";
@@ -305,29 +291,6 @@ public class AppController {
                 SecurityContextHolder.getContext().setAuthentication(null);
             }
             return "redirect:/login?logout";
-        }
-
-        /**
-         * This method returns the principal[user-name] of logged-in user.
-         */
-        private String getPrincipal(){
-            String userName = null;
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-            if (principal instanceof UserDetails) {
-                userName = ((UserDetails)principal).getUsername();
-            } else {
-                userName = principal.toString();
-            }
-            return userName;
-        }
-
-        /**
-         * This method returns true if users is already authenticated [logged-in], else false.
-         */
-        private boolean isCurrentAuthenticationAnonymous() {
-            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            return authenticationTrustResolver.isAnonymous(authentication);
         }
 
     }

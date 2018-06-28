@@ -30,6 +30,12 @@ public class ContractServiceImpl implements ContractService{
     @Autowired
     TarifDAO tarifDAO;
 
+    @Autowired
+    CustomerServiceImpl userService;
+
+    @Autowired
+    TarifServiceImpl tarifService;
+
     public Contract findById(Integer id) {
         return contractDAO.findById(id);
     }
@@ -70,6 +76,24 @@ public class ContractServiceImpl implements ContractService{
         Tarif tarif = tarifDAO.findById(tarifId.getTarifId());
         List<Contract>contracts = contractDAO.findContractByTarif(tarif);
         return contracts;
+    }
+
+    public Contract findUserContract(Customer user){
+        List<Contract> contracts = findByCustomerId(user);
+        Contract contract = contracts.get(0);
+        return contract;
+    }
+
+    public Contract createNewContract(String phone, String sso, String tarif){
+        Customer customer = userService.findBySSO(sso);
+        Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
+        Contract contract = new Contract(phone, customer, tarif1);
+        customer.setTelNumber(phone);
+        userService.updateUser(customer);
+        persist(contract);
+        List<Contract> tarifContracts = findContractByTarif(tarif1);
+        tarifContracts.add(contract);
+        return contract;
     }
 
 }
