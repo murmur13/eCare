@@ -26,16 +26,16 @@ public class ContractServiceImpl implements ContractService{
     CustomerDAO customerDAO;
 
     @Autowired
-    FeatureServiceImpl featureService;
+    FeatureService featureService;
 
     @Autowired
     TarifDAO tarifDAO;
 
     @Autowired
-    CustomerServiceImpl userService;
+    CustomerService userService;
 
     @Autowired
-    TarifServiceImpl tarifService;
+    TarifService tarifService;
 
     public Contract findById(Integer id) {
         return contractDAO.findById(id);

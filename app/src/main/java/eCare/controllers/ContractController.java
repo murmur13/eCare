@@ -2,29 +2,19 @@ package eCare.controllers;
 
 import eCare.model.PO.*;
 import eCare.model.services.*;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.HttpRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,12 +23,12 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/contracts")
-@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value = "singleton", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @SessionAttributes("contract")
 public class ContractController {
 
     @Autowired
-    CustomerServiceImpl userService;
+    CustomerService userService;
 
     @Autowired
     FeatureService featureService;
@@ -50,7 +40,7 @@ public class ContractController {
     TarifService tarifService;
 
     @Autowired
-    ContractServiceImpl contractService;
+    ContractService contractService;
 
     /**
      * This method will list all existing contracts.

@@ -35,7 +35,11 @@ public class FeatureDAO implements DAOInterface <Feature, Integer> {
     }
 
     public void update(Feature entity) {
-        getSession().update(entity);
+        Session session = getSession();
+        session.clear();
+        session.update(entity);
+        session.flush();
+//        getSession().update(entity);
     }
 
     public Feature findById(Integer id) {

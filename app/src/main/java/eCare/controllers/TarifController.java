@@ -1,20 +1,13 @@
 package eCare.controllers;
 
-import eCare.configuration.MessageSender;
-import eCare.model.PO.Customer;
 import eCare.model.PO.Tarif;
-import eCare.model.services.ContractService;
-import eCare.model.services.CustomerServiceImpl;
-import eCare.model.services.TarifService;
-import eCare.model.services.TarifServiceImpl;
+import eCare.model.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -32,13 +25,14 @@ import java.util.Locale;
  * Created by echerkas on 06.12.2017.
  */
 @Controller
+@Scope("singleton")
 @RequestMapping("/tarifs")
 public class TarifController {
 
     Logger logger = LoggerFactory.getLogger(TarifController.class);
 
     @Autowired
-    TarifServiceImpl tarifService;
+    TarifService tarifService;
 
     @Autowired
     MessageSource messageSource;
@@ -47,7 +41,7 @@ public class TarifController {
     ContractService contractService;
 
     @Autowired
-    CustomerServiceImpl userService;
+    CustomerService userService;
 
     /**
      * This method will list all existing tarifs.

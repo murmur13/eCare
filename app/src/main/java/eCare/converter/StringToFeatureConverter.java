@@ -2,6 +2,7 @@ package eCare.converter;
 
 import eCare.model.PO.Feature;
 import eCare.model.services.FeatureService;
+import eCare.model.services.FeatureServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

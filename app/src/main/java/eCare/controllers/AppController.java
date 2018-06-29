@@ -2,22 +2,15 @@ package eCare.controllers;
 
 import eCare.model.PO.Customer;
 import eCare.model.PO.UserProfile;
-import eCare.model.PO.UserProfileType;
 import eCare.model.services.CustomerService;
-import eCare.model.services.CustomerServiceImpl;
 import eCare.model.services.UserProfileService;
-import org.hibernate.collection.internal.PersistentSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.HttpRequest;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,7 +19,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,12 +32,12 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/")
-@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @SessionAttributes(value = {"roles", "user"})
 public class AppController {
 
         @Autowired
-        CustomerServiceImpl userService;
+        CustomerService userService;
 
         @Autowired
         UserProfileService userProfileService;

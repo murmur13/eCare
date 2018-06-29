@@ -25,9 +25,6 @@ public class MessagingConfiguration {
 
     private static final String TEST_QUEUE = "TestQueue";
 
-//    @Autowired
-//    MessageReceiver messageReceiver;
-
     @Bean
     public ConnectionFactory connectionFactory(){
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
@@ -46,18 +43,6 @@ public class MessagingConfiguration {
         connectionFactory.setSessionCacheSize(10);
         return connectionFactory;
     }
-
-    /*
-     * Message listener container, used for invoking messageReceiver.onMessage on message reception.
-//     */
-//    @Bean
-//    public MessageListenerContainer getContainer(){
-//        DefaultMessageListenerContainer container = new DefaultMessageListenerContainer();
-//        container.setConnectionFactory(connectionFactory());
-//        container.setDestinationName(TEST_QUEUE);
-//        container.setMessageListener(messageReceiver);
-//        return container;
-//    }
 
     /*
      * Used for Sending Messages.

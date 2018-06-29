@@ -28,7 +28,7 @@ public class FeatureServiceImpl implements FeatureService {
     private ContractDAO contractDAO;
 
     @Autowired
-    ContractServiceImpl contractService;
+    ContractService contractService;
 
     public Feature findById(Integer id) {
         return featureDAO.findById(id);

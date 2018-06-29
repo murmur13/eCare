@@ -39,7 +39,12 @@ public class ContractDAO implements DAOInterface <Contract, Integer> {
     }
 
     public void update(Contract entity) {
-        getSession().update(entity);
+        Session session = getSession();
+        session.clear();
+        session.update(entity);
+        session.flush();
+//        return type;
+//        getSession().update(entity);
     }
 
     public Contract findById(Integer id) {

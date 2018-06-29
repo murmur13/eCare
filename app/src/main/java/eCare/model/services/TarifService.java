@@ -28,4 +28,6 @@ public interface TarifService {
 
     boolean isTarifUnique(String name);
 
+    Tarif editTarifAndSendToQueue(Tarif tarif);
+
 }

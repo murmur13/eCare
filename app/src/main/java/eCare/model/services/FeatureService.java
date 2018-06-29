@@ -4,6 +4,7 @@ import eCare.model.DAO.FeatureDAO;
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Feature;
+import eCare.model.PO.SelectedFeatures;
 
 import java.util.List;
 
@@ -40,5 +41,17 @@ public interface FeatureService {
     List<Feature> findAllBlockingFeatures();
 
     List <Feature> findAllRequiredFeatures();
+
+    Contract deletedFeatureFromContract(Integer id, Customer user);
+
+    void createBlockingFeatures(List<Feature> blockingFeatures);
+
+    void createRequiredFeatures(List<Feature> requiredFeatures);
+
+    SelectedFeatures unblockFeatures(List<Feature> features);
+
+    List<Feature> returnUnblockedFeatures(Integer id, Integer secondId);
+
+    List<Feature> dismissRequiredFeatures(Integer id, Integer secondId);
 
 }

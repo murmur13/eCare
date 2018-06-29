@@ -1,12 +1,10 @@
 package eCare.model.services;
 
-import eCare.model.PO.Contract;
+import eCare.model.PO.*;
 import eCare.model.DAO.ContractDAO;
-import eCare.model.PO.Customer;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -33,5 +31,17 @@ public interface ContractService {
     List<Contract> findAll();
 
     void deleteAll();
+
+    Contract findUserContract(Customer user);
+
+    Contract createNewContract(String phone, String sso, String tarif);
+
+    List<Feature> deleteFeatureFromContract(Feature featureToDelete, Contract contract);
+
+    void editContractTarif(Integer contractId, Integer tarifId);
+
+    List<Feature> updateContractOptions(Integer contractId, SelectedFeatures selectedFeaturesIds, Cart cart, HttpSession session);
+
+    String generateNumber(Integer contractId);
 
 }

@@ -1,8 +1,10 @@
 package eCare.model.services;
 
 import eCare.model.PO.Customer;
+import eCare.model.PO.UserProfile;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -28,5 +30,11 @@ public interface CustomerService {
     List<Customer> findByName(String name);
 
     List<Customer> findByTelNumber(String telNumber);
+
+    boolean isCurrentAuthenticationAnonymous();
+
+    String getPrincipal();
+
+    HashSet<UserProfile> addUserProfile(UserProfile role);
 
 }

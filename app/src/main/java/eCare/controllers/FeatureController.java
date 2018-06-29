@@ -4,10 +4,8 @@ import eCare.model.PO.*;
 import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.cglib.core.Block;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -22,20 +20,21 @@ import java.util.*;
  * Created by echerkas on 13.01.2018.
  */
 @Controller
+@Scope("singleton")
 @RequestMapping("/features")
 public class FeatureController {
 
     @Autowired
-    FeatureServiceImpl featureService;
+    FeatureService featureService;
 
     @Autowired
-    CustomerServiceImpl userService;
+    CustomerService userService;
 
     @Autowired
     MessageSource messageSource;
 
     @Autowired
-    ContractServiceImpl contractService;
+    ContractService contractService;
 
     /**
      * This method will list all existing users.
