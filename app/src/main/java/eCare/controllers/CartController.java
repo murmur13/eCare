@@ -1,10 +1,7 @@
 package eCare.controllers;
 
 import eCare.model.PO.*;
-import eCare.model.services.ContractService;
-import eCare.model.services.FeatureService;
-import eCare.model.services.TarifService;
-import eCare.model.services.UserProfileService;
+import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,31 +32,33 @@ public class CartController {
     private Cart cart;
 
     @Autowired
-    FeatureService featureService;
+    FeatureServiceImpl featureService;
 
     @Autowired
-    TarifService tarifService;
+    ContractServiceImpl contractService;
 
     @Autowired
-    ContractService contractService;
+    CustomerServiceImpl userService;
 
     @Autowired
     UserProfileService userProfileService;
+
+    @Autowired
+    CartService cartService;
 
     @RequestMapping(value="/cart", method= RequestMethod.GET)
     public String searchResults(Model model, HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
         if(cart.getTarifInCart()==null && cart.getOptionsInCart().isEmpty()){
-//            model.addAttribute("cart", cart);
             model.addAttribute("message", "Your cart is empty");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         else{
             model.addAttribute("featuresInCart",cart.getOptionsInCart());
             model.addAttribute("tarifInCart",cart.getTarifInCart());
         }
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
     }
 
@@ -91,13 +90,9 @@ public class CartController {
             }
 
         }
-        List<Feature> cartOptions = cart.getOptionsInCart();
-            if (!cartOptions.contains(featureToAdd)){
-                cartOptions.add(featureToAdd);
-                cart.setOptionsInCart(cartOptions);
-            }
+        cartService.setOptionsInCart(cart, featureToAdd);
         session.setAttribute("cart", cart);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
     }
 
@@ -110,7 +105,7 @@ public class CartController {
         else{
             cart = (Cart) session.getAttribute("cart");
             session.setAttribute("cart", cart);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             }
 
         Customer user = (Customer) session.getAttribute("user");
@@ -118,11 +113,10 @@ public class CartController {
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Tarif cannot be chosen :(");
             return "errorPage";
         }
-        Tarif tarifToAdd = tarifService.findById(tarifId);
-        cart.setTarifInCart(tarifToAdd);
+        Tarif tarifToAdd = cartService.addTarifToCart(tarifId, cart);
         model.addAttribute("tarifInCart", tarifToAdd);
         model.addAttribute("tarifInCart", tarifToAdd);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
         }
 
@@ -131,24 +125,20 @@ public class CartController {
         Cart cart = (Cart) session.getAttribute("cart");
         cart.setTarifInCart(null);
         session.setAttribute("cart", cart);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
     }
 
     @RequestMapping(value = "/cart/deleteOption-{featureId}", method = RequestMethod.GET)
     public String deleteOptionFromCart(@PathVariable Integer featureId, Model model, HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
-        Feature cartFeature = featureService.findById(featureId);
-        List<Feature> cartFeatures = cart.getOptionsInCart();
-        int index = cartFeatures.indexOf(cartFeature);
-        cartFeatures.remove(index);
-        cart.setOptionsInCart(cartFeatures);
+        cart = cartService.deleteOptionFromCart(cart, featureId);
         if(cart.getOptionsInCart() == null){
             cart.setOptionsInCart(null);
             session.setAttribute("cart", cart);
         }
         session.setAttribute("cart", cart);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
     }
 
@@ -159,7 +149,7 @@ public class CartController {
         Tarif tarif = cart.getTarifInCart();
         model.addAttribute("tarifInCart", tarif);
         model.addAttribute("optionsInCart", cartFeatures);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
     }
 
@@ -169,67 +159,28 @@ public class CartController {
         List<Contract> contracts = contractService.findByCustomerId(user);
         Contract contract = contracts.get(0);
         cart = (Cart) session.getAttribute("cart");
-        List<Tarif> tarifs = new ArrayList<Tarif>();
         List<Feature> submitOptions = cart.getOptionsInCart();
         if(cart.getTarifInCart()!=null) {
-            List<Feature> contractOptions = featureService.findFeatureByContract(contract.getContractId());
-            if(!contractOptions.isEmpty()){
-                for (Feature feature:contractOptions) {
-                    List <Contract> featureContracts = feature.getFeatureContracts();
-                    int index = featureContracts.indexOf(contract);
-                    Contract featureContract = featureContracts.get(index);
-                    featureContracts.remove(index);
-                    featureService.update(feature);
-                    contractService.update(featureContract);
-                }
-            }
-            Tarif submitTarif = cart.getTarifInCart();
-            contract.setTarif(submitTarif);
-            contractOptions.clear();
-            contractService.update(contract);
-            tarifService.update(submitTarif);
-            cart.setTarifInCart(null);
+            cartService.submitTarif(cart, contract);
             model.addAttribute("features", null);
             model.addAttribute("contracts", contracts);
             model.addAttribute("optionsInCart", null);
         }
         if(cart.getOptionsInCart() !=null && !cart.getOptionsInCart().isEmpty()) {
-            for (Feature feature : submitOptions) {
-                List<Feature> contractOptions = featureService.findFeatureByContract(contract.getContractId());
-                contractOptions.add(feature);
-                feature.setFeatureContracts(contracts);
-                feature.setFeatureTarifs(tarifs);
-                featureService.update(feature);
+            List<Feature> contractOptions = cartService.submitOptions(submitOptions, contract, contracts);
                 model.addAttribute("features", null);
                 model.addAttribute("contracts", contracts);
                 model.addAttribute("optionsInCart", null);
                 model.addAttribute("userFeatures", contractOptions);
-                contractService.update(contract);
             }
-        }
         status.setComplete();
         if(submitOptions != null) {
             submitOptions.clear();
         }
         model.addAttribute("contracts", contracts);
-//        model.addAttribute("tarif",submitTarif );
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
             return "userContract";
         } else return "userslist";
     }
-
-    private String getPrincipal(){
-        String userName = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
-    }
-
-
 }

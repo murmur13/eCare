@@ -222,14 +222,6 @@ public class AppController {
             if (result.hasErrors()) {
                 return "editUser";
             }
-
-		/*//Uncomment below 'if block' if you WANT TO ALLOW UPDATING SSO_ID in UI which is a unique key to a User.
-		if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
-			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
-		    result.addError(ssoError);
-			return "registration";
-		}*/
-
             userService.updateUser(user);
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "redirect: /list";

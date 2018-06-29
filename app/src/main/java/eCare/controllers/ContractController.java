@@ -52,15 +52,6 @@ public class ContractController {
     @Autowired
     ContractServiceImpl contractService;
 
-    @Autowired
-    AppController appController;
-
-    @Autowired
-    UserProfileService userProfileService;
-
-    @Autowired
-    RandomPhoneNumber randomPhoneNumber;
-
     /**
      * This method will list all existing contracts.
      */
@@ -159,7 +150,7 @@ public class ContractController {
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
         model.addAttribute("tarif", tarif);
-        Contract contract = contracts.get(0);
+        Contract contract = contractService.findUserContract(user);
         if (!contract.getTarif().equals(tarif)) {
             contract.setTarif(tarif);
             List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
@@ -181,16 +172,9 @@ public class ContractController {
     @RequestMapping(value = {"/deleteFeature/fromContract-{featureId}"}, method = RequestMethod.GET)
     public String deleteFeatureFromContract(@PathVariable Integer featureId,
                                             ModelMap model, HttpSession session) {
-//        Contract contract = contractService.findById(contractId);
         Contract contract = (Contract) session.getAttribute("contract");
         Feature featureToDelete = featureService.findById(featureId);
-        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
-        List<Contract> featureContracts = featureToDelete.getFeatureContracts();
-        int index = features.indexOf(featureToDelete);
-        features.remove(index);
-        featureContracts.remove(contract);
-        featureService.update(featureToDelete);
-        contractService.update(contract);
+        List<Feature> features = contractService.deleteFeatureFromContract(featureToDelete, contract);
         model.addAttribute("features", features);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractFeatures";
@@ -214,15 +198,10 @@ public class ContractController {
     }
 
     @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.POST)
-    public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model, HttpSession session){
-        Contract contract = contractService.findById(contractId);
-        Tarif newTarif = tarifService.findById(tarifId);
-        contract.setTarif(newTarif);
-//        session.setAttribute("tarifInCart", newTarif);
-        contractService.update(contract);
+    public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model){
+        contractService.editContractTarif(contractId, tarifId);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", userService.getPrincipal());
-//        return "redirect: /cart";
         return "redirect:/contracts/listContracts";
     }
 
@@ -247,48 +226,7 @@ public class ContractController {
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.POST)
     public String updateContractOptions(@PathVariable Integer contractId, @ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
                                         ModelMap model, Cart cart, HttpSession session){
-        Contract contract = contractService.findById(contractId);
-        Tarif tarif = contract.getTarif();
-        List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
-        List<Feature> finalFeatures = selectedFeaturesIds.getSelectedFeatures();
-        if(finalFeatures.isEmpty()) {
-            for (Feature feature : userFeatures) {
-                List<Tarif> featureTarifs = feature.getFeatureTarifs();
-                List<Contract> featureContracts = feature.getFeatureContracts();
-                featureContracts.remove(contract);
-                feature.setFeatureContracts(featureContracts);
-                featureTarifs.remove(feature);
-                feature.setFeatureTarifs(featureTarifs);
-                featureService.update(feature);
-                contractService.update(contract);
-                tarifService.update(tarif);
-            }
-            userFeatures.clear();
-        }
-        else {
-            for (Feature feature : finalFeatures) {
-                if (!userFeatures.contains(feature)) {
-                    userFeatures.add(feature);
-                    List<Tarif> featureTarifs = feature.getFeatureTarifs();
-                    List<Contract> featureContracts = feature.getFeatureContracts();
-                    if (!featureContracts.contains(contract)) {
-                        featureContracts.add(contract);
-                        feature.setFeatureContracts(featureContracts);
-                    }
-
-                    if (!featureTarifs.contains(tarif)) {
-                        featureTarifs.add(tarif);
-                        feature.setFeatureTarifs(featureTarifs);
-                    }
-                    cart.setOptionsInCart(finalFeatures);
-                    session.setAttribute("optionsInCart", finalFeatures);
-                    featureService.update(feature);
-                    contractService.update(contract);
-                    tarifService.update(tarif);
-                }
-            }
-        }
-
+        List<Feature> userFeatures = contractService.updateContractOptions(contractId, selectedFeaturesIds, cart, session);
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
             model.addAttribute("loggedinuser", userService.getPrincipal());
@@ -336,10 +274,6 @@ public class ContractController {
 
     @RequestMapping(value = { "/block-contract-{id}" }, method = RequestMethod.GET)
     public String blockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
-
-        UserProfile roleUser = userProfileService.findByType("USER");
-        UserProfile roleAdmin = userProfileService.findByType("ADMIN");
-
         Contract contract = contractService.findById(id);
         Customer user = contract.getCustomer();
         Customer sessionUser = (Customer) session.getAttribute("user");
@@ -349,7 +283,6 @@ public class ContractController {
             return "errorPage";
         }
 
-//        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
         if (!user.equals(sessionUser)){
             user.setBlockedByAdmin(true);
             userService.updateUser(user);
@@ -369,8 +302,6 @@ public class ContractController {
     public String unblockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
         Contract contract = contractService.findById(id);
         Customer user = contract.getCustomer();
-        UserProfile roleUser = userProfileService.findByType("USER");
-        UserProfile roleAdmin = userProfileService.findByType("ADMIN");
         Customer sessionUser = (Customer) session.getAttribute("user");
 
         if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
@@ -388,18 +319,13 @@ public class ContractController {
             user.setBlockedByUser(false);
             userService.updateUser(user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-//            model.addAttribute("loggedinuser", getPrincipal());
-//            return "registrationsuccess";
         }
 
         if(!user.equals(sessionUser)){
             user.setBlockedByAdmin(false);
             userService.updateUser(user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-//            model.addAttribute("loggedinuser", getPrincipal());
-//            return "registrationsuccess";
         }
-
 
         model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         model.addAttribute("loggedinuser", userService.getPrincipal());
@@ -407,18 +333,8 @@ public class ContractController {
     }
 
     @RequestMapping(value = { "/generatePhoneNumber-contract-{id}" }, method = RequestMethod.GET)
-    public String generateNumber(@PathVariable Integer id, ModelMap model, HttpSession session) {
-        RandomPhoneNumber numberGenerator = new RandomPhoneNumber();
-        Contract contract = contractService.findById(id);
-        String number = numberGenerator.generateNumber();
-        List<Contract> allContracts = contractService.findAll();
-        for (Contract someContract :allContracts) {
-            String someNumber = contract.gettNumber();
-            if(someNumber.equals(number))
-                number = numberGenerator.generateNumber();
-        }
-        contract.settNumber(number);
-        contractService.update(contract);
+    public String generateNumber(@PathVariable Integer id, ModelMap model) {
+        String number = contractService.generateNumber(id);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         model.addAttribute("message", "number " + number + " was generated and set to contract");
         return "registrationsuccess";

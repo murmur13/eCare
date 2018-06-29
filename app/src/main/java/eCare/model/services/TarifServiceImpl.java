@@ -1,5 +1,6 @@
 package eCare.model.services;
 
+import eCare.configuration.MessageSender;
 import eCare.model.DAO.TarifDAO;
 import eCare.model.PO.Contract;
 import eCare.model.PO.Customer;
@@ -20,6 +21,9 @@ public class TarifServiceImpl implements TarifService {
 
     @Autowired
     private TarifDAO tarifDAO;
+
+    @Autowired
+    MessageSender messageSender;
 
     public Tarif findById(Integer id) {
         return tarifDAO.findById(id);
@@ -62,5 +66,11 @@ public class TarifServiceImpl implements TarifService {
 
     public void setTarifDAO(TarifDAO tarifDAO) {
         this.tarifDAO = tarifDAO;
+    }
+
+    public Tarif editTarifAndSendToQueue(Tarif tarif){
+        update(tarif);
+        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
+        return tarif;
     }
 }

@@ -4,7 +4,9 @@ import eCare.configuration.MessageSender;
 import eCare.model.PO.Customer;
 import eCare.model.PO.Tarif;
 import eCare.model.services.ContractService;
+import eCare.model.services.CustomerServiceImpl;
 import eCare.model.services.TarifService;
+import eCare.model.services.TarifServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class TarifController {
     Logger logger = LoggerFactory.getLogger(TarifController.class);
 
     @Autowired
-    TarifService tarifService;
+    TarifServiceImpl tarifService;
 
     @Autowired
     MessageSource messageSource;
@@ -45,7 +47,7 @@ public class TarifController {
     ContractService contractService;
 
     @Autowired
-    MessageSender messageSender;
+    CustomerServiceImpl userService;
 
     /**
      * This method will list all existing tarifs.
@@ -66,8 +68,7 @@ public class TarifController {
             pagedListHolder.setPage(page-1);
             model.addAttribute("tarifs", pagedListHolder.getPageList());
         }
-//        model.addAttribute("tarifs", tarifs);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "tarifslist";
     }
 
@@ -76,7 +77,7 @@ public class TarifController {
         Tarif tarif = new Tarif();
         model.addAttribute("tarif", tarif);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "tarifRegistration";
     }
 
@@ -100,7 +101,7 @@ public class TarifController {
 
             tarifService.persist(tarif);
             model.addAttribute("success", "Tarif " + tarif.getName() + " " + " added successfully");
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             //return "success";
             return "registrationsuccess";
         }
@@ -114,7 +115,7 @@ public class TarifController {
         Tarif tarif = tarifService.findById(id);
         model.addAttribute("tarif", tarif);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "tarifRegistration";
     }
 
@@ -129,10 +130,9 @@ public class TarifController {
         if (result.hasErrors()) {
             return "tarifRegistration";
         }
-        tarifService.update(tarif);
-        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
+        tarifService.editTarifAndSendToQueue(tarif);
         model.addAttribute("message", "Tarif " + tarif.getName() + " " + " updated successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", userService.getPrincipal());
         return "registrationsuccess";
     }
 
@@ -142,27 +142,11 @@ public class TarifController {
         if(!contractService.findContractByTarif(tarif).isEmpty()){
             String tarifNotDeleted = messageSource.getMessage("tarif.not.deletable", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifNotDeleted);
-            model.addAttribute("loggedinuser", getPrincipal());
+            model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
         tarifService.delete(id);
         return "redirect:/tarifs/listTarifs";
-    }
-
-
-    /**
-     * This method returns the principal[user-name] of logged-in user.
-     */
-    private String getPrincipal(){
-        String userName = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
     }
 
 }
