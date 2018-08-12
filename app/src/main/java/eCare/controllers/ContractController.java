@@ -1,6 +1,6 @@
 package eCare.controllers;
 
-import eCare.model.PO.*;
+import eCare.model.po.*;
 import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -28,19 +28,19 @@ import java.util.Locale;
 public class ContractController {
 
     @Autowired
-    CustomerService userService;
+    private CustomerService userService;
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
-    TarifService tarifService;
+    private TarifService tarifService;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     /**
      * This method will list all existing contracts.
@@ -95,12 +95,21 @@ public class ContractController {
                                ModelMap model) {
 
         Customer customer = userService.findBySSO(sso);
+        List<Contract> allContracts = contractService.findAll();
+        for (Contract someContract :allContracts) {
+            String someNumber = someContract.gettNumber();
+            if(someNumber.equals(phone)) {
+                model.addAttribute("loggedinuser", userService.getPrincipal());
+                model.addAttribute("message", "This phone number is already taken");
+                return "errorPage";
+            }
+        }
         Contract newContract = contractService.createNewContract(phone, sso, tarif);
         model.addAttribute("tarif", newContract.getTarif());
         model.addAttribute("customer", customer);
         model.addAttribute("phone", customer.getTelNumber());
         model.addAttribute("contract", newContract);
-        model.addAttribute("success", "Contract " + newContract.getContractId() + " " + " added successfully");
+        model.addAttribute("message", "Contract " + newContract.getContractId() + " " + " added successfully");
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "registrationsuccess";
     }
@@ -145,7 +154,6 @@ public class ContractController {
             contract.setTarif(tarif);
             List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
             features.clear();
-//            contractService.update(contract);
             model.addAttribute("features", null);
             model.addAttribute("contracts", contracts);
             model.addAttribute("edit", true);
@@ -276,12 +284,14 @@ public class ContractController {
         if (!user.equals(sessionUser)){
             user.setBlockedByAdmin(true);
             userService.updateUser(user);
+            session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
         }
         else{
             user.setBlockedByUser(true);
             userService.updateUser(user);
+            session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
         }
@@ -308,12 +318,14 @@ public class ContractController {
         if(user.equals(sessionUser)){
             user.setBlockedByUser(false);
             userService.updateUser(user);
+            session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         }
 
         if(!user.equals(sessionUser)){
             user.setBlockedByAdmin(false);
             userService.updateUser(user);
+            session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         }
 

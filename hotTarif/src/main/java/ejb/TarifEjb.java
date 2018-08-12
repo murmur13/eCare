@@ -1,23 +1,16 @@
 package ejb;
 
-import eCare.model.DAO.AbstractDao;
-import eCare.model.DAO.TarifDAO;
-import eCare.model.PO.Tarif;
+import eCare.configuration.MessageSender;
+import eCare.model.dao.TarifDao;
+import eCare.model.po.Tarif;
 import eCare.model.services.TarifServiceImpl;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,13 +31,13 @@ public class TarifEjb {
     }
 
     @Autowired
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Autowired
-    TarifServiceImpl tarifService;
+    private TarifServiceImpl tarifService;
 
     @Autowired
-    TarifDAO tarifDAO;
+    private TarifDao TarifDao;
 
     public List<Tarif> getCheapTarifs(){
         List<Tarif> allTarifs = tarifService.findAll();
@@ -64,8 +57,8 @@ public class TarifEjb {
         return tarifService;
     }
 
-    public TarifDAO getTarifDAO() {
-        return tarifDAO;
+    public TarifDao getTarifDao() {
+        return TarifDao;
     }
 
 }

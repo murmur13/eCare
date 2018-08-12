@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
     <enterprise-beans>
         <message-driven>
-            <ejb-name>MDB</ejb-name>
-            <ejb-class>ejb.MDB</ejb-class>
+            <ejb-name>Mdb</ejb-name>
+            <ejb-class>ejb.Mdb</ejb-class>
 
             <activation-config>
                 <activation-config-property>

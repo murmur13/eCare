@@ -1,9 +1,9 @@
 package eCare.model.services;
 
-import eCare.model.PO.Cart;
-import eCare.model.PO.Contract;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
+import eCare.model.po.Cart;
+import eCare.model.po.Contract;
+import eCare.model.po.Feature;
+import eCare.model.po.Tarif;
 
 import java.util.List;
 

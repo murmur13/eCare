@@ -1,8 +1,8 @@
 package eCare.model.services;
 
-import eCare.model.DAO.CustomerDAO;
-import eCare.model.PO.Customer;
-import eCare.model.PO.UserProfile;
+import eCare.model.dao.CustomerDao;
+import eCare.model.po.Customer;
+import eCare.model.po.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
@@ -24,34 +24,29 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
-    private CustomerDAO customerDAO;
+    private CustomerDao customerDao;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    AuthenticationTrustResolver authenticationTrustResolver;
+    private AuthenticationTrustResolver authenticationTrustResolver;
 
     public Customer findById(Integer id) {
-        return customerDAO.findById(id);
+        return customerDao.findById(id);
     }
 
     public Customer findBySSO(String sso) {
-        return customerDAO.findBySSO(sso);
+        return customerDao.findBySSO(sso);
     }
 
     public void saveUser(Customer user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        customerDAO.save(user);
+        customerDao.save(user);
     }
 
-    /*
-     * Since the method is running with Transaction, No need to call hibernate update explicitly.
-     * Just fetch the entity from db and update it with proper values within transaction.
-     * It will be updated in db once transaction ends.
-     */
     public void updateUser(Customer user) {
-        Customer entity = customerDAO.findById(user.getId());
+        Customer entity = customerDao.findById(user.getId());
         if(entity!=null){
             entity.setSsoId(user.getSsoId());
             if(!user.getPassword().equals(entity.getPassword())){
@@ -72,11 +67,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     public void deleteUserBySSO(String sso) {
-        customerDAO.deleteBySSO(sso);
+        customerDao.deleteBySSO(sso);
     }
 
     public List<Customer> findAllUsers() {
-        return customerDAO.findAllUsers();
+        return customerDao.findAllUsers();
     }
 
     public boolean isUserSSOUnique(Integer id, String sso) {
@@ -85,12 +80,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public List<Customer> findByName(String name) {
-        List<Customer> customers = customerDAO.findByName(name);
+        List<Customer> customers = customerDao.findByName(name);
         return customers;
     }
 
     public List<Customer> findByTelNumber(String telNumber){
-        List<Customer> customers = customerDAO.findByTelNumber(telNumber);
+        List<Customer> customers = customerDao.findByTelNumber(telNumber);
         return customers;
     }
 

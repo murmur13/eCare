@@ -1,6 +1,6 @@
 package ejb;
 
-import eCare.model.PO.Tarif;
+import eCare.model.po.Tarif;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;

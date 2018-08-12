@@ -1,4 +1,4 @@
-<%--<%@ page import="eCare.model.PO.Customer" %>--%>
+<%--<%@ page import="eCare.model.po.Customer" %>--%>
 <%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>--%>
 
 <%--&lt;%&ndash;<div class="container pull-right">&ndash;%&gt;--%>

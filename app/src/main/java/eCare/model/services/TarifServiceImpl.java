@@ -1,13 +1,10 @@
 package eCare.model.services;
 
 import eCare.configuration.MessageSender;
-import eCare.model.DAO.TarifDAO;
-import eCare.model.PO.Contract;
-import eCare.model.PO.Customer;
-import eCare.model.PO.Tarif;
+import eCare.model.dao.TarifDao;
+import eCare.model.po.Tarif;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -20,34 +17,34 @@ import java.util.List;
 public class TarifServiceImpl implements TarifService {
 
     @Autowired
-    private TarifDAO tarifDAO;
+    private TarifDao tarifDao;
 
     @Autowired
-    MessageSender messageSender;
+    private MessageSender messageSender;
 
     public Tarif findById(Integer id) {
-        return tarifDAO.findById(id);
+        return tarifDao.findById(id);
     }
 
     public void persist(Tarif tarif) {
-        tarifDAO.persist(tarif);
+        tarifDao.persist(tarif);
     }
 
     public void delete(Integer id) {
-        Tarif tarif = tarifDAO.findById(id);
-        tarifDAO.delete(tarif);
+        Tarif tarif = tarifDao.findById(id);
+        tarifDao.delete(tarif);
     }
 
     public void update(Tarif tarif) {
-        tarifDAO.update(tarif);
+        tarifDao.update(tarif);
     }
 
     public List<Tarif> findAll() {
-        return tarifDAO.findAll();
+        return tarifDao.findAll();
     }
 
     public void deleteAll() {
-        tarifDAO.deleteAll();
+        tarifDao.deleteAll();
     }
 
     public boolean isTarifUnique(String name) {
@@ -60,12 +57,12 @@ public class TarifServiceImpl implements TarifService {
     }
 
     public List<Tarif> findByName(String name) {
-        List<Tarif> tarif = tarifDAO.findByName(name);
+        List<Tarif> tarif = tarifDao.findByName(name);
         return tarif;
     }
 
-    public void setTarifDAO(TarifDAO tarifDAO) {
-        this.tarifDAO = tarifDAO;
+    public void setTarifDAO(TarifDao tarifDAO) {
+        this.tarifDao = tarifDAO;
     }
 
     public Tarif editTarifAndSendToQueue(Tarif tarif){

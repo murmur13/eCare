@@ -1,9 +1,9 @@
 package eCare.model.services;
 
-import eCare.model.DAO.ContractDAO;
-import eCare.model.DAO.CustomerDAO;
-import eCare.model.DAO.TarifDAO;
-import eCare.model.PO.*;
+import eCare.model.dao.ContractDao;
+import eCare.model.dao.CustomerDao;
+import eCare.model.dao.TarifDao;
+import eCare.model.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,62 +20,62 @@ import java.util.List;
 public class ContractServiceImpl implements ContractService{
 
     @Autowired
-    ContractDAO contractDAO;
+    private ContractDao contractDao;
 
     @Autowired
-    CustomerDAO customerDAO;
+    private CustomerDao customerDao;
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     @Autowired
-    TarifDAO tarifDAO;
+    private TarifDao tarifDao;
 
     @Autowired
-    CustomerService userService;
+    private CustomerService userService;
 
     @Autowired
-    TarifService tarifService;
+    private TarifService tarifService;
 
     public Contract findById(Integer id) {
-        return contractDAO.findById(id);
+        return contractDao.findById(id);
     }
 
     public void persist(Contract contract) {
-        contractDAO.persist(contract);
+        contractDao.persist(contract);
     }
 
     public void delete(Integer id){
-        Contract contract = contractDAO.findById(id);
-        contractDAO.delete(contract);
+        Contract contract = contractDao.findById(id);
+        contractDao.delete(contract);
     }
 
     public void update(Contract contract) {
-        contractDAO.update(contract);
+        contractDao.update(contract);
     }
 
     public List<Contract> findAll() {
-        return contractDAO.findAll();
+        return contractDao.findAll();
     }
 
     public void deleteAll(){
-        contractDAO.deleteAll();
+        contractDao.deleteAll();
     }
 
     public List<Contract> findByPhone(String telNumber) {
-        List<Contract> contract = contractDAO.findByPhone(telNumber);
+        List<Contract> contract = contractDao.findByPhone(telNumber);
         return contract;
     }
 
     public List<Contract> findByCustomerId(Customer customerId){
-        Customer customer = customerDAO.findById(customerId.getId());
-        List<Contract> contracts = contractDAO.findByCustomerId(customerId);
+        Customer customer = customerDao.findById(customerId.getId());
+        List<Contract> contracts = contractDao.findByCustomerId(customerId);
         return contracts;
     }
 
     public List<Contract> findContractByTarif(Tarif tarifId){
-        Tarif tarif = tarifDAO.findById(tarifId.getTarifId());
-        List<Contract>contracts = contractDAO.findContractByTarif(tarif);
+        Tarif tarif = tarifDao.findById(tarifId.getTarifId());
+        List<Contract>contracts = contractDao.findContractByTarif(tarif);
         return contracts;
     }
 

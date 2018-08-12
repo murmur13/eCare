@@ -1,7 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.PO.Contract;
-import eCare.model.PO.Tarif;
+import eCare.model.po.Tarif;
 
 import java.util.List;
 
@@ -17,8 +16,6 @@ public interface TarifService {
     void update(Tarif entity);
 
      Tarif findById(Integer id);
-
-//    void deleteById(Integer id);
 
     void delete(Integer id);
 

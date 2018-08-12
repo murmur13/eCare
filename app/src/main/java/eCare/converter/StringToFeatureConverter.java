@@ -1,8 +1,7 @@
 package eCare.converter;
 
-import eCare.model.PO.Feature;
+import eCare.model.po.Feature;
 import eCare.model.services.FeatureService;
-import eCare.model.services.FeatureServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +9,6 @@ import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by echerkas on 31.03.2018.
@@ -25,7 +20,7 @@ public class StringToFeatureConverter implements Converter<String, Feature> {
     static final Logger logger = LoggerFactory.getLogger(StringToFeatureConverter.class);
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     public StringToFeatureConverter(FeatureService featureService) {
         this.featureService = featureService;

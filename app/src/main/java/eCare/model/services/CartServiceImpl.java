@@ -1,9 +1,9 @@
 package eCare.model.services;
 
-import eCare.model.PO.Cart;
-import eCare.model.PO.Contract;
-import eCare.model.PO.Feature;
-import eCare.model.PO.Tarif;
+import eCare.model.po.Cart;
+import eCare.model.po.Contract;
+import eCare.model.po.Feature;
+import eCare.model.po.Tarif;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,13 @@ import java.util.List;
 public class CartServiceImpl implements CartService{
 
     @Autowired
-    TarifService tarifService;
+    private TarifService tarifService;
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     public void setOptionsInCart(Cart cart, Feature featureToAdd) {
         List<Feature> cartOptions = cart.getOptionsInCart();

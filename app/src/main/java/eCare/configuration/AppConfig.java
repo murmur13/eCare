@@ -25,10 +25,10 @@ import org.springframework.web.servlet.view.JstlView;
 public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
-    RoleToUserProfileConverter roleToUserProfileConverter;
+    private RoleToUserProfileConverter roleToUserProfileConverter;
 
     @Autowired
-    StringToFeatureConverter stringToFeatureConverter;
+    private StringToFeatureConverter stringToFeatureConverter;
 
 
     /**

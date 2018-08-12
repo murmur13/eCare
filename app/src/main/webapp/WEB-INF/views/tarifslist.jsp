@@ -46,9 +46,9 @@
                     <sec:authorize access="hasRole('USER')">
                         <td><a href="<c:url value='/cart/${tarif.tarifId}/addTarifToCart' />" class="btn btn-success custom-width">Add tarif to cart</a></td>
                     </sec:authorize>
-                    <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/contracts/changeTarif-${tarif.tarifId}' />" class="btn btn-success custom-width">Change tarif</a></td>
-                    </sec:authorize>
+                    <%--<sec:authorize access="hasRole('USER')">--%>
+                        <%--<td><a href="<c:url value='/contracts/changeTarif-${tarif.tarifId}' />" class="btn btn-success custom-width">Change tarif</a></td>--%>
+                    <%--</sec:authorize>--%>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/tarifs/edit-tarif-${tarif.tarifId}' />" class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>

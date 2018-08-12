@@ -1,7 +1,7 @@
 package eCare.security;
 
-import eCare.model.PO.Customer;
-import eCare.model.PO.UserProfile;
+import eCare.model.po.Customer;
+import eCare.model.po.UserProfile;
 import eCare.model.services.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -29,7 +29,7 @@ public class MessagingConfiguration {
     public ConnectionFactory connectionFactory(){
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(DEFAULT_BROKER_URL);
-        connectionFactory.setTrustedPackages(Arrays.asList("eCare.model.PO.Tarif"));
+        connectionFactory.setTrustedPackages(Arrays.asList("eCare.model.po.Tarif"));
         return connectionFactory;
     }
     /*

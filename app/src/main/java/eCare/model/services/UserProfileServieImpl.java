@@ -1,7 +1,7 @@
 package eCare.model.services;
 
-import eCare.model.DAO.UserProfileDao;
-import eCare.model.PO.UserProfile;
+import eCare.model.dao.UserProfileDao;
+import eCare.model.po.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.List;
     public class UserProfileServieImpl  implements UserProfileService{
 
     @Autowired
-    UserProfileDao dao;
+    private UserProfileDao dao;
 
     public UserProfile findById(int id) {
         return dao.findById(id);

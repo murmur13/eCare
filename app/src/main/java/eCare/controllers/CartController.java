@@ -1,6 +1,6 @@
 package eCare.controllers;
 
-import eCare.model.PO.*;
+import eCare.model.po.*;
 import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,19 +25,19 @@ public class CartController {
     private Cart cart;
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     @Autowired
-    CustomerService userService;
+    private CustomerService userService;
 
     @Autowired
-    UserProfileService userProfileService;
+    private UserProfileService userProfileService;
 
     @Autowired
-    CartService cartService;
+    private CartService cartService;
 
     @RequestMapping(value="/cart", method= RequestMethod.GET)
     public String searchResults(Model model, HttpSession session) {

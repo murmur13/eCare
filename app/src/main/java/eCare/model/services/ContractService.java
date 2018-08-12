@@ -1,8 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.PO.*;
-import eCare.model.DAO.ContractDAO;
-import org.springframework.stereotype.Service;
+import eCare.model.po.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -23,8 +21,6 @@ public interface ContractService {
     void update(Contract entity);
 
     Contract findById(Integer id);
-
-//    void deleteById(Integer id);
 
     void delete(Integer id);
 

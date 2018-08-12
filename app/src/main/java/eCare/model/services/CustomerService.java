@@ -1,8 +1,7 @@
 package eCare.model.services;
 
-import eCare.model.PO.Customer;
-import eCare.model.PO.UserProfile;
-import org.springframework.stereotype.Service;
+import eCare.model.po.Customer;
+import eCare.model.po.UserProfile;
 
 import java.util.HashSet;
 import java.util.List;

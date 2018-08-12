@@ -1,16 +1,13 @@
 package eCare.model.services;
 
-import eCare.model.DAO.ContractDAO;
-import eCare.model.DAO.CustomerDAO;
-import eCare.model.DAO.FeatureDAO;
-import eCare.model.PO.*;
+import eCare.model.dao.ContractDao;
+import eCare.model.dao.FeatureDao;
+import eCare.model.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jca.cci.core.InteractionCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -22,57 +19,52 @@ import java.util.List;
 public class FeatureServiceImpl implements FeatureService {
 
     @Autowired
-    private FeatureDAO featureDAO;
+    private FeatureDao featureDao;
 
     @Autowired
-    private ContractDAO contractDAO;
+    private ContractDao contractDao;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     public Feature findById(Integer id) {
-        return featureDAO.findById(id);
+        return featureDao.findById(id);
     }
 
     public void persist(Feature feature) {
-        featureDAO.persist(feature);
+        featureDao.persist(feature);
     }
 
     public void delete(Integer id){
-        Feature feature = featureDAO.findById(id);
-        featureDAO.delete(feature);
+        Feature feature = featureDao.findById(id);
+        featureDao.delete(feature);
     }
 
     public void update(Feature feature) {
-        featureDAO.update(feature);
+        featureDao.update(feature);
     }
 
     public List<Feature> findAll() {
-        return featureDAO.findAll();
+        return featureDao.findAll();
     }
 
-    public List<Feature> findAllBlockingFeatures(){return featureDAO.findAllBlockingFeatures();}
+    public List<Feature> findAllBlockingFeatures(){return featureDao.findAllBlockingFeatures();}
 
-    public List<Feature> findAllRequiredFeatures(){return featureDAO.findAllRequiredFeatures();}
-
-//    public List<Feature> findByTarif(Integer tarifId){
-//        List<Feature> feature = featureDAO.findByTarif(tarifId);
-//        return feature;
-//    }
+    public List<Feature> findAllRequiredFeatures(){return featureDao.findAllRequiredFeatures();}
 
     public List<Feature> findFeatureByTarif(Integer tarifId){
-        List<Feature> features = featureDAO.findFeatureByTarif(tarifId);
+        List<Feature> features = featureDao.findFeatureByTarif(tarifId);
         return features;
     }
 
     public List<Feature> findFeatureByContract(Integer contract){
-        Contract userContract = contractDAO.findById(contract);
-        List<Feature> featureList = featureDAO.findFeatureByContract(userContract.getContractId());
+        Contract userContract = contractDao.findById(contract);
+        List<Feature> featureList = featureDao.findFeatureByContract(userContract.getContractId());
         return featureList;
     }
 
     public void deleteAll(){
-        featureDAO.deleteAll();
+        featureDao.deleteAll();
     }
 
     public boolean isFeatureUnique(String name){
@@ -85,7 +77,7 @@ public class FeatureServiceImpl implements FeatureService {
     }
 
     public List<Feature> findByName(String name) {
-        List<Feature> feature = featureDAO.findByName(name);
+        List<Feature> feature = featureDao.findByName(name);
         return feature;
     }
 

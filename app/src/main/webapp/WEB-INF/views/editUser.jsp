@@ -129,8 +129,14 @@
             <div class="form-actions">
                 <input type="submit" value="Update user" class="btn btn-primary btn-sm"/> <a
                     href="<c:url value='//edit-user-{user.ssoId}' />"></a>
+                <sec:authorize access="hasRole('ADMIN')">
                 <input type="submit" value="Cancel" class="btn btn-primary btn-sm"/>
                 <a href="<c:url value='//list'/>"></a>
+                </sec:authorize>
+                <sec:authorize access="hasRole('USER')">
+                    <input type="submit" value="Cancel" class="btn btn-primary btn-sm"/>
+                    <a href="<c:url value='/mainPage'/>"></a>
+                </sec:authorize>
             </div>
         </div>
     </form:form>

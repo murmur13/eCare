@@ -16,7 +16,6 @@ public class ErrorHandleFilter implements Filter {
 
     private final Logger logger = LoggerFactory.getLogger(ErrorHandleFilter.class);
 
-    //Your custom bean to handle error
     GlobalExceptionController globalExceptionController;
 
     @Override
@@ -26,7 +25,6 @@ public class ErrorHandleFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        //Get bean from Spring container
         globalExceptionController = (GlobalExceptionController) WebApplicationContextUtils
                 .getRequiredWebApplicationContext(filterConfig.getServletContext())
                 .getBean("globalExceptionController");

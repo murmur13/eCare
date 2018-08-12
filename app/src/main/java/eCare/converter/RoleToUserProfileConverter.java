@@ -1,6 +1,6 @@
 package eCare.converter;
 
-import eCare.model.PO.UserProfile;
+import eCare.model.po.UserProfile;
 import eCare.model.services.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ public class RoleToUserProfileConverter implements Converter<Object, UserProfile
         static final Logger logger = LoggerFactory.getLogger(RoleToUserProfileConverter.class);
 
         @Autowired
-        UserProfileService userProfileService;
+        private UserProfileService userProfileService;
 
         /**
          * Gets UserProfile by Id

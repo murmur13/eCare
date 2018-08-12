@@ -1,7 +1,7 @@
 package eCare;
 
-import eCare.model.DAO.FeatureDAO;
-import eCare.model.PO.Feature;
+import eCare.model.dao.FeatureDao;
+import eCare.model.po.Feature;
 import eCare.model.services.FeatureServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class FeatureServiceImplTest {
 
     @Mock
-    private FeatureDAO featureDAO;
+    private FeatureDao featureDAO;
 
     @InjectMocks
     private FeatureServiceImpl featureService;

@@ -22,7 +22,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan({ "eCare.configuration" })
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = {"classpath:properties/application.properties"})
 public class HibernateConfiguration {
 
     @Autowired
@@ -32,7 +32,7 @@ public class HibernateConfiguration {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[] { "eCare.model.PO"});
+        sessionFactory.setPackagesToScan(new String[] { "eCare.model.po"});
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

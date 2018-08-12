@@ -1,6 +1,6 @@
 package eCare.controllers;
 
-import eCare.model.PO.Tarif;
+import eCare.model.po.Tarif;
 import eCare.model.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +32,16 @@ public class TarifController {
     Logger logger = LoggerFactory.getLogger(TarifController.class);
 
     @Autowired
-    TarifService tarifService;
+    private TarifService tarifService;
 
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     @Autowired
-    CustomerService userService;
+    private CustomerService userService;
 
     /**
      * This method will list all existing tarifs.
@@ -69,6 +69,9 @@ public class TarifController {
     @RequestMapping(value = { "/newtarif" }, method = RequestMethod.GET)
     public String newTarif(ModelMap model) {
         Tarif tarif = new Tarif();
+        tarif.setName("sdgsd");
+        tarif.setPrice(13.0);
+        tarif.setTarifId(0);
         model.addAttribute("tarif", tarif);
         model.addAttribute("edit", false);
         model.addAttribute("loggedinuser", userService.getPrincipal());
@@ -94,9 +97,8 @@ public class TarifController {
         }
 
             tarifService.persist(tarif);
-            model.addAttribute("success", "Tarif " + tarif.getName() + " " + " added successfully");
+            model.addAttribute("message", "Tarif " + tarif.getName() + " " + " added successfully");
             model.addAttribute("loggedinuser", userService.getPrincipal());
-            //return "success";
             return "registrationsuccess";
         }
 

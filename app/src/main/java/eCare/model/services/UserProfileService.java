@@ -1,6 +1,6 @@
 package eCare.model.services;
 
-import eCare.model.PO.UserProfile;
+import eCare.model.po.UserProfile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

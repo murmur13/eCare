@@ -1,7 +1,7 @@
 package eCare.controllers;
 
-import eCare.model.PO.Customer;
-import eCare.model.PO.UserProfile;
+import eCare.model.po.Customer;
+import eCare.model.po.UserProfile;
 import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +37,16 @@ import java.util.*;
 public class AppController {
 
         @Autowired
-        CustomerService userService;
+        private CustomerService userService;
 
         @Autowired
-        UserProfileService userProfileService;
+        private UserProfileService userProfileService;
 
         @Autowired
-        MessageSource messageSource;
+        private MessageSource messageSource;
 
         @Autowired
-        PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
+        private PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
 
 
     /**
@@ -270,7 +270,6 @@ public class AppController {
             if (auth != null){
                 status.setComplete();
                 webR.removeAttribute("user", webR.SCOPE_SESSION);
-                //new SecurityContextLogoutHandler().logout(request, response, auth);
                 persistentTokenBasedRememberMeServices.logout(request, response, auth);
                 SecurityContextHolder.getContext().setAuthentication(null);
             }

@@ -1,6 +1,5 @@
 package eCare.configuration;
 
-import eCare.model.PO.Tarif;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -15,7 +14,7 @@ import javax.jms.*;
 public class MessageSender {
 
     @Autowired
-    JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
 
     public void sendMessage(final String message) {
 

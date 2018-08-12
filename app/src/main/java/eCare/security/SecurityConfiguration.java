@@ -27,10 +27,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Autowired
         @Qualifier("customUserDetailsService")
-        UserDetailsService userDetailsService;
+        private UserDetailsService userDetailsService;
 
         @Autowired
-        PersistentTokenRepository tokenRepository;
+        private PersistentTokenRepository tokenRepository;
 
         @Autowired
         public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {

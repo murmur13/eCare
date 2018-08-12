@@ -1,6 +1,6 @@
 package eCare.controllers;
 
-import eCare.model.PO.*;
+import eCare.model.po.*;
 import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -25,16 +25,16 @@ import java.util.*;
 public class FeatureController {
 
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
 
     @Autowired
-    CustomerService userService;
+    private CustomerService userService;
 
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
-    ContractService contractService;
+    private ContractService contractService;
 
     /**
      * This method will list all existing users.
