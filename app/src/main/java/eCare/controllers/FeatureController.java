@@ -94,7 +94,7 @@ public class FeatureController {
 
     @RequestMapping(value = {"/chooseFeature-{id}"}, method = RequestMethod.GET)
     public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session) {
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         Contract contract = contractService.findUserContract(user);
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         Feature chosenFeature = featureService.findById(id);
@@ -154,8 +154,8 @@ public class FeatureController {
     }
 
     @RequestMapping(value = { "/delete-feature-{id}/fromContract" }, method = RequestMethod.GET)
-    public String deleteFeatureFromContract(@PathVariable Integer id, HttpSession session, ModelMap model) {
-        Customer user = (Customer) session.getAttribute("user");
+    public String deleteFeatureFromContract(@PathVariable Integer id, ModelMap model) {
+        Customer user = userService.findBySSO(userService.getPrincipal());
         Contract updatedContract = featureService.deletedFeatureFromContract(id, user);
         List<Feature> userFeatures = featureService.findFeatureByContract(updatedContract.getContractId());
         model.addAttribute("userFeatures", userFeatures);

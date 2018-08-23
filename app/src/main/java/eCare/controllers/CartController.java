@@ -58,12 +58,12 @@ public class CartController {
     @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.GET)
     public String addFeatureToCart(@PathVariable Integer featureId, Model model, HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         if(user.isBlockedByUser() || user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Option cannot be chosen :(");
             return "errorPage";
         }
-        Contract contract = user.getContracts().get(0);
+        Contract contract = user.getContract();
         List<Feature> contractFeatures = featureService.findFeatureByContract(contract.getContractId());
         Feature featureToAdd = featureService.findById(featureId);
         List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
@@ -101,7 +101,7 @@ public class CartController {
             model.addAttribute("loggedinuser", userService.getPrincipal());
             }
 
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         if(user.isBlockedByUser() || user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Tarif cannot be chosen :(");
             return "errorPage";
@@ -148,9 +148,9 @@ public class CartController {
 
     @RequestMapping(value = "/cart/submit", method = RequestMethod.GET)
     public String submitCartGet(Model model, HttpSession session, Cart cart, SessionStatus status){
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         List<Contract> contracts = contractService.findByCustomerId(user);
-        Contract contract = contracts.get(0);
+        Contract contract = user.getContract();
         cart = (Cart) session.getAttribute("cart");
         List<Feature> submitOptions = cart.getOptionsInCart();
         if(cart.getTarifInCart()!=null) {

@@ -53,10 +53,9 @@ public class AppController {
      * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
-    public String mainPage(ModelMap model, HttpServletRequest request){
+    public String mainPage(ModelMap model){
         String name = userService.getPrincipal();
         Customer user = userService.findBySSO(name);
-        request.getSession().setAttribute("user", user);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "main";
     }
@@ -67,7 +66,7 @@ public class AppController {
 
     @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
     public String listUsers(@RequestParam(required = false) Integer page, ModelMap model, HttpSession session) {
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         List<Customer> users = userService.findAllUsers();
 
         PagedListHolder<Customer> pagedListHolder = new PagedListHolder<Customer>(users);
@@ -125,17 +124,16 @@ public class AppController {
     }
 
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
-    public String newRegisteredUser(HttpSession session, ModelMap model) {
+    public String newRegisteredUser(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
-        session.setAttribute("user", user);
         model.addAttribute("edit", false);
         model.addAttribute("loggedinuser");
         return "registration";
     }
 
     @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
-    public String registerNewUser(HttpSession session, Customer user, BindingResult result, ModelMap model) {
+    public String registerNewUser(Customer user, BindingResult result, ModelMap model) {
         UserProfile role = userProfileService.findByType("USER");
         HashSet<UserProfile> profiles = userService.addUserProfile(role);
         user.setUserProfiles(profiles);
@@ -148,7 +146,6 @@ public class AppController {
                 return "registration";
             }
         userService.saveUser(user);
-        session.setAttribute("user", user);
         model.addAttribute("message", "Please, log in with your new account!");
         model.addAttribute("loggedinuser", user.getSsoId());
         return "errorPage";

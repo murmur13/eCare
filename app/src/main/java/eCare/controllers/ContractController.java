@@ -66,7 +66,7 @@ public class ContractController {
 
     @RequestMapping(value = {"/getMyContract" }, method = RequestMethod.GET)
     public String getMyContract(ModelMap model, HttpSession session) {
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         Contract contract = contractService.findUserContract(user);
         List<Contract> contracts = contractService.findByCustomerId(user);
         List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
@@ -145,7 +145,7 @@ public class ContractController {
 
     @RequestMapping(value = {"/changeTarif-{id}"}, method = RequestMethod.GET)
     public String changeTarif(@PathVariable Integer id,  ModelMap model, HttpSession session) {
-        Customer user = (Customer) session.getAttribute("user");
+        Customer user = userService.findBySSO(userService.getPrincipal());
         List<Contract> contracts = contractService.findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
         model.addAttribute("tarif", tarif);
@@ -274,14 +274,14 @@ public class ContractController {
     public String blockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
         Contract contract = contractService.findById(id);
         Customer user = contract.getCustomer();
-        Customer sessionUser = (Customer) session.getAttribute("user");
+        Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
         if(user.isBlockedByUser() || user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is already blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
-        if (!user.equals(sessionUser)){
+        if (!user.equals(notSessionUser)){
             user.setBlockedByAdmin(true);
             userService.updateUser(user);
             session.setAttribute("user", user);
@@ -302,27 +302,27 @@ public class ContractController {
     public String unblockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
         Contract contract = contractService.findById(id);
         Customer user = contract.getCustomer();
-        Customer sessionUser = (Customer) session.getAttribute("user");
+        Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
 
         if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is not blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
-        if(user.isBlockedByAdmin() && user.equals(sessionUser)){
+        if(user.isBlockedByAdmin() && user.equals(notSessionUser)){
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked by ADMIN. You can't unblock it");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
-        if(user.equals(sessionUser)){
+        if(user.equals(notSessionUser)){
             user.setBlockedByUser(false);
             userService.updateUser(user);
             session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         }
 
-        if(!user.equals(sessionUser)){
+        if(!user.equals(notSessionUser)){
             user.setBlockedByAdmin(false);
             userService.updateUser(user);
             session.setAttribute("user", user);

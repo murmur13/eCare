@@ -62,8 +62,8 @@ public class Customer{
     @Column(name = "isBlockedByAdmin", columnDefinition = "TINYINT(1)")
     private boolean isBlockedByAdmin;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="customer")
-    private List<Contract> contracts;
+    @OneToOne(fetch = FetchType.EAGER, mappedBy="customer")
+    private Contract contract;
 
     public String getSsoId() {
         return ssoId;
@@ -239,12 +239,21 @@ public class Customer{
         this.customerId = customerId;
     }
 
-    public List<Contract> getContracts() {
-        return contracts;
+//    public List<Contract> getContracts() {
+//        return contracts;
+//    }
+
+//    public void setContracts(List<Contract> contracts) {
+//        this.contracts = contracts;
+//    }
+
+
+    public Contract getContract() {
+        return contract;
     }
 
-    public void setContracts(List<Contract> contracts) {
-        this.contracts = contracts;
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 
     @Override
