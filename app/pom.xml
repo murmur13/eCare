@@ -11,10 +11,18 @@
     <artifactId>app</artifactId>
     <packaging>war</packaging>
 
+    <repositories>
+        <repository>
+            <id>maven-central</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+    </repositories>
+
     <properties>
         <springframework.version>4.3.12.RELEASE</springframework.version>
         <springsecurity.version>4.0.4.RELEASE</springsecurity.version>
     </properties>
+
     <dependencies>
 
         <!-- Database -->
@@ -111,6 +119,12 @@
             <version>${springframework.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
         <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -138,7 +152,7 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-spring</artifactId>
-            <version>5.13.3</version>
+            <version>5.15.4</version>
         </dependency>
 
         <!-- SLF4J/Logback -->
@@ -188,6 +202,81 @@
                     <artifactId>jquery</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+
+        <!--Camel ActiveMq -->
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>2.20.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <version>2.15.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+            <!--<version>2.15.1</version>-->
+            <version>2.22.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+            <version>5.15.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>5.15.4</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-component -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-component</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-core -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+
+
+
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context</artifactId>-->
+            <!--<version>4.1.5.RELEASE</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <version>2.15.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+            <version>2.22.0</version>
+            <scope>provided</scope>
         </dependency>
 
 

@@ -3,6 +3,11 @@ package eCare.model.services;
 import eCare.configuration.MessageSender;
 import eCare.model.dao.TarifDao;
 import eCare.model.po.Tarif;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +26,9 @@ public class TarifServiceImpl implements TarifService {
 
     @Autowired
     private MessageSender messageSender;
+
+    @Autowired
+    private CamelContext camelContext;
 
     public Tarif findById(Integer id) {
         return tarifDao.findById(id);
@@ -67,7 +75,10 @@ public class TarifServiceImpl implements TarifService {
 
     public Tarif editTarifAndSendToQueue(Tarif tarif){
         update(tarif);
-        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
+        Exchange ex = new DefaultExchange(camelContext);
+        ex.getIn().setBody(tarif);
+        messageSender.sendMessage(ex);
+//        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
         return tarif;
     }
 }

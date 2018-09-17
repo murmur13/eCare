@@ -45,8 +45,15 @@
         <property name="connectionFactory" ref="connectionFactory"/>
     </bean>
 
+    <bean id="activeMQComponent" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>
+
     <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://localhost:61616"/>
         <property name="trustedPackages" value="true"/>
     </bean>
+
+    <!--<bean id="messageProcessor" class="eCare.configuration.camel.MessageProcessor"/>-->
+
 </beans>
