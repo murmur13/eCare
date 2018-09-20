@@ -21,7 +21,7 @@ public class JmsToEmailRoute extends RouteBuilder {
                         MemoryIdempotentRepository.memoryIdempotentRepository(200))
                 .removeOnFailure(true)
                 .skipDuplicate(true)
-//                .to("activemq:queue:TestQueue")
+                .to("activemq:queue:TestQueue")
                 .to("stream:out");
     }
 }

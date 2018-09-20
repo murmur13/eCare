@@ -1,11 +1,18 @@
 package ejb;
 
 import ejb.rest.Rest;
+import org.apache.activemq.command.ActiveMQObjectMessage;
+import org.apache.activemq.command.ActiveMQTextMessage;
+import org.springframework.security.util.FieldUtils;
 
 import javax.ejb.*;
 import javax.inject.Inject;
 import javax.jms.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+
+import static org.apache.camel.model.rest.RestParamType.body;
 
 /**
  * Created by echerkas on 21.06.2018.
@@ -35,17 +42,15 @@ public class Mdb implements MessageListener {
 
     @Override
     public void onMessage(Message message){
-        if (message instanceof TextMessage) {
-            try {
-                final String text = ((TextMessage) message).getText();
-                LOGGER.info(() -> "Received: " + text);
-                tarifBean.returnTarifFromQueue(text);
-                rest.getTarifs();
-            } catch (final JMSException e) {
-                throw new RuntimeException(e);
-            }
+            ObjectMessage objMessage = (ObjectMessage) message;
+        try {
+            Integer id = (Integer) objMessage.getObject();
+            LOGGER.info("received: " + objMessage);
+            tarifBean.returnTarifFromQueue(message.toString());
+            rest.getTarifs();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
         }
     }
-}
-
 

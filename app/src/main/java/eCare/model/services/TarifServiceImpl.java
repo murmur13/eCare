@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by echerkas on 06.12.2017.
@@ -76,9 +77,16 @@ public class TarifServiceImpl implements TarifService {
     public Tarif editTarifAndSendToQueue(Tarif tarif){
         update(tarif);
         Exchange ex = new DefaultExchange(camelContext);
-        ex.getIn().setBody(tarif);
+        final UUID correlationID = createUuid();
+        ex.getIn().setHeader("JMSCorrelationID", correlationID);
+        ex.getIn().setBody(tarif.getTarifId());
         messageSender.sendMessage(ex);
 //        messageSender.sendMessage(String.valueOf(tarif.getTarifId()));
         return tarif;
+    }
+
+    public UUID createUuid() {
+        UUID uuid = UUID.randomUUID();
+        return uuid;
     }
 }

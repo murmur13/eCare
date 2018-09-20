@@ -32,7 +32,6 @@ public class MessagingConfiguration {
 
     private static final String TEST_QUEUE = "TestQueue";
 
-
     @Bean
     public CamelContext camelContext() {
         return new DefaultCamelContext();
@@ -42,13 +41,13 @@ public class MessagingConfiguration {
     public ConnectionFactory connectionFactory() throws Exception {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(DEFAULT_BROKER_URL);
-        connectionFactory.setTrustedPackages(Arrays.asList("eCare.model.po.Tarif"));
         CamelContext context = camelContext();
         ActiveMQComponent comp = ActiveMQComponent.activeMQComponent(DEFAULT_BROKER_URL);
         comp.start();
         context.addComponent("jms",comp);
         context.addRoutes(new JmsToEmailRoute());
         context.start();
+        connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
     /*

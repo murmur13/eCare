@@ -23,15 +23,10 @@ public class MessageProcessor implements Processor {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    public UUID createUuid() {
-        UUID uuid = UUID.randomUUID();
-        return uuid;
-    }
+
 
     public void process(Exchange message){
         System.out.println("Got message: " + message);
-        final UUID correlationID = createUuid();
-        message.getIn().setHeader("JMSCorrelationID", correlationID);
 
         ProducerTemplate template = message.getContext().createProducerTemplate();
         Endpoint endpoint = message.getContext().getEndpoint("activemq:queue:TestQueue");
@@ -39,7 +34,9 @@ public class MessageProcessor implements Processor {
 
         try {
             template.start();
-            template.sendBody(message.getIn().getBody());
+            template.send(message);
+            template.send(message);
+//            template.sendBody(message.getIn().getBody());
             template.stop();
         } catch (Exception e) {
             e.printStackTrace();

@@ -26,38 +26,17 @@ public class MessageSender {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private MessageProcessor messageProcessor;
 
     private TextMessage msg;
 
-    public UUID createUuid(){
+    public UUID createUuid() {
         UUID uuid = UUID.randomUUID();
         return uuid;
     }
 
     public void sendMessage(Exchange message) {
         messageProcessor.process(message);
-
-//        jmsTemplate.send(new MessageCreator(){
-//            @Override
-//            public Message createMessage(Session session) throws JMSException {
-//                TextMessage textMessage = session.createTextMessage(message.toString());
-//                System.out.println("Sending message " + message.toString());
-//                textMessage.setJMSCorrelationID(createUuid().toString());
-//                msg = textMessage;
-//                return textMessage;
-//            }
-//        });
-//        jmsTemplate.send(new MessageCreator(){
-//            @Override
-//            public Message createMessage(Session session) throws JMSException {
-//                TextMessage textMessage = msg;
-//                msg = textMessage;
-//                return textMessage;
-//            }
-//        });
-
     }
-
 }

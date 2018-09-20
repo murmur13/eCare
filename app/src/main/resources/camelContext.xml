@@ -14,6 +14,7 @@
         above -->
     <bean id="main-broker" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="trustAllPackages" value="true"/>
     </bean>
 
     <bean id="jmsToFileRoute" class="eCare.configuration.camel.JmsToEmailRoute" />
