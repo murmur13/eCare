@@ -2,7 +2,6 @@ package eCare.configuration;
 
 import eCare.controllers.exceptions.ErrorHandleFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-
 import javax.servlet.Filter;
 import javax.servlet.ServletRegistration;
 

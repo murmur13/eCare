@@ -3,7 +3,6 @@ package eCare.controllers;
 import eCare.model.po.*;
 import eCare.model.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -12,7 +11,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +26,6 @@ import java.util.Locale;
 public class ContractController {
 
     @Autowired
-    private CustomerService userService;
-
-    @Autowired
-    private FeatureService featureService;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private TarifService tarifService;
-
-    @Autowired
     private ContractService contractService;
 
     /**
@@ -47,42 +33,20 @@ public class ContractController {
      */
     @RequestMapping(value = {"/listContracts" }, method = RequestMethod.GET)
     public String listContracts(@RequestParam(required = false) Integer page, ModelMap model) {
-        List<Contract> contracts = contractService.findAll();
-        PagedListHolder<Contract> pagedListHolder = new PagedListHolder<Contract>(contracts);
-        pagedListHolder.setPageSize(10);
-        model.addAttribute("maxPages", pagedListHolder.getPageCount());
-        model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
-            pagedListHolder.setPage(0);
-            model.addAttribute("contracts", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("contracts", pagedListHolder.getPageList());
-        }
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "contractslist";
+        String view = contractService.listContracts(page, model);
+        return view;
     }
 
     @RequestMapping(value = {"/getMyContract" }, method = RequestMethod.GET)
     public String getMyContract(ModelMap model, HttpSession session) {
-        Customer user = userService.findBySSO(userService.getPrincipal());
-        Contract contract = contractService.findUserContract(user);
-        List<Contract> contracts = contractService.findByCustomerId(user);
-        List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
-            model.addAttribute("userFeatures", features);
-            model.addAttribute("contracts", contracts);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "userContract";
+        String view = contractService.getMyContract(model, session);
+        return view;
     }
 
     @RequestMapping(value = { "/newcontract" }, method = RequestMethod.GET)
     public String newContract(ModelMap model) {
-        Contract contract = new Contract();
-        model.addAttribute("contract", contract);
-        model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "contractRegistration";
+        String view = contractService.newContract(model);
+        return view;
     }
 
     /**
@@ -94,88 +58,33 @@ public class ContractController {
                                @RequestParam(value = "tarif", required = false) String tarif,
                                ModelMap model) {
 
-        Customer customer = userService.findBySSO(sso);
-        List<Contract> allContracts = contractService.findAll();
-        for (Contract someContract :allContracts) {
-            String someNumber = someContract.gettNumber();
-            if(someNumber.equals(phone)) {
-                model.addAttribute("loggedinuser", userService.getPrincipal());
-                model.addAttribute("message", "This phone number is already taken");
-                return "errorPage";
-            }
-        }
-        Contract newContract = contractService.createNewContract(phone, sso, tarif);
-        model.addAttribute("tarif", newContract.getTarif());
-        model.addAttribute("customer", customer);
-        model.addAttribute("phone", customer.getTelNumber());
-        model.addAttribute("contract", newContract);
-        model.addAttribute("message", "Contract " + newContract.getContractId() + " " + " added successfully");
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "registrationsuccess";
+        String view = contractService.saveContract(phone, sso, tarif, model);
+        return view;
     }
 
     @RequestMapping(value = {"/contract/{id}/details" }, method = RequestMethod.GET)
     public String seeContractDetails(@PathVariable("id") int id, ModelMap model) {
-
-        Contract contract = contractService.findById(id);
-        model.addAttribute("contract", contract);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "contractslist";
+        String view = contractService.seeContractDetails(id, model);
+        return view;
     }
 
     @RequestMapping(value = {"/showOptions-{id}" }, method = RequestMethod.GET)
     public ModelAndView seeContractOptions(@PathVariable("id") int id, HttpSession session) {
-        ModelAndView modelAndView = new ModelAndView("contractFeatures");
-        Contract contract = contractService.findById(id);
-        session.setAttribute("contract", contract);
-        List<Feature> contractFeatures = featureService.findFeatureByContract(id);
-        if(!contractFeatures.isEmpty()){
-            modelAndView.addObject("features", contractFeatures);
-            modelAndView.addObject("loggedinuser", userService.getPrincipal());
-            return modelAndView;
-    }
-        else{
-            ModelAndView modelAndView2 = new ModelAndView("errorPage");
-            String contractWithoutOptions = messageSource.getMessage("contract.not.having.any.options", new String[]{Integer.toString(id)}, Locale.getDefault());
-            modelAndView2.addObject("message", contractWithoutOptions);
-            modelAndView2.addObject("loggedinuser", userService.getPrincipal());
-            return modelAndView2;
-        }
+        ModelAndView view = contractService.seeContractOptions(id, session);
+        return view;
     }
 
     @RequestMapping(value = {"/changeTarif-{id}"}, method = RequestMethod.GET)
     public String changeTarif(@PathVariable Integer id,  ModelMap model, HttpSession session) {
-        Customer user = userService.findBySSO(userService.getPrincipal());
-        List<Contract> contracts = contractService.findByCustomerId(user);
-        Tarif tarif = tarifService.findById(id);
-        model.addAttribute("tarif", tarif);
-        Contract contract = contractService.findUserContract(user);
-        if (!contract.getTarif().equals(tarif)) {
-            contract.setTarif(tarif);
-            List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
-            features.clear();
-            model.addAttribute("features", null);
-            model.addAttribute("contracts", contracts);
-            model.addAttribute("edit", true);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "userContract";
-        } else {
-            String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
-            model.addAttribute("message", tarifIsAlreadyChosen);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
+        String view = contractService.changeTarif(id, model, session);
+        return view;
     }
 
     @RequestMapping(value = {"/deleteFeature/fromContract-{featureId}"}, method = RequestMethod.GET)
     public String deleteFeatureFromContract(@PathVariable Integer featureId,
                                             ModelMap model, HttpSession session) {
-        Contract contract = (Contract) session.getAttribute("contract");
-        Feature featureToDelete = featureService.findById(featureId);
-        List<Feature> features = contractService.deleteFeatureFromContract(featureToDelete, contract);
-        model.addAttribute("features", features);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "contractFeatures";
+       String view = contractService.deleteFeatureFromContract(featureId, model, session);
+        return view;
     }
 
     /**
@@ -184,161 +93,57 @@ public class ContractController {
 
     @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.GET)
     public String editContract(@PathVariable Integer contractId, ModelMap model) {
-        Contract contract = contractService.findById(contractId);
-        List<Tarif> tarifs = tarifService.findAll();
-        Tarif userTarif = contract.getTarif();
-        model.addAttribute("tarif", userTarif);
-        model.addAttribute("userTarif", userTarif);
-        model.addAttribute("tarifs", tarifs);
-        model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "editContractTarif";
+        String view = contractService.editContract(contractId, model);
+        return view;
     }
 
     @RequestMapping(value = { "/edit-contractTarif-{contractId}" }, method = RequestMethod.POST)
     public String updateContract(@PathVariable Integer contractId, Integer tarifId, ModelMap model){
-        contractService.editContractTarif(contractId, tarifId);
-        model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "redirect:/contracts/listContracts";
+        String view = contractService.updateContract(contractId, tarifId, model);
+        return view;
     }
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.GET)
     public String editContractOptions(@PathVariable Integer contractId, ModelMap model, HttpSession session) {
-        Contract contract = contractService.findById(contractId);
-        List<Feature> features = featureService.findAll();
-        List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
-        Cart cart = new Cart();
-        session.setAttribute("cart", cart);
-        SelectedFeatures selectedFeatures = new SelectedFeatures();
-        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(featureService.findAll()));
-        model.addAttribute("selectedFeatures", selectedFeatures);
-        model.addAttribute("features", features);
-        model.addAttribute("contract", contract);
-        model.addAttribute("userFeatures", userFeatures);
-        model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "editContractFeatures";
+        String view = contractService.editContractOptions(contractId, model, session);
+        return view;
     }
 
     @RequestMapping(value = { "/edit-contractOptions-{contractId}" }, method = RequestMethod.POST)
     public String updateContractOptions(@PathVariable Integer contractId, @ModelAttribute(value = "selectedFeatures") SelectedFeatures selectedFeaturesIds, BindingResult result,
                                         ModelMap model, Cart cart, HttpSession session){
-        List<Feature> userFeatures = contractService.updateContractOptions(contractId, selectedFeaturesIds, cart, session);
-        if (result.hasErrors()) {
-            model.addAttribute("message", "OOOPS");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
-        model.addAttribute("userFeatures", userFeatures);
-        model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "redirect:/contracts/listContracts";
+        String view = contractService.updateContractOptions(contractId, selectedFeaturesIds, result, model, cart, session);
+        return view;
     }
 
 
     @RequestMapping(value = {"/setTarifToContract-{id}"}, method = RequestMethod.GET)
     public String setTarif(@PathVariable Integer id,  ModelMap model, HttpSession session) {
-        Contract contract = (Contract) session.getAttribute("contract");
-        List<Contract> contracts = new ArrayList<Contract>();
-        contracts.add(contract);
-        Tarif tarif = tarifService.findById(id);
-        model.addAttribute("tarif", tarif);
-        if (!contract.getTarif().getName().equals(tarif.getName())) {
-            contract.setTarif(tarif);
-            List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
-            for (Feature feature : features) {
-                featureService.delete(feature.getFeatureId());
-            }
-            contractService.update(contract);
-            model.addAttribute("features", features);
-            model.addAttribute("contracts", contracts);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "userContract";
-        } else {
-            String tarifIsAlreadyChosen = messageSource.getMessage("tarif.is.already.chosen", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
-            model.addAttribute("message", tarifIsAlreadyChosen);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
+        String view = contractService.setTarif(id, model, session);
+        return view;
     }
 
     @RequestMapping(value = { "/delete-contract-{id}" }, method = RequestMethod.GET)
     public String deleteContract(@PathVariable Integer id, ModelMap model) {
-        contractService.delete(id);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "redirect:/contracts/listContracts";
+        String view = contractService.deleteContract(id, model);
+        return view;
     }
 
     @RequestMapping(value = { "/block-contract-{id}" }, method = RequestMethod.GET)
     public String blockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
-        Contract contract = contractService.findById(id);
-        Customer user = contract.getCustomer();
-        Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
-        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
-            model.addAttribute("message", "User " + user.getSsoId() + " is already blocked");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
-
-        if (!user.equals(notSessionUser)){
-            user.setBlockedByAdmin(true);
-            userService.updateUser(user);
-            session.setAttribute("user", user);
-            model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-        }
-        else{
-            user.setBlockedByUser(true);
-            userService.updateUser(user);
-            session.setAttribute("user", user);
-            model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-        }
-        return "registrationsuccess";
+        String view = contractService.blockContract(id, model, session);
+        return view;
     }
 
     @RequestMapping(value = { "/unblock-contract-{id}" }, method = RequestMethod.GET)
     public String unblockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
-        Contract contract = contractService.findById(id);
-        Customer user = contract.getCustomer();
-        Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
-
-        if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
-            model.addAttribute("message", "User " + user.getSsoId() + " is not blocked");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
-        if(user.isBlockedByAdmin() && user.equals(notSessionUser)){
-            model.addAttribute("message", "User " + user.getSsoId() + " is blocked by ADMIN. You can't unblock it");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
-
-        if(user.equals(notSessionUser)){
-            user.setBlockedByUser(false);
-            userService.updateUser(user);
-            session.setAttribute("user", user);
-            model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-        }
-
-        if(!user.equals(notSessionUser)){
-            user.setBlockedByAdmin(false);
-            userService.updateUser(user);
-            session.setAttribute("user", user);
-            model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-        }
-
-        model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "registrationsuccess";
+        String view = contractService.unblockContract(id, model, session);
+        return view;
     }
 
     @RequestMapping(value = { "/generatePhoneNumber-contract-{id}" }, method = RequestMethod.GET)
     public String generateNumber(@PathVariable Integer id, ModelMap model) {
-        String number = contractService.generateNumber(id);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        model.addAttribute("message", "number " + number + " was generated and set to contract");
-        return "registrationsuccess";
+        String view = contractService.generateNumber(id, model);
+        return view;
     }
 }

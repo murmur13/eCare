@@ -3,6 +3,7 @@ package eCare.model.services;
 import eCare.model.dao.UserProfileDao;
 import eCare.model.po.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

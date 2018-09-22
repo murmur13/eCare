@@ -1,26 +1,18 @@
 package eCare.configuration;
 
-import java.util.Arrays;
-
 import javax.jms.ConnectionFactory;
 
 import eCare.configuration.camel.JmsToEmailRoute;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
-import org.apache.camel.component.jms.MessageCreatedStrategy;
 
 /**
  * Created by echerkas on 21.06.2018.

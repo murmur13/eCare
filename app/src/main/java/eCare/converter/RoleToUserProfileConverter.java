@@ -5,6 +5,7 @@ import eCare.model.services.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * Created by echerkas on 15.11.2017.
  */
 @Component
+@DependsOn("messageSource")
 public class RoleToUserProfileConverter implements Converter<Object, UserProfile> {
 
         static final Logger logger = LoggerFactory.getLogger(RoleToUserProfileConverter.class);

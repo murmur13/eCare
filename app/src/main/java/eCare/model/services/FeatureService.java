@@ -4,7 +4,10 @@ import eCare.model.po.Contract;
 import eCare.model.po.Customer;
 import eCare.model.po.Feature;
 import eCare.model.po.SelectedFeatures;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -48,5 +51,39 @@ public interface FeatureService {
     List<Feature> returnUnblockedFeatures(Integer id, Integer secondId);
 
     List<Feature> dismissRequiredFeatures(Integer id, Integer secondId);
+
+    String listFeatures(Integer page, ModelMap model);
+
+    String newFeature (ModelMap model);
+
+    String saveFeature(Feature feature, BindingResult result, ModelMap model);
+
+    String chooseFeature(Integer id, ModelMap model, HttpSession session);
+
+    String editTarif(Integer id, ModelMap model);
+
+    String updateFeature(Feature feature, BindingResult result, ModelMap model, Integer id);
+
+    String deleteFeatureFromContract(Integer id, ModelMap model);
+
+    String seeBlockingFeatures(ModelMap model);
+
+    String blockingFeatures(ModelMap model);
+
+    String blockingFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
+
+    String requiredFeatures(ModelMap model);
+
+    String requiredFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
+
+    String seeRequiredFeatures(ModelMap model);
+
+    String unblockFeatures(ModelMap model);
+
+    String unblockFeatures (Integer id, Integer secondId, ModelMap model);
+
+    String dismissRequiredFeatures(ModelMap model);
+
+    String dismissRequiredFeatures (Integer id, Integer secondId, ModelMap model);
 
 }

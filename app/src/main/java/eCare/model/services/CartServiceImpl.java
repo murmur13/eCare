@@ -1,13 +1,14 @@
 package eCare.model.services;
 
-import eCare.model.po.Cart;
-import eCare.model.po.Contract;
-import eCare.model.po.Feature;
-import eCare.model.po.Tarif;
+import eCare.model.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.support.SessionStatus;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * Created by echerkas on 29.06.2018.
  */
 @Service("cartService")
+@DependsOn("messageSource")
 @Transactional
 public class CartServiceImpl implements CartService{
 
@@ -26,6 +28,12 @@ public class CartServiceImpl implements CartService{
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private UserProfileService userProfileService;
+
+    @Autowired
+    private CustomerService userService;
 
     public void setOptionsInCart(Cart cart, Feature featureToAdd) {
         List<Feature> cartOptions = cart.getOptionsInCart();
@@ -81,5 +89,137 @@ public class CartServiceImpl implements CartService{
             contractService.update(contract);
         }
         return contractOptions;
+    }
+
+    public String searchResults(Model model, HttpSession session){
+        Cart cart = (Cart) session.getAttribute("cart");
+        if(cart.getTarifInCart()==null && cart.getOptionsInCart().isEmpty()){
+            model.addAttribute("message", "Your cart is empty");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        else{
+            model.addAttribute("featuresInCart",cart.getOptionsInCart());
+            model.addAttribute("tarifInCart",cart.getTarifInCart());
+        }
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+    }
+
+    public String addFeatureToCart(Integer featureId, Model model, HttpSession session){
+        Cart cart = (Cart) session.getAttribute("cart");
+        Customer user = userService.findBySSO(userService.getPrincipal());
+        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Option cannot be chosen :(");
+            return "errorPage";
+        }
+        Contract contract = user.getContract();
+        List<Feature> contractFeatures = featureService.findFeatureByContract(contract.getContractId());
+        Feature featureToAdd = featureService.findById(featureId);
+        List<Feature> requiredFeatures = featureService.findAllRequiredFeatures();
+        List<Feature> allBlockingFeatures = featureService.findAllBlockingFeatures();
+        for (Feature feature: allBlockingFeatures) {
+            if(feature.getBlockingFeatures().contains(featureToAdd) && contractFeatures.contains(feature)){
+                model.addAttribute("message", "You can't add option \"" + featureToAdd.getFeatureName() + "\" together with option \"" + feature.getFeatureName() + "\"");
+                return "errorPage";
+            }
+
+        }
+        for (Feature feature: requiredFeatures) {
+            List<Feature> secondFeatureContainer = feature.getRequiredFeatures();
+            if(secondFeatureContainer.contains(featureToAdd) && !contractFeatures.contains(feature)){
+                model.addAttribute("message", "You can't add option \"" + featureToAdd.getFeatureName() + "\" without adding option \"" + feature.getFeatureName() + "\" first");
+                return "errorPage";
+            }
+
+        }
+        setOptionsInCart(cart, featureToAdd);
+        session.setAttribute("cart", cart);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+
+    }
+
+    public String addTarifToCart(Integer tarifId, Model model, HttpSession session){
+        Cart cart;
+        if (session.getAttribute("cart") == null) {
+            cart = new Cart();
+        }
+        else{
+            cart = (Cart) session.getAttribute("cart");
+            session.setAttribute("cart", cart);
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+        }
+
+        Customer user = userService.findBySSO(userService.getPrincipal());
+        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+            model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Tarif cannot be chosen :(");
+            return "errorPage";
+        }
+        Tarif tarifToAdd = addTarifToCart(tarifId, cart);
+        model.addAttribute("tarifInCart", tarifToAdd);
+        model.addAttribute("tarifInCart", tarifToAdd);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+    }
+
+    public String deleteTarifFromCart(Model model, HttpSession session){
+        Cart cart = (Cart) session.getAttribute("cart");
+        cart.setTarifInCart(null);
+        session.setAttribute("cart", cart);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+    }
+
+    public String deleteOptionFromCart(Integer featureId, Model model, HttpSession session){
+        Cart cart = (Cart) session.getAttribute("cart");
+        cart = deleteOptionFromCart(cart, featureId);
+        if(cart.getOptionsInCart() == null){
+            cart.setOptionsInCart(null);
+            session.setAttribute("cart", cart);
+        }
+        session.setAttribute("cart", cart);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+    }
+
+    public String refreshCart(Model model, HttpSession session, Cart cart){
+        cart = (Cart) session.getAttribute("cart");
+        List<Feature> cartFeatures = cart.getOptionsInCart();
+        Tarif tarif = cart.getTarifInCart();
+        model.addAttribute("tarifInCart", tarif);
+        model.addAttribute("optionsInCart", cartFeatures);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "cart";
+    }
+
+    public String submitCartGet(Model model, HttpSession session, Cart cart, SessionStatus status){
+        Customer user = userService.findBySSO(userService.getPrincipal());
+        List<Contract> contracts = contractService.findByCustomerId(user);
+        Contract contract = user.getContract();
+        cart = (Cart) session.getAttribute("cart");
+        List<Feature> submitOptions = cart.getOptionsInCart();
+        if(cart.getTarifInCart()!=null) {
+            submitTarif(cart, contract);
+            model.addAttribute("features", null);
+            model.addAttribute("contracts", contracts);
+            model.addAttribute("optionsInCart", null);
+        }
+        if(cart.getOptionsInCart() !=null && !cart.getOptionsInCart().isEmpty()) {
+            List<Feature> contractOptions = submitOptions(submitOptions, contract, contracts);
+            model.addAttribute("features", null);
+            model.addAttribute("contracts", contracts);
+            model.addAttribute("optionsInCart", null);
+            model.addAttribute("userFeatures", contractOptions);
+        }
+        status.setComplete();
+        if(submitOptions != null) {
+            submitOptions.clear();
+        }
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
+            return "userContract";
+        } else return "userslist";
     }
 }

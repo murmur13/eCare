@@ -4,17 +4,24 @@ import eCare.model.dao.ContractDao;
 import eCare.model.dao.FeatureDao;
 import eCare.model.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * Created by echerkas on 13.01.2018.
  */
 
 @Service("featureService")
+@DependsOn("messageSource")
 @Transactional
 public class FeatureServiceImpl implements FeatureService {
 
@@ -26,6 +33,12 @@ public class FeatureServiceImpl implements FeatureService {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private CustomerService userService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     public Feature findById(Integer id) {
         return featureDao.findById(id);
@@ -153,4 +166,267 @@ public class FeatureServiceImpl implements FeatureService {
         requiredFeatures.remove(featureToDelete);
         return requiredFeatures;
     }
+
+    public String listFeatures(Integer page, ModelMap model){
+        List<Feature> features = findAll();
+        PagedListHolder<Feature> pagedListHolder = new PagedListHolder<Feature>(features);
+        pagedListHolder.setPageSize(15);
+        model.addAttribute("maxPages", pagedListHolder.getPageCount());
+        model.addAttribute("page", page);
+        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+            pagedListHolder.setPage(0);
+            model.addAttribute("features", pagedListHolder.getPageList());
+        }
+        else if(page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page-1);
+            model.addAttribute("features", pagedListHolder.getPageList());
+        }
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "featuresList";
+    }
+
+    public String newFeature (ModelMap model){
+        Feature feature = new Feature();
+        model.addAttribute("feature", feature);
+        model.addAttribute("edit", false);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "featureRegistration";
+    }
+
+    public String saveFeature(Feature feature, BindingResult result, ModelMap model){
+        if (result.hasErrors()) {
+            return "featureRegistration";
+        }
+
+        if (!isFeatureUnique(feature.getFeatureName())) {
+            FieldError nameError = new FieldError("feature", "name", messageSource.getMessage("non.unique.name", new String[]{feature.getFeatureName()}, Locale.getDefault()));
+            result.addError(nameError);
+            model.addAttribute("message", "This option already exists");
+            return "errorPage";
+        }
+
+        persist(feature);
+        model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " added successfully");
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "registrationsuccess";
+    }
+
+    public String chooseFeature(Integer id, ModelMap model, HttpSession session){
+        Customer user = userService.findBySSO(userService.getPrincipal());
+        Contract contract = contractService.findUserContract(user);
+        List<Feature> features = findFeatureByContract(contract.getContractId());
+        Feature chosenFeature = findById(id);
+        for (Feature feature : features) {
+            if (feature.getFeatureId()== chosenFeature.getFeatureId()) {
+                String featureIsAlreadyChosen = messageSource.getMessage("feature.is.already.chosen", new String[]{Integer.toString(chosenFeature.getFeatureId())}, Locale.getDefault());
+                model.addAttribute("message", featureIsAlreadyChosen);
+                model.addAttribute("loggedinuser", userService.getPrincipal());
+                return "errorPage";
+            }
+        }
+
+        Cart cart = (Cart) session.getAttribute("cart");
+        cart.setOptionsInCart(features);
+        session.setAttribute("optionsInCart", features);
+        session.setAttribute("cart", cart);
+        model.addAttribute("userFeatures", features);
+        model.addAttribute("contracts", contractService.findByCustomerId(user));
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect: /cart";
+    }
+
+    public String editTarif(Integer id, ModelMap model){
+        Feature feature = findById(id);
+        model.addAttribute("feature", feature);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "featureRegistration";
+    }
+
+    public String updateFeature(Feature feature, BindingResult result, ModelMap model, Integer id){
+        if (result.hasErrors()) {
+            return "featureRegistration";
+        }
+        update(feature);
+        model.addAttribute("message", "Feature " + feature.getFeatureName() + " " + " updated successfully");
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "registrationsuccess";
+    }
+
+    public String deleteFeatureFromContract(Integer id, ModelMap model){
+        Customer user = userService.findBySSO(userService.getPrincipal());
+        Contract updatedContract = deletedFeatureFromContract(id, user);
+        List<Feature> userFeatures = findFeatureByContract(updatedContract.getContractId());
+        model.addAttribute("userFeatures", userFeatures);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect:/contracts/getMyContract";
+    }
+
+    public String seeBlockingFeatures(ModelMap model){
+        List<Feature> blockingFeatures = findAllBlockingFeatures();
+        List<MessagesList> messagesList = new ArrayList<MessagesList>();
+        if (blockingFeatures.isEmpty()) {
+            model.addAttribute("message", "There is no blocked features yet");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        Set<Feature> blockingFeaturesSet = new HashSet<Feature>(blockingFeatures);
+
+        for (Feature blockingfeature: blockingFeaturesSet) {
+            List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(blockingfeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+            messagesList.add(message);
+        }
+        model.addAttribute("messages", messagesList);
+        model.addAttribute("features", blockingFeaturesSet);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "blockingFeaturesList";
+    }
+
+    public String blockingFeatures(ModelMap model){
+        List<Feature > features = findAll();
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(findAll()));
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", features);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "blockingFeatures";
+    }
+
+    public String blockingFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model){
+        List<Feature> blockingFeatures = selectedFeaturesIds.getSelectedFeatures();
+        if (blockingFeatures.size() > 2) {
+            model.addAttribute("message", "You can choose only two options");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        createBlockingFeatures(blockingFeatures);
+
+        if (result.hasErrors()) {
+            model.addAttribute("message", "OOOPS");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        model.addAttribute("features", blockingFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect:/features/blockingFeatures/seeAll";
+    }
+
+    public String requiredFeatures(ModelMap model){
+        List<Feature > features = findAll();
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(findAll()));
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", features);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "requiredFeatures";
+    }
+
+    public String requiredFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model){
+        List<Feature> requiredFeatures = selectedFeaturesIds.getSelectedFeatures();
+        if (requiredFeatures.size() > 2) {
+            model.addAttribute("message", "You can choose only two options");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        createRequiredFeatures(requiredFeatures);
+
+        if (result.hasErrors()) {
+            model.addAttribute("message", "OOOPS");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        model.addAttribute("features", requiredFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect:/features/requiredFeatures/seeAll";
+    }
+
+    public String seeRequiredFeatures(ModelMap model){
+
+        List<Feature> requiredFeatures = findAllRequiredFeatures();
+        List<MessagesList> messagesList = new ArrayList<MessagesList>();
+        if (requiredFeatures.isEmpty()) {
+            model.addAttribute("message", "There is no required features yet");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
+        Set<Feature> requiredFeaturesSet = new HashSet<Feature>(requiredFeatures);
+        for (Feature requiredfeature: requiredFeaturesSet) {
+            List<Feature> featuresToDisplay = requiredfeature.getRequiredFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(requiredfeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+            messagesList.add(message);
+        }
+        model.addAttribute("messages", messagesList);
+        model.addAttribute("features", requiredFeaturesSet);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "requiredFeaturesList";
+    }
+
+    public String unblockFeatures(ModelMap model){
+        List<Feature > features = findAllBlockingFeatures();
+        SelectedFeatures selectedFeatures = unblockFeatures(features);
+        HashSet<Feature> set = new HashSet<Feature>(features);
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", set);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "unblockFeatures";
+    }
+
+    public String unblockFeatures (Integer id, Integer secondId, ModelMap model){
+        List blockingFeatures = returnUnblockedFeatures(id, secondId);
+        model.addAttribute("features", blockingFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect:/features/unblockFeatures";
+    }
+    public String dismissRequiredFeatures(ModelMap model){
+        List<Feature > features = findAllRequiredFeatures();
+        HashSet<Feature> set = new HashSet<Feature>(features);
+        SelectedFeatures selectedFeatures = new SelectedFeatures();
+        selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
+        for (Feature requiredFeature: features) {
+            List<Feature> featuresToDisplay = requiredFeature.getRequiredFeatures();
+            MessagesList message = new MessagesList();
+            message.setMessageFeature(requiredFeature);
+            List<String> names = new ArrayList<String>();
+            for (Feature feature : featuresToDisplay) {
+                String name = feature.getFeatureName();
+                names.add(name);
+            }
+            message.setMessageList(names);
+        }
+        model.addAttribute("selectedFeatures", selectedFeatures);
+        model.addAttribute("features", set);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "dismissRequiredFeatures";
+    }
+
+    public String dismissRequiredFeatures (Integer id, Integer secondId, ModelMap model){
+        List<Feature> requiredFeatures = dismissRequiredFeatures(id, secondId);
+        model.addAttribute("features", requiredFeatures);
+        model.addAttribute("edit", true);
+        model.addAttribute("loggedinuser", userService.getPrincipal());
+        return "redirect:/features/dismissRequiredFeatures";
+    }
+
 }

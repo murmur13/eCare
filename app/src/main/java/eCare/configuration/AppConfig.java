@@ -4,10 +4,7 @@ import eCare.converter.RoleToUserProfileConverter;
 import eCare.converter.StringToFeatureConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.*;
@@ -65,6 +62,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     /**
      * Configure MessageSource to lookup any validation/error message in internationalized property files
      */
+    @DependsOn("appConfig")
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();

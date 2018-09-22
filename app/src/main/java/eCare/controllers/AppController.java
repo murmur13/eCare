@@ -4,6 +4,8 @@ import eCare.model.po.Customer;
 import eCare.model.po.UserProfile;
 import eCare.model.services.CustomerService;
 import eCare.model.services.UserProfileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.context.MessageSource;
@@ -19,7 +21,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -42,22 +43,15 @@ public class AppController {
         @Autowired
         private UserProfileService userProfileService;
 
-        @Autowired
-        private MessageSource messageSource;
-
-        @Autowired
-        private PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
-
+    Logger logger = LoggerFactory.getLogger(AppController.class);
 
     /**
      * This method will land us onto the main page.
      */
     @RequestMapping(value = { "/", "/mainPage" }, method = RequestMethod.GET)
     public String mainPage(ModelMap model){
-        String name = userService.getPrincipal();
-        Customer user = userService.findBySSO(name);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "main";
+        String result = userService.mainPageMethod(model);
+        return result;
     }
 
     /**
@@ -65,30 +59,10 @@ public class AppController {
      */
 
     @RequestMapping(value = { "/list" }, method = RequestMethod.GET)
-    public String listUsers(@RequestParam(required = false) Integer page, ModelMap model, HttpSession session) {
-        Customer user = userService.findBySSO(userService.getPrincipal());
-        List<Customer> users = userService.findAllUsers();
-
-        PagedListHolder<Customer> pagedListHolder = new PagedListHolder<Customer>(users);
-        pagedListHolder.setPageSize(15);
-        model.addAttribute("maxPages", pagedListHolder.getPageCount());
-        model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
-            pagedListHolder.setPage(0);
-            model.addAttribute("users", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("users", pagedListHolder.getPageList());
-        }
-
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
-            return "main";
-        } else return "userslist";
-
+    public String listUsers(@RequestParam(required = false) Integer page, ModelMap model) {
+        String result = userService.listUsersMethod(page, model);
+        return result;
     }
-
 
     /**
      * This method will find the user by name.
@@ -96,59 +70,28 @@ public class AppController {
 
     @RequestMapping(value = {"/search" }, method = RequestMethod.GET)
     public String search(ModelMap model) {
-        Customer user = new Customer();
-        model.addAttribute("user", user);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "search";
+        String result = userService.searchUser(model);
+        return result;
     }
 
     @RequestMapping(value = { "/search" }, method = RequestMethod.POST)
     public String findByNameOrTel(@RequestParam ("nameOrPhone") String nameOrPhone, ModelMap model) {
-            List<Customer> users = userService.findByName(nameOrPhone);
-        if(users.isEmpty()){
-            users = userService.findByTelNumber(nameOrPhone);
-            model.addAttribute("users", users);
-            model.addAttribute("name", nameOrPhone);
-            if(users.isEmpty()){
-                model.addAttribute("message", "User " + nameOrPhone + " is not found");
-                return "errorPage";
-            }
-        }
-        else {
-            model.addAttribute("users", users);
-            model.addAttribute("name", nameOrPhone);
-        }
-        model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "userslist";
+        logger.info(nameOrPhone);
+        String result = userService.findByNameOrTel(nameOrPhone, model);
+        return result;
     }
 
     @RequestMapping(value = {"/register"}, method = RequestMethod.GET)
     public String newRegisteredUser(ModelMap model) {
-        Customer user = new Customer();
-        model.addAttribute("user", user);
-        model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser");
-        return "registration";
+        String result = userService.newRegisteredUser(model);
+        return result;
     }
 
     @RequestMapping(value = { "/register" }, method = RequestMethod.POST)
     public String registerNewUser(Customer user, BindingResult result, ModelMap model) {
-        UserProfile role = userProfileService.findByType("USER");
-        HashSet<UserProfile> profiles = userService.addUserProfile(role);
-        user.setUserProfiles(profiles);
-            if (result.hasErrors()) {
-                return "registration";
-            }
-            if(!userService.isUserSSOUnique(user.getId(), user.getSsoId()) || (user.getId()!=null)){
-                FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
-                result.addError(ssoError);
-                return "registration";
-            }
-        userService.saveUser(user);
-        model.addAttribute("message", "Please, log in with your new account!");
-        model.addAttribute("loggedinuser", user.getSsoId());
-        return "errorPage";
+        logger.info(user.toString());
+        String view = userService.registerNewUser(user, result, model);
+        return view;
     }
 
         /**
@@ -156,11 +99,8 @@ public class AppController {
          */
         @RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
         public String newUser(ModelMap model) {
-            Customer user = new Customer();
-            model.addAttribute("user", user);
-            model.addAttribute("edit", false);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "registration";
+            String view = userService.newUser(model);
+            return view;
         }
 
         /**
@@ -170,21 +110,9 @@ public class AppController {
         @RequestMapping(value = { "/newuser" }, method = RequestMethod.POST)
         public String saveUser(@Valid Customer user, BindingResult result,
                                ModelMap model) {
-
-            if (result.hasErrors()) {
-                return "registration";
-            }
-
-            if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
-                FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
-                result.addError(ssoError);
-                return "registration";
-            }
-
-            userService.saveUser(user);
-            model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "registrationsuccess";
+            logger.info(user.toString());
+            String view = userService.saveUser(user, result, model);
+            return view;
         }
 
 
@@ -193,11 +121,8 @@ public class AppController {
          */
         @RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.GET)
         public String editUser(@PathVariable String ssoId, ModelMap model) {
-            Customer editUser = userService.findBySSO(ssoId);
-            model.addAttribute("editUser", editUser);
-            model.addAttribute("edit", true);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "editUser";
+            String view = userService.editUser(ssoId, model);
+            return view;
         }
 
         /**
@@ -207,13 +132,9 @@ public class AppController {
         @RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.POST)
         public String updateUser(@Valid Customer user, BindingResult result,
                                  ModelMap model, @PathVariable String ssoId) {
-
-            if (result.hasErrors()) {
-                return "editUser";
-            }
-            userService.updateUser(user);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "redirect: /list";
+            logger.info(user.toString());
+            String view = userService.updateUser(user, result, model, ssoId);
+            return view;
         }
 
 
@@ -222,8 +143,8 @@ public class AppController {
          */
         @RequestMapping(value = { "/delete-user-{ssoId}" }, method = RequestMethod.GET)
         public String deleteUser(@PathVariable String ssoId) {
-            userService.deleteUserBySSO(ssoId);
-            return "redirect:/list";
+            String view = userService.deleteUser(ssoId);
+            return view;
         }
 
 
@@ -250,11 +171,8 @@ public class AppController {
          */
         @RequestMapping(value = "/login", method = RequestMethod.GET)
         public String loginPage() {
-            if (userService.isCurrentAuthenticationAnonymous()) {
-                return "login";
-            } else {
-                return "redirect:/mainPage";
-            }
+            String view = userService.login();
+            return view;
         }
 
         /**
@@ -263,14 +181,8 @@ public class AppController {
          */
         @RequestMapping(value="/logout", method = RequestMethod.GET)
         public String logoutPage (HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status){
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null){
-                status.setComplete();
-                webR.removeAttribute("user", webR.SCOPE_SESSION);
-                persistentTokenBasedRememberMeServices.logout(request, response, auth);
-                SecurityContextHolder.getContext().setAuthentication(null);
-            }
-            return "redirect:/login?logout";
+           String view = userService.logout(request, response, webR, status);
+            return view;
         }
 
     }

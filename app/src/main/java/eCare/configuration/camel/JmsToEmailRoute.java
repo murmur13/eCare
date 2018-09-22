@@ -4,12 +4,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 
-
-
 /**
  * Created by echerkas on 02.09.2018.
  */
-//@Component
 public class JmsToEmailRoute extends RouteBuilder {
 
     @Override

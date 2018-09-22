@@ -34,48 +34,19 @@ public class TarifController {
     @Autowired
     private TarifService tarifService;
 
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private ContractService contractService;
-
-    @Autowired
-    private CustomerService userService;
-
     /**
      * This method will list all existing tarifs.
      */
     @RequestMapping(value = {"/listTarifs" }, method = RequestMethod.GET)
     public String listTarifs(@RequestParam(required = false) Integer page, ModelMap model) {
-        List<Tarif> tarifs = tarifService.findAll();
-
-        PagedListHolder<Tarif> pagedListHolder = new PagedListHolder<Tarif>(tarifs);
-        pagedListHolder.setPageSize(15);
-        model.addAttribute("maxPages", pagedListHolder.getPageCount());
-        model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
-            pagedListHolder.setPage(0);
-            model.addAttribute("tarifs", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
-            model.addAttribute("tarifs", pagedListHolder.getPageList());
-        }
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "tarifslist";
+        String view = tarifService.listTarifs(page, model);
+        return view;
     }
 
     @RequestMapping(value = { "/newtarif" }, method = RequestMethod.GET)
     public String newTarif(ModelMap model) {
-        Tarif tarif = new Tarif();
-        tarif.setName("sdgsd");
-        tarif.setPrice(13.0);
-        tarif.setTarifId(0);
-        model.addAttribute("tarif", tarif);
-        model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "tarifRegistration";
+        String view = tarifService.newTarif(model);
+        return view;
     }
 
     /**
@@ -85,21 +56,8 @@ public class TarifController {
     @RequestMapping(value = { "/newtarif" }, method = RequestMethod.POST)
     public String saveTarif(@Valid Tarif tarif, BindingResult result,
                            ModelMap model) {
-
-        if (result.hasErrors()) {
-            return "tarifRegistration";
-        }
-
-        if (!tarifService.isTarifUnique(tarif.getName())) {
-            FieldError nameError = new FieldError("tarif", "name", messageSource.getMessage("non.unique.name", new String[]{tarif.getName()}, Locale.getDefault()));
-            result.addError(nameError);
-            return "tarifRegistration";
-        }
-
-            tarifService.persist(tarif);
-            model.addAttribute("message", "Tarif " + tarif.getName() + " " + " added successfully");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "registrationsuccess";
+        String view = tarifService.saveTarif(tarif, result, model);
+        return view;
         }
 
 
@@ -108,11 +66,8 @@ public class TarifController {
      */
     @RequestMapping(value = { "/edit-tarif-{id}" }, method = RequestMethod.GET)
     public String editTarif(@PathVariable Integer id, ModelMap model) {
-        Tarif tarif = tarifService.findById(id);
-        model.addAttribute("tarif", tarif);
-        model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "tarifRegistration";
+        String view = tarifService.editTarif(id, model);
+        return view;
     }
 
     /**
@@ -122,27 +77,14 @@ public class TarifController {
     @RequestMapping(value = { "/edit-tarif-{id}" }, method = RequestMethod.POST)
     public String updateTarif(@Valid Tarif tarif, BindingResult result,
                              ModelMap model, @PathVariable Integer id) {
-
-        if (result.hasErrors()) {
-            return "tarifRegistration";
-        }
-        tarifService.editTarifAndSendToQueue(tarif);
-        model.addAttribute("message", "Tarif " + tarif.getName() + " " + " updated successfully");
-        model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "registrationsuccess";
+        String view = tarifService.updateTarif(tarif, result, model, id);
+        return view;
     }
 
     @RequestMapping(value = { "/delete-tarif-{id}" }, method = RequestMethod.GET)
     public String deleteTarif(@PathVariable Integer id, ModelMap model) {
-        Tarif tarif = tarifService.findById(id);
-        if(!contractService.findContractByTarif(tarif).isEmpty()){
-            String tarifNotDeleted = messageSource.getMessage("tarif.not.deletable", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
-            model.addAttribute("message", tarifNotDeleted);
-            model.addAttribute("loggedinuser", userService.getPrincipal());
-            return "errorPage";
-        }
-        tarifService.delete(id);
-        return "redirect:/tarifs/listTarifs";
+        String view = tarifService.deleteTarif(id, model);
+        return view;
     }
 
 }
