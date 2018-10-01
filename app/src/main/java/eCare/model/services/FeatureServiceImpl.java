@@ -25,6 +25,8 @@ import java.util.*;
 @Transactional
 public class FeatureServiceImpl implements FeatureService {
 
+    private final static String NO_USERSERVICE_DEFINED = "Lost connection with user service";
+
     @Autowired
     private FeatureDao featureDao;
 
@@ -48,7 +50,7 @@ public class FeatureServiceImpl implements FeatureService {
         featureDao.persist(feature);
     }
 
-    public void delete(Integer id){
+    public void delete(Integer id) {
         Feature feature = featureDao.findById(id);
         featureDao.delete(feature);
     }
@@ -61,30 +63,34 @@ public class FeatureServiceImpl implements FeatureService {
         return featureDao.findAll();
     }
 
-    public List<Feature> findAllBlockingFeatures(){return featureDao.findAllBlockingFeatures();}
+    public List<Feature> findAllBlockingFeatures() {
+        return featureDao.findAllBlockingFeatures();
+    }
 
-    public List<Feature> findAllRequiredFeatures(){return featureDao.findAllRequiredFeatures();}
+    public List<Feature> findAllRequiredFeatures() {
+        return featureDao.findAllRequiredFeatures();
+    }
 
-    public List<Feature> findFeatureByTarif(Integer tarifId){
+    public List<Feature> findFeatureByTarif(Integer tarifId) {
         List<Feature> features = featureDao.findFeatureByTarif(tarifId);
         return features;
     }
 
-    public List<Feature> findFeatureByContract(Integer contract){
+    public List<Feature> findFeatureByContract(Integer contract) {
         Contract userContract = contractDao.findById(contract);
         List<Feature> featureList = featureDao.findFeatureByContract(userContract.getContractId());
         return featureList;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         featureDao.deleteAll();
     }
 
-    public boolean isFeatureUnique(String name){
+    public boolean isFeatureUnique(String name) {
         boolean isUnique = false;
         List<Feature> feature = findByName(name);
-        if(feature == null || feature.isEmpty()){
-            isUnique=true;
+        if (feature == null || feature.isEmpty()) {
+            isUnique = true;
         }
         return isUnique;
     }
@@ -94,7 +100,7 @@ public class FeatureServiceImpl implements FeatureService {
         return feature;
     }
 
-    public Contract deletedFeatureFromContract(Integer id, Customer user){
+    public Contract deletedFeatureFromContract(Integer id, Customer user) {
         Contract contract = contractService.findUserContract(user);
         List<Feature> userFeatures = findFeatureByContract(contract.getContractId());
         Feature featureToDelete = findById(id);
@@ -108,16 +114,21 @@ public class FeatureServiceImpl implements FeatureService {
         return contract;
     }
 
-    public void createBlockingFeatures(List<Feature> blockingFeatures){
+    public void createBlockingFeatures(List<Feature> blockingFeatures) {
+        List<Feature> blockedFeatures = new ArrayList<Feature>();
         Feature fisrtFeature = blockingFeatures.get(0);
         Feature secondFeature = blockingFeatures.get(1);
-        List<Feature> blockedFeatures = fisrtFeature.getBlockingFeatures();
+        if (!fisrtFeature.getBlockingFeatures().isEmpty()) {
+            blockedFeatures.addAll(fisrtFeature.getBlockingFeatures());
+        }
         blockedFeatures.add(secondFeature);
         fisrtFeature.setBlockingFeatures(blockedFeatures);
-        update(fisrtFeature);
+        if (featureDao != null) {
+            update(fisrtFeature);
+        }
     }
 
-    public void createRequiredFeatures(List<Feature> requiredFeatures){
+    public void createRequiredFeatures(List<Feature> requiredFeatures) {
         Feature fisrtFeature = requiredFeatures.get(0);
         Feature secondFeature = requiredFeatures.get(1);
         List<Feature> features = fisrtFeature.getRequiredFeatures();
@@ -126,10 +137,11 @@ public class FeatureServiceImpl implements FeatureService {
         update(fisrtFeature);
     }
 
-    public SelectedFeatures unblockFeatures(List<Feature> features){
+    //TODO: remove code with Messages logic
+    public SelectedFeatures unblockFeatures(List<Feature> features) {
         SelectedFeatures selectedFeatures = new SelectedFeatures();
         selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
-        for (Feature blockingfeature: features) {
+        for (Feature blockingfeature : features) {
             List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
             MessagesList message = new MessagesList();
             message.setMessageFeature(blockingfeature);
@@ -143,11 +155,11 @@ public class FeatureServiceImpl implements FeatureService {
         return selectedFeatures;
     }
 
-    public List<Feature> returnUnblockedFeatures(Integer id, Integer secondId){
+    public List<Feature> returnUnblockedFeatures(Integer id, Integer secondId) {
         List<Feature> blockingFeatures = findAllBlockingFeatures();
         Integer index = blockingFeatures.indexOf(findById(secondId));
         Feature featureToDelete = blockingFeatures.get(index);
-        List<Feature> features =  featureToDelete.getBlockingFeatures();
+        List<Feature> features = featureToDelete.getBlockingFeatures();
         features.remove(findById(id));
         featureToDelete.setBlockingFeatures(features);
         update(featureToDelete);
@@ -155,11 +167,11 @@ public class FeatureServiceImpl implements FeatureService {
         return blockingFeatures;
     }
 
-    public List<Feature> dismissRequiredFeatures(Integer id, Integer secondId){
+    public List<Feature> dismissRequiredFeatures(Integer id, Integer secondId) {
         List<Feature> requiredFeatures = findAllRequiredFeatures();
         Integer index = requiredFeatures.indexOf(findById(secondId));
         Feature featureToDelete = requiredFeatures.get(index);
-        List<Feature> features =  featureToDelete.getRequiredFeatures();
+        List<Feature> features = featureToDelete.getRequiredFeatures();
         features.remove(findById(id));
         featureToDelete.setRequiredFeatures(features);
         update(featureToDelete);
@@ -167,25 +179,24 @@ public class FeatureServiceImpl implements FeatureService {
         return requiredFeatures;
     }
 
-    public String listFeatures(Integer page, ModelMap model){
+    public String listFeatures(Integer page, ModelMap model) {
         List<Feature> features = findAll();
         PagedListHolder<Feature> pagedListHolder = new PagedListHolder<Feature>(features);
         pagedListHolder.setPageSize(15);
         model.addAttribute("maxPages", pagedListHolder.getPageCount());
         model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
             pagedListHolder.setPage(0);
             model.addAttribute("features", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
+        } else if (page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page - 1);
             model.addAttribute("features", pagedListHolder.getPageList());
         }
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "featuresList";
     }
 
-    public String newFeature (ModelMap model){
+    public String newFeature(ModelMap model) {
         Feature feature = new Feature();
         model.addAttribute("feature", feature);
         model.addAttribute("edit", false);
@@ -193,7 +204,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "featureRegistration";
     }
 
-    public String saveFeature(Feature feature, BindingResult result, ModelMap model){
+    public String saveFeature(Feature feature, BindingResult result, ModelMap model) {
         if (result.hasErrors()) {
             return "featureRegistration";
         }
@@ -211,13 +222,13 @@ public class FeatureServiceImpl implements FeatureService {
         return "registrationsuccess";
     }
 
-    public String chooseFeature(Integer id, ModelMap model, HttpSession session){
+    public String chooseFeature(Integer id, ModelMap model, HttpSession session) {
         Customer user = userService.findBySSO(userService.getPrincipal());
         Contract contract = contractService.findUserContract(user);
         List<Feature> features = findFeatureByContract(contract.getContractId());
         Feature chosenFeature = findById(id);
         for (Feature feature : features) {
-            if (feature.getFeatureId()== chosenFeature.getFeatureId()) {
+            if (feature.getFeatureId() == chosenFeature.getFeatureId()) {
                 String featureIsAlreadyChosen = messageSource.getMessage("feature.is.already.chosen", new String[]{Integer.toString(chosenFeature.getFeatureId())}, Locale.getDefault());
                 model.addAttribute("message", featureIsAlreadyChosen);
                 model.addAttribute("loggedinuser", userService.getPrincipal());
@@ -235,7 +246,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "redirect: /cart";
     }
 
-    public String editTarif(Integer id, ModelMap model){
+    public String editTarif(Integer id, ModelMap model) {
         Feature feature = findById(id);
         model.addAttribute("feature", feature);
         model.addAttribute("edit", true);
@@ -243,7 +254,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "featureRegistration";
     }
 
-    public String updateFeature(Feature feature, BindingResult result, ModelMap model, Integer id){
+    public String updateFeature(Feature feature, BindingResult result, ModelMap model, Integer id) {
         if (result.hasErrors()) {
             return "featureRegistration";
         }
@@ -253,7 +264,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "registrationsuccess";
     }
 
-    public String deleteFeatureFromContract(Integer id, ModelMap model){
+    public String deleteFeatureFromContract(Integer id, ModelMap model) {
         Customer user = userService.findBySSO(userService.getPrincipal());
         Contract updatedContract = deletedFeatureFromContract(id, user);
         List<Feature> userFeatures = findFeatureByContract(updatedContract.getContractId());
@@ -262,7 +273,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "redirect:/contracts/getMyContract";
     }
 
-    public String seeBlockingFeatures(ModelMap model){
+    public String seeBlockingFeatures(ModelMap model) {
         List<Feature> blockingFeatures = findAllBlockingFeatures();
         List<MessagesList> messagesList = new ArrayList<MessagesList>();
         if (blockingFeatures.isEmpty()) {
@@ -272,7 +283,7 @@ public class FeatureServiceImpl implements FeatureService {
         }
         Set<Feature> blockingFeaturesSet = new HashSet<Feature>(blockingFeatures);
 
-        for (Feature blockingfeature: blockingFeaturesSet) {
+        for (Feature blockingfeature : blockingFeaturesSet) {
             List<Feature> featuresToDisplay = blockingfeature.getBlockingFeatures();
             MessagesList message = new MessagesList();
             message.setMessageFeature(blockingfeature);
@@ -290,8 +301,8 @@ public class FeatureServiceImpl implements FeatureService {
         return "blockingFeaturesList";
     }
 
-    public String blockingFeatures(ModelMap model){
-        List<Feature > features = findAll();
+    public String blockingFeatures(ModelMap model) {
+        List<Feature> features = findAll();
         SelectedFeatures selectedFeatures = new SelectedFeatures();
         selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(findAll()));
         model.addAttribute("selectedFeatures", selectedFeatures);
@@ -301,28 +312,30 @@ public class FeatureServiceImpl implements FeatureService {
         return "blockingFeatures";
     }
 
-    public String blockingFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model){
-        List<Feature> blockingFeatures = selectedFeaturesIds.getSelectedFeatures();
-        if (blockingFeatures.size() > 2) {
+    public String blockingFeatures(SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model) {
+        List<Feature> blockingFeatures = new ArrayList<Feature>();
+        blockingFeatures.addAll(selectedFeaturesIds.getSelectedFeatures());
+        if (blockingFeatures.size() == 2) {
+            createBlockingFeatures(blockingFeatures);
+        } else {
             model.addAttribute("message", "You can choose only two options");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
+            model.addAttribute("loggedinuser", getPrincipalMessageForUserService(userService));
             return "errorPage";
         }
-        createBlockingFeatures(blockingFeatures);
 
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
-            model.addAttribute("loggedinuser", userService.getPrincipal());
+            model.addAttribute("loggedinuser", getPrincipalMessageForUserService(userService));
             return "errorPage";
         }
         model.addAttribute("features", blockingFeatures);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", userService.getPrincipal());
+        model.addAttribute("loggedinuser", getPrincipalMessageForUserService(userService));
         return "redirect:/features/blockingFeatures/seeAll";
     }
 
-    public String requiredFeatures(ModelMap model){
-        List<Feature > features = findAll();
+    public String requiredFeatures(ModelMap model) {
+        List<Feature> features = findAll();
         SelectedFeatures selectedFeatures = new SelectedFeatures();
         selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(findAll()));
         model.addAttribute("selectedFeatures", selectedFeatures);
@@ -332,7 +345,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "requiredFeatures";
     }
 
-    public String requiredFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model){
+    public String requiredFeatures(SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model) {
         List<Feature> requiredFeatures = selectedFeaturesIds.getSelectedFeatures();
         if (requiredFeatures.size() > 2) {
             model.addAttribute("message", "You can choose only two options");
@@ -352,7 +365,7 @@ public class FeatureServiceImpl implements FeatureService {
         return "redirect:/features/requiredFeatures/seeAll";
     }
 
-    public String seeRequiredFeatures(ModelMap model){
+    public String seeRequiredFeatures(ModelMap model) {
 
         List<Feature> requiredFeatures = findAllRequiredFeatures();
         List<MessagesList> messagesList = new ArrayList<MessagesList>();
@@ -362,7 +375,7 @@ public class FeatureServiceImpl implements FeatureService {
             return "errorPage";
         }
         Set<Feature> requiredFeaturesSet = new HashSet<Feature>(requiredFeatures);
-        for (Feature requiredfeature: requiredFeaturesSet) {
+        for (Feature requiredfeature : requiredFeaturesSet) {
             List<Feature> featuresToDisplay = requiredfeature.getRequiredFeatures();
             MessagesList message = new MessagesList();
             message.setMessageFeature(requiredfeature);
@@ -380,8 +393,8 @@ public class FeatureServiceImpl implements FeatureService {
         return "requiredFeaturesList";
     }
 
-    public String unblockFeatures(ModelMap model){
-        List<Feature > features = findAllBlockingFeatures();
+    public String unblockFeatures(ModelMap model) {
+        List<Feature> features = findAllBlockingFeatures();
         SelectedFeatures selectedFeatures = unblockFeatures(features);
         HashSet<Feature> set = new HashSet<Feature>(features);
         model.addAttribute("selectedFeatures", selectedFeatures);
@@ -391,19 +404,20 @@ public class FeatureServiceImpl implements FeatureService {
         return "unblockFeatures";
     }
 
-    public String unblockFeatures (Integer id, Integer secondId, ModelMap model){
+    public String unblockFeatures(Integer id, Integer secondId, ModelMap model) {
         List blockingFeatures = returnUnblockedFeatures(id, secondId);
         model.addAttribute("features", blockingFeatures);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/unblockFeatures";
     }
-    public String dismissRequiredFeatures(ModelMap model){
-        List<Feature > features = findAllRequiredFeatures();
+
+    public String dismissRequiredFeatures(ModelMap model) {
+        List<Feature> features = findAllRequiredFeatures();
         HashSet<Feature> set = new HashSet<Feature>(features);
         SelectedFeatures selectedFeatures = new SelectedFeatures();
         selectedFeatures.setSelectedFeatures(new ArrayList<Feature>(features));
-        for (Feature requiredFeature: features) {
+        for (Feature requiredFeature : features) {
             List<Feature> featuresToDisplay = requiredFeature.getRequiredFeatures();
             MessagesList message = new MessagesList();
             message.setMessageFeature(requiredFeature);
@@ -421,12 +435,16 @@ public class FeatureServiceImpl implements FeatureService {
         return "dismissRequiredFeatures";
     }
 
-    public String dismissRequiredFeatures (Integer id, Integer secondId, ModelMap model){
+    public String dismissRequiredFeatures(Integer id, Integer secondId, ModelMap model) {
         List<Feature> requiredFeatures = dismissRequiredFeatures(id, secondId);
         model.addAttribute("features", requiredFeatures);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/features/dismissRequiredFeatures";
+    }
+
+    private String getPrincipalMessageForUserService(CustomerService userService) {
+        return userService != null ? userService.getPrincipal() : NO_USERSERVICE_DEFINED;
     }
 
 }

@@ -55,6 +55,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = Exception.class)
     public ModelAndView handleAllException(HttpServletRequest req, Exception e) throws Exception {
+        logger.error(e.toString());
         if (AnnotationUtils.findAnnotation
                 (e.getClass(), ResponseStatus.class) != null)
             throw e;
