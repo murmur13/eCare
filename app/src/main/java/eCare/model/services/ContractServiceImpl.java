@@ -207,6 +207,10 @@ public class ContractServiceImpl implements ContractService{
 
     public String getMyContract(ModelMap model, HttpSession session){
         Customer user = userService.findBySSO(userService.getPrincipal());
+        if(user == null){
+            model.addAttribute("message", "please, login");
+            return "errorPage";
+        }
         Contract contract = findUserContract(user);
         List<Contract> contracts = findByCustomerId(user);
         List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
@@ -306,6 +310,12 @@ public class ContractServiceImpl implements ContractService{
     public String editContract(Integer contractId, ModelMap model){
         Contract contract = findById(contractId);
         List<Tarif> tarifs = tarifService.findAll();
+        List<Contract> existingContracts = findAll();
+        if(!existingContracts.contains(contract)){
+            String string = "contract with id " + contractId + " is not found";
+            model.addAttribute("message", string);
+            return "errorPage";
+        }
         Tarif userTarif = contract.getTarif();
         model.addAttribute("tarif", userTarif);
         model.addAttribute("userTarif", userTarif);

@@ -39,13 +39,13 @@ public class TarifServiceImpl implements TarifService {
     @Autowired
     private CamelContext camelContext;
 
-    @Autowired
+    @Autowired(required = false)
     private CustomerService userService;
 
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
+    @Autowired(required = false)
     private ContractService contractService;
 
     public Tarif findById(Integer id) {

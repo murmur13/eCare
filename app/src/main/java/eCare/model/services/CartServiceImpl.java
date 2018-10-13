@@ -108,6 +108,9 @@ public class CartServiceImpl implements CartService{
 
     public String addFeatureToCart(Integer featureId, Model model, HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
+        if(cart==null){
+            cart = new Cart();
+        }
         Customer user = userService.findBySSO(userService.getPrincipal());
         if(user.isBlockedByUser() || user.isBlockedByAdmin()){
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked. Option cannot be chosen :(");
@@ -219,7 +222,8 @@ public class CartServiceImpl implements CartService{
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
-            return "userContract";
-        } else return "userslist";
+            return "redirect:/contracts/getMyContract";
+//            return "userContract";
+        } else return "redirect: /list";
     }
 }

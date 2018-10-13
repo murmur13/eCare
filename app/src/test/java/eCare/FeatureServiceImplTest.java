@@ -36,7 +36,6 @@ public class FeatureServiceImplTest {
     @Mock
     private ContractService contractService;
 
-
     @InjectMocks
     private FeatureServiceImpl featureService;
 
@@ -48,11 +47,12 @@ public class FeatureServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        MockitoAnnotations.initMocks(featureDAO);
         featureService = new FeatureServiceImpl();
         model = new ModelMap();
         userService = new CustomerServiceImpl();
+        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(featureDAO);
+
     }
 
     @Test
