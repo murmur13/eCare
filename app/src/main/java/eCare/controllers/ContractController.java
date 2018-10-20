@@ -127,19 +127,19 @@ public class ContractController {
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/block"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/block"}, method = RequestMethod.POST)
     public String blockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
         String view = contractService.blockContract(id, model, session);
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/unblock"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/unblock"}, method = RequestMethod.POST)
     public String unblockContract(@PathVariable Integer id, ModelMap model, HttpSession session) {
         String view = contractService.unblockContract(id, model, session);
         return view;
     }
 
-    @RequestMapping(value = {"/contract/{id}/phoneNumber"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/contract/{id}/phoneNumber"}, method = RequestMethod.POST)
     public String generateNumber(@PathVariable Integer id, ModelMap model) {
         String view = contractService.generateNumber(id, model);
         return view;

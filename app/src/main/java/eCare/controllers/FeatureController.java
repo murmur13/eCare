@@ -51,7 +51,7 @@ public class FeatureController {
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/chooseFeature"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/chooseFeature"}, method = RequestMethod.POST)
     public String chooseFeature(@PathVariable Integer id, ModelMap model, HttpSession session) {
         String view = featureService.chooseFeature(id, model, session);
         return view;
@@ -78,13 +78,13 @@ public class FeatureController {
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/deleteFeature"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/deleteFeature"}, method = RequestMethod.POST)
     public String deleteFeature(@PathVariable Integer id) {
         featureService.delete(id);
         return "redirect:/features/listFeatures";
     }
 
-    @RequestMapping(value = {"/{id}/deleteFeatureFromContract"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/deleteFeatureFromContract"}, method = RequestMethod.POST)
     public String deleteFeatureFromContract(@PathVariable Integer id, ModelMap model) {
         String view = featureService.deleteFeatureFromContract(id, model);
         return view;
@@ -135,7 +135,7 @@ public class FeatureController {
         return view;
     }
 
-    @RequestMapping(value = {"/unblockFeatures/{id}/{secondId}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/unblockFeatures/{id}/{secondId}"}, method = RequestMethod.POST)
     public String unblockFeatures(@PathVariable Integer id, @PathVariable Integer secondId,
                                   ModelMap model) {
         String view = featureService.unblockFeatures(id, secondId, model);
@@ -148,7 +148,7 @@ public class FeatureController {
         return view;
     }
 
-    @RequestMapping(value = {"/dismissRequiredFeatures/{id}/{secondId}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/dismissRequiredFeatures/{id}/{secondId}"}, method = RequestMethod.POST)
     public String dismissRequiredFeatures(@PathVariable Integer id, @PathVariable Integer secondId,
                                           ModelMap model) {
         String view = featureService.dismissRequiredFeatures(id, secondId, model);

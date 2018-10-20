@@ -70,14 +70,14 @@ public class GlobalExceptionController {
         return mav;
     }
 
-//    @ExceptionHandler(value = ServletException.class)
-//    public ModelAndView handleJspExceptions(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException {
-//        ModelAndView mav = new ModelAndView();
-//        mav.addObject("loggedinuser", getPrincipal());
-//        mav.setViewName("jspError");
-//        servletRequest.setAttribute("loggedinuser", getPrincipal());
-//        return mav;
-//    }
+    @ExceptionHandler(value = ServletException.class)
+    public ModelAndView handleJspExceptions(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("loggedinuser", getPrincipal());
+        mav.setViewName("jspError");
+        servletRequest.setAttribute("loggedinuser", getPrincipal());
+        return mav;
+    }
 
     /**
      * This method returns the principal[user-name] of logged-in user.

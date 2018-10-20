@@ -47,9 +47,18 @@
                         <td>${feature.featureName}</td>
                         <td>${requiredFeature.featureName}</td>
                         <sec:authorize access="hasRole('ADMIN')">
+
+                            <c:url var="dismissUrl"
+                                   value="/features/dismissRequiredFeatures/${requiredFeature.featureId}/${feature.featureId}"/>
                             <td>
-                                <a href="<c:url value='/features/dismissRequiredFeatures/${requiredFeature.featureId}/${feature.featureId}' />"
-                                   class="btn btn-success custom-width">Dismiss</a></td>
+                                <form:form id="${dismissForm}" action="${dismissUrl}" method="POST">
+                                    <input id="requiredFeature" name="requiredFeature" type="hidden"
+                                           value="${requiredFeature.featureId}"/>
+                                    <input id="feature" name="feature" type="hidden" value="${feature.featureId}"/>
+                                    <input type="submit" class="btn btn-danger custom-width" value="Dismiss"
+                                           onClick="return confirm('sure?')"/>
+                                </form:form>
+                            </td>
                         </sec:authorize>
                     </tr>
                 </c:forEach>

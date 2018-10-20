@@ -49,9 +49,18 @@
                         <td>${feature.featureName}</td>
                         <td>${blockingFeature.featureName}</td>
                         <sec:authorize access="hasRole('ADMIN')">
+
+                            <c:url var="unblockUrl"
+                                   value="/features/unblockFeatures/${blockingFeature.featureId}/${feature.featureId}"/>
                             <td>
-                                <a href="<c:url value='/features/unblockFeatures/${blockingFeature.featureId}/${feature.featureId}' />"
-                                   class="btn btn-success custom-width">Unblock</a></td>
+                                <form:form id="${unblockForm}" action="${unblockUrl}" method="POST">
+                                    <input id="blockingFeature" name="blockingFeature" type="hidden"
+                                           value="${blockingFeature.featureId}"/>
+                                    <input id="feature" name="feature" type="hidden" value="${feature.featureId}"/>
+                                    <input type="submit" class="btn btn-danger custom-width" value="Unblock"
+                                           onClick="return confirm('sure?')"/>
+                                </form:form>
+                            </td>
                         </sec:authorize>
                     </tr>
                 </c:forEach>

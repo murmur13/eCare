@@ -70,14 +70,35 @@
                                class="btn btn-warning custom-width">show chosen options</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/${contract.contractId}/block' />"
-                               class="btn btn-danger custom-width">block</a></td>
-                        <td><a href="<c:url value='/contracts/${contract.contractId}/unblock' />"
-                               class="btn btn-success custom-width">unblock</a></td>
+                        <c:url var="blockUrl" value="/contracts/${contract.contractId}/block"/>
+                        <td>
+                            <form:form id="${blockForm}" action="${blockUrl}" method="POST">
+                                <input id="contract" name="contract" type="hidden" value="${contract.contractId}"/>
+                                <input type="submit" class="btn btn-danger custom-width" value="block"
+                                       onClick="return confirm('sure?')"/>
+                            </form:form>
+                        </td>
+
+                        <c:url var="unblockUrl" value="/contracts/${contract.contractId}/unblock"/>
+                        <td>
+                            <form:form id="${unblockForm}" action="${unblockUrl}" method="POST">
+                                <input id="contract" name="contract" type="hidden" value="${contract.contractId}"/>
+                                <input type="submit" class="btn btn-danger custom-width" value="unblock"
+                                       onClick="return confirm('sure?')"/>
+                            </form:form>
+                        </td>
+
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/contract/${contract.contractId}/phoneNumber' />"
-                               class="btn btn-primary custom-width">generate number</a></td>
+
+                        <c:url var="generateUrl" value="/contracts/contract/${contract.contractId}/phoneNumber"/>
+                        <td>
+                            <form:form id="${generateForm}" action="${generateUrl}" method="POST">
+                                <input id="contract" name="contract" type="hidden" value="${contract.contractId}"/>
+                                <input type="submit" class="btn btn-danger custom-width" value="generate number"
+                                       onClick="return confirm('sure?')"/>
+                            </form:form>
+                        </td>
                     </sec:authorize>
                 </tr>
             </c:forEach>

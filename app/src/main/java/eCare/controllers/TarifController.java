@@ -76,7 +76,7 @@ public class TarifController {
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/deleteTarif"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/deleteTarif"}, method = RequestMethod.POST)
     public String deleteTarif(@PathVariable Integer id, ModelMap model) {
         String view = tarifService.deleteTarif(id, model);
         return view;

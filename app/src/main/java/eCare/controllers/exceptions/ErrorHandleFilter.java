@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
 
 /**
@@ -35,7 +37,7 @@ public class ErrorHandleFilter implements Filter {
             throws IOException, ServletException {
 
         try {
-//            globalExceptionController.handleJspExceptions(servletRequest, servletResponse);
+            globalExceptionController.handleJspExceptions(servletRequest, servletResponse);
             filterChain.doFilter(servletRequest, servletResponse);
 
         } catch (Exception ex) {
@@ -48,6 +50,7 @@ public class ErrorHandleFilter implements Filter {
         }
 
     }
+
 
     /**
      * This method returns the principal[user-name] of logged-in user.
