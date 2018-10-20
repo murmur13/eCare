@@ -6,7 +6,8 @@
     <transaction-support>XATransaction</transaction-support>
 
     <connection-definitions>
-        <connection-definition class-name="de.akquinet.jbosscc.jca.FileManagedConnectionFactory" jndi-name="java:/ConnectionFactory" enabled="true" pool-name="ConnectionFactory">
+        <connection-definition class-name="de.akquinet.jbosscc.jca.FileManagedConnectionFactory"
+                               jndi-name="java:/ConnectionFactory" enabled="true" pool-name="ConnectionFactory">
         </connection-definition>
     </connection-definitions>
 

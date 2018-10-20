@@ -21,7 +21,8 @@ public class MessagesList {
         this.message = message;
     }
 
-    public MessagesList(){}
+    public MessagesList() {
+    }
 
     public Feature getMessageFeature() {
         return messageFeature;

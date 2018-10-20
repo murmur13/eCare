@@ -19,7 +19,7 @@ public class ErrorHandleFilter implements Filter {
     GlobalExceptionController globalExceptionController;
 
     @Override
-    public void destroy(){
+    public void destroy() {
 
     }
 
@@ -48,15 +48,16 @@ public class ErrorHandleFilter implements Filter {
         }
 
     }
+
     /**
      * This method returns the principal[user-name] of logged-in user.
      */
-    private String getPrincipal(){
+    private String getPrincipal() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
+            userName = ((UserDetails) principal).getUsername();
         } else {
             userName = principal.toString();
         }

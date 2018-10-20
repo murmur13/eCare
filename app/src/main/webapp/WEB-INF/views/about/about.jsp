@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <head>
     <title>Javastudy.ru MVC_HTML5_Angular</title>
@@ -13,9 +13,9 @@
     <spring:url value="/resources/css/modern-business.css" var="startertemplate"/>
     <!-- Custom Fonts -->
     <spring:url value="/resources/css/font-awesome.min.css" var="fontawesome"/>
-    <link href="${bootstrap}" rel="stylesheet" />
-    <link href="${startertemplate}" rel="stylesheet" />
-    <link href="${fontawesome}" rel="stylesheet" />
+    <link href="${bootstrap}" rel="stylesheet"/>
+    <link href="${startertemplate}" rel="stylesheet"/>
+    <link href="${fontawesome}" rel="stylesheet"/>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,7 +42,8 @@
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -148,9 +149,15 @@
         </div>
         <div class="col-md-6">
             <h2>About Modern Business</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed voluptate nihil eum consectetur similique? Consectetur, quod, incidunt, harum nisi dolores delectus reprehenderit voluptatem perferendis dicta dolorem non blanditiis ex fugiat.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe, magni, aperiam vitae illum voluptatum aut sequi impedit non velit ab ea pariatur sint quidem corporis eveniet. Odit, temporibus reprehenderit dolorum!</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, consequuntur, modi mollitia corporis ipsa voluptate corrupti eum ratione ex ea praesentium quibusdam? Aut, in eum facere corrupti necessitatibus perspiciatis quis?</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed voluptate nihil eum consectetur similique?
+                Consectetur, quod, incidunt, harum nisi dolores delectus reprehenderit voluptatem perferendis dicta
+                dolorem non blanditiis ex fugiat.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe, magni, aperiam vitae illum voluptatum
+                aut sequi impedit non velit ab ea pariatur sint quidem corporis eveniet. Odit, temporibus reprehenderit
+                dolorum!</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, consequuntur, modi mollitia corporis ipsa
+                voluptate corrupti eum ratione ex ea praesentium quibusdam? Aut, in eum facere corrupti necessitatibus
+                perspiciatis quis?</p>
         </div>
     </div>
     <!-- /.row -->
@@ -167,7 +174,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>
@@ -186,7 +194,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>
@@ -205,7 +214,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>
@@ -224,7 +234,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>
@@ -243,7 +254,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>
@@ -262,7 +274,8 @@
                     <h3>John Smith<br>
                         <small>Job Title</small>
                     </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt maxime.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iste saepe et quisquam nesciunt
+                        maxime.</p>
                     <ul class="list-inline">
                         <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
                         </li>

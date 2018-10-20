@@ -6,21 +6,21 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                    http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-<changeSet author="echerkas" id="1516384652249-39">
-    <createTable tableName="contract_has_feature">
-        <column name="contractId" type="INT">
-            <constraints nullable="false" />
-        </column>
-        <column name="contractFeature" type="INT">
-            <constraints nullable="false" />
-        </column>
-    </createTable>
+    <changeSet author="echerkas" id="1516384652249-39">
+        <createTable tableName="contract_has_feature">
+            <column name="contractId" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contractFeature" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
-    <addForeignKeyConstraint constraintName="fk_feature"
-                             baseTableName="contract_has_feature" baseColumnNames="contractFeature"
-                             referencedTableName="feature" referencedColumnNames="feature_id" />
-    <addForeignKeyConstraint constraintName="fk_contract"
-                             baseTableName="contract_has_feature" baseColumnNames="contractId"
-                             referencedTableName="contract" referencedColumnNames="contract_id" />
-</changeSet>
+        <addForeignKeyConstraint constraintName="fk_feature"
+                                 baseTableName="contract_has_feature" baseColumnNames="contractFeature"
+                                 referencedTableName="feature" referencedColumnNames="feature_id"/>
+        <addForeignKeyConstraint constraintName="fk_contract"
+                                 baseTableName="contract_has_feature" baseColumnNames="contractId"
+                                 referencedTableName="contract" referencedColumnNames="contract_id"/>
+    </changeSet>
 </databaseChangeLog>

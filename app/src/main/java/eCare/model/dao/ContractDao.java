@@ -25,7 +25,7 @@ public class ContractDao implements DaoInterface<Contract, Integer> {
     @Autowired
     private SessionFactory sessionFactory;
 
-    protected Session getSession(){
+    protected Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -50,10 +50,10 @@ public class ContractDao implements DaoInterface<Contract, Integer> {
         Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.tNumber = :telNumber");
         query.setParameter("telNumber", telNumber);
         List results = query.list();
-        return  results;
+        return results;
     }
 
-    public List<Contract> findByCustomerId(Customer customerId){
+    public List<Contract> findByCustomerId(Customer customerId) {
         logger.info("ContractCustomerId : {}", customerId);
         Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.customer = :customerId");
         query.setParameter("customerId", customerId);
@@ -61,7 +61,7 @@ public class ContractDao implements DaoInterface<Contract, Integer> {
         return results;
     }
 
-    public List<Contract> findContractByTarif(Tarif tarifId){
+    public List<Contract> findContractByTarif(Tarif tarifId) {
         logger.info("TarifId : {}, tarifId");
         Query query = sessionFactory.getCurrentSession().createQuery("select c from Contract c where c.tarif = :tarifId");
         query.setParameter("tarifId", tarifId);

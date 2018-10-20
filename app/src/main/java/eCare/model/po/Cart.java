@@ -20,7 +20,8 @@ public class Cart {
     private List<Feature> optionsInCart = new ArrayList<Feature>();
     private Tarif tarifInCart;
 
-    public Cart(){}
+    public Cart() {
+    }
 
     public List<Feature> getOptionsInCart() {
         return optionsInCart;
@@ -40,26 +41,26 @@ public class Cart {
 
     public void addTarifToCart(Tarif tarif) {
         this.id = tarif.getTarifId();
-        this.name =tarif.getName();
+        this.name = tarif.getName();
         this.price = tarif.getPrice();
     }
 
     public void addOptionToCart(Feature feature) {
         this.id = feature.getFeatureId();
-        this.name =feature.getFeatureName();
+        this.name = feature.getFeatureName();
         this.price = feature.getFeaturePrice();
     }
 
     private Double total(Cart cart) {
         Double total = new Double(0);
-            List<Feature> featuresCart = cart.getOptionsInCart();
-            Tarif tarifCart = cart.getTarifInCart();
-            for (Feature featureCart: featuresCart) {
-                Double price = featureCart.getFeaturePrice();
-                Double connection = featureCart.getConnectionCost();
-                total += price + connection;
-            }
-            Double tarifPrice = tarifCart.getPrice();
+        List<Feature> featuresCart = cart.getOptionsInCart();
+        Tarif tarifCart = cart.getTarifInCart();
+        for (Feature featureCart : featuresCart) {
+            Double price = featureCart.getFeaturePrice();
+            Double connection = featureCart.getConnectionCost();
+            total += price + connection;
+        }
+        Double tarifPrice = tarifCart.getPrice();
         total += tarifPrice;
         return total;
     }

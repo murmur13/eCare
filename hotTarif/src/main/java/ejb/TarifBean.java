@@ -1,6 +1,8 @@
 package ejb;
 
 import eCare.model.po.Tarif;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -15,6 +17,8 @@ import java.util.List;
 @ManagedBean
 @RequestScoped
 public class TarifBean implements Serializable {
+
+    static final Logger logger = LoggerFactory.getLogger(TarifBean.class);
 
     @EJB
     TarifEjb tarifEjb;
@@ -57,15 +61,15 @@ public class TarifBean implements Serializable {
         return cheapTarifs;
     }
 
-    public String returnTarifFromQueue(String string){
-        System.out.println("TarifId is received in Ejb = " + string);
+    public String returnTarifFromQueue(String string) {
+        logger.info("TarifId is received in Ejb = " + string);
         setId(string);
         return id;
     }
 
     public boolean isPollEnabled() {
         Boolean param = true;
-        System.out.println("Returns " + param);
+        logger.info("Returns " + param);
         return param;
     }
 

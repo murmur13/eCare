@@ -13,7 +13,7 @@ public class RandomPhoneNumber {
 
     String number;
 
-    public String generateNumber(){
+    public String generateNumber() {
         int num1, num2, num3; //3 numbers in area code
         int set2, set3; //sequence 2 and 3 of the phone number
 

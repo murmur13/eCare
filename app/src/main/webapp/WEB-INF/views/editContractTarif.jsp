@@ -28,12 +28,14 @@
     <div class="row">
         <div class="col-md-2">
             <div class="form-group">
-                <td>List of tarifs:<td>
-                <form:select class="form-control" path="tarifId" id="tarifId">
-                <c:forEach items="${tarifs}" var="tarif">
-                <form:option value="${tarif.tarifId}">${tarif.name} &#8195 &#8195 &#8195 &#8195 &#8195 ${tarif.price}</form:option>
-                </c:forEach>
-                </form:select>
+                <td>List of tarifs:
+                <td>
+                    <form:select class="form-control" path="tarifId" id="tarifId">
+                    <c:forEach items="${tarifs}" var="tarif">
+                    <form:option value="${tarif.tarifId}">${tarif.name} &#8195 &#8195 &#8195 &#8195
+                    &#8195 ${tarif.price}</form:option>
+                    </c:forEach>
+                    </form:select>
             </div>
         </div>
             <%--</div>--%>

@@ -21,7 +21,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan({ "eCare.configuration" })
+@ComponentScan({"eCare.configuration"})
 @PropertySource(value = {"classpath:properties/application.properties"})
 public class HibernateConfiguration {
 
@@ -32,7 +32,7 @@ public class HibernateConfiguration {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[] { "eCare.model.po"});
+        sessionFactory.setPackagesToScan(new String[]{"eCare.model.po"});
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

@@ -1,5 +1,7 @@
 package eCare.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -11,9 +13,10 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
+        final Logger logger = LoggerFactory.getLogger(Main.class);
         String password = "abc125";
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode(password));
+        logger.info(passwordEncoder.encode(password));
     }
 
 }

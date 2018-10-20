@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 
@@ -12,7 +12,8 @@
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
 </head>
 
 <body>
@@ -40,30 +41,37 @@
             <tbody>
             <c:forEach items="${contracts}" var="contract">
                 <tr>
-                    <%--<td>${contract.contractId}</td>--%>
+                        <%--<td>${contract.contractId}</td>--%>
                     <td>${contract.customer.ssoId}</td>
                     <td>${contract.tarif.name}</td>
                     <td>${contract.tarif.price}</td>
                     <td>${contract.tNumber}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contractTarif-${contract.contractId}' />" class="btn btn-primary custom-width">change tarif</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/editContractTarif' />"
+                               class="btn btn-primary custom-width">change tarif</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contractOptions-${contract.contractId}' />" class="btn btn-primary custom-width">change options</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/editContractOptions' />"
+                               class="btn btn-primary custom-width">change options</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/deleteContract' />"
+                               class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/showOptions-${contract.contractId}' />" class="btn btn-warning custom-width">show chosen options</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/showOptions' />"
+                               class="btn btn-warning custom-width">show chosen options</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                    <td><a href="<c:url value='/contracts/block-contract-${contract.contractId}' />" class="btn btn-danger custom-width">block</a></td>
-                    <td><a href="<c:url value='/contracts/unblock-contract-${contract.contractId}' />" class="btn btn-success custom-width">unblock</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/block' />"
+                               class="btn btn-danger custom-width">block</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/unblock' />"
+                               class="btn btn-success custom-width">unblock</a></td>
                     </sec:authorize>
-                        <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                            <td><a href="<c:url value='/contracts/generatePhoneNumber-contract-${contract.contractId}' />" class="btn btn-primary custom-width">generate number</a></td>
-                        </sec:authorize>
+                    <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
+                        <td><a href="<c:url value='/contracts/contract/${contract.contractId}/phoneNumber' />"
+                               class="btn btn-primary custom-width">generate number</a></td>
+                    </sec:authorize>
                 </tr>
             </c:forEach>
             </tbody>
@@ -80,19 +88,20 @@
             <c:param name="page" value="${page-1}"/>
         </c:url>
         <c:if test="${page > 1}">
-        <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+            <li><a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
         </c:if>
 
         <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
             <c:choose>
                 <c:when test="${page == i.index}">
-                    <li class="active"><span>${i.index}</span><li>
+                    <li class="active"><span>${i.index}</span>
+                    <li>
                 </c:when>
                 <c:otherwise>
                     <c:url value="/contracts/listContracts" var="url">
                         <c:param name="page" value="${i.index}"/>
                     </c:url>
-             <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
+                    <li><a href='<c:out value="${url}" />'>${i.index}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
@@ -100,7 +109,7 @@
             <c:param name="page" value="${page + 1}"/>
         </c:url>
         <c:if test="${page + 1 <= maxPages}">
-        <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
+            <li><a href='<c:out value="${next}" />' class="pn next">Next</a></li>
         </c:if>
     </ul>
 

@@ -2,6 +2,7 @@ package eCare.configuration;
 
 import eCare.controllers.exceptions.ErrorHandleFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
 import javax.servlet.Filter;
 import javax.servlet.ServletRegistration;
 
@@ -10,20 +11,20 @@ import javax.servlet.ServletRegistration;
  */
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-        @Override
-        protected Class<?>[] getRootConfigClasses() {
-            return new Class[] { AppConfig.class };
-        }
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[]{AppConfig.class};
+    }
 
-        @Override
-        protected Class<?>[] getServletConfigClasses() {
-            return null;
-        }
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return null;
+    }
 
-        @Override
-        protected String[] getServletMappings() {
-            return new String[] { "/" };
-        }
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
 
     @Override
     public void customizeRegistration(ServletRegistration.Dynamic registration) {
@@ -35,5 +36,5 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
         return new Filter[]{new ErrorHandleFilter()};
     }
 
-    }
+}
 

@@ -24,13 +24,13 @@ public class TarifDao implements DaoInterface<Tarif, Integer> {
 
     @PostConstruct
     public void test() {
-        System.out.print(applicationContext);
+        logger.info(applicationContext.toString());
     }
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    protected Session getSession(){
+    protected Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -52,7 +52,7 @@ public class TarifDao implements DaoInterface<Tarif, Integer> {
         Query query = sessionFactory.getCurrentSession().createQuery("select t from Tarif t where t.name = :name");
         query.setParameter("name", name);
         List results = query.list();
-        return  results;
+        return results;
     }
 
     public void delete(Tarif entity) {

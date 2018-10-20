@@ -69,9 +69,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     public void updateUser(Customer user) {
         Customer entity = customerDao.findById(user.getId());
-        if(entity!=null){
+        if (entity != null) {
             entity.setSsoId(user.getSsoId());
-            if(!user.getPassword().equals(entity.getPassword())){
+            if (!user.getPassword().equals(entity.getPassword())) {
                 entity.setPassword(passwordEncoder.encode(user.getPassword()));
             }
             entity.setName(user.getName());
@@ -98,7 +98,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     public boolean isUserSSOUnique(Integer id, String sso) {
         Customer user = findBySSO(sso);
-        return ( user == null || ((id != null) && (user.getId() == id)));
+        return (user == null || ((id != null) && (user.getId() == id)));
     }
 
     public List<Customer> findByName(String name) {
@@ -106,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customers;
     }
 
-    public List<Customer> findByTelNumber(String telNumber){
+    public List<Customer> findByTelNumber(String telNumber) {
         List<Customer> customers = customerDao.findByTelNumber(telNumber);
         return customers;
     }
@@ -122,72 +122,70 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * This method returns the principal[user-name] of logged-in user.
      */
-    public String getPrincipal(){
+    public String getPrincipal() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
+            userName = ((UserDetails) principal).getUsername();
         } else {
             userName = principal.toString();
         }
         return userName;
     }
 
-    public HashSet<UserProfile> addUserProfile(UserProfile role){
-        HashSet <UserProfile> userProfiles = new HashSet<UserProfile>();
+    public HashSet<UserProfile> addUserProfile(UserProfile role) {
+        HashSet<UserProfile> userProfiles = new HashSet<UserProfile>();
         userProfiles.add(role);
         return userProfiles;
     }
 
-    public String mainPageMethod(ModelMap model){
+    public String mainPageMethod(ModelMap model) {
         String name = getPrincipal();
         Customer user = findBySSO(name);
         model.addAttribute("loggedinuser", getPrincipal());
         return "main";
     }
 
-    public String listUsersMethod(Integer page, ModelMap model){
+    public String listUsersMethod(Integer page, ModelMap model) {
         Customer user = findBySSO(getPrincipal());
         List<Customer> users = findAllUsers();
         PagedListHolder<Customer> pagedListHolder = new PagedListHolder<Customer>(users);
         pagedListHolder.setPageSize(15);
         model.addAttribute("maxPages", pagedListHolder.getPageCount());
         model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
             pagedListHolder.setPage(0);
             model.addAttribute("users", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
+        } else if (page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page - 1);
             model.addAttribute("users", pagedListHolder.getPageList());
         }
 
         model.addAttribute("loggedinuser", getPrincipal());
-        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))){
+        if (user.getUserProfiles().contains(userProfileService.findByType("USER"))) {
             return "main";
         } else return "userslist";
     }
 
-    public String searchUser(ModelMap model){
+    public String searchUser(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
         model.addAttribute("loggedinuser", getPrincipal());
         return "search";
     }
 
-    public String findByNameOrTel(String nameOrPhone, ModelMap model){
+    public String findByNameOrTel(String nameOrPhone, ModelMap model) {
         List<Customer> users = findByName(nameOrPhone);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             users = findByTelNumber(nameOrPhone);
             model.addAttribute("users", users);
             model.addAttribute("name", nameOrPhone);
-            if(users.isEmpty()){
+            if (users.isEmpty()) {
                 model.addAttribute("message", "User " + nameOrPhone + " is not found");
                 return "errorPage";
             }
-        }
-        else {
+        } else {
             model.addAttribute("users", users);
             model.addAttribute("name", nameOrPhone);
         }
@@ -196,7 +194,7 @@ public class CustomerServiceImpl implements CustomerService {
         return "userslist";
     }
 
-    public String newRegisteredUser(ModelMap model){
+    public String newRegisteredUser(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
@@ -204,15 +202,15 @@ public class CustomerServiceImpl implements CustomerService {
         return "registration";
     }
 
-    public String registerNewUser(Customer user, BindingResult result, ModelMap model){
+    public String registerNewUser(Customer user, BindingResult result, ModelMap model) {
         UserProfile role = userProfileService.findByType("USER");
         HashSet<UserProfile> profiles = addUserProfile(role);
         user.setUserProfiles(profiles);
         if (result.hasErrors()) {
             return "registration";
         }
-        if(!isUserSSOUnique(user.getId(), user.getSsoId()) || (user.getId()!=null)){
-            FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
+        if (!isUserSSOUnique(user.getId(), user.getSsoId()) || (user.getId() != null)) {
+            FieldError ssoError = new FieldError("user", "ssoId", messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
             result.addError(ssoError);
             return "registration";
         }
@@ -222,7 +220,7 @@ public class CustomerServiceImpl implements CustomerService {
         return "errorPage";
     }
 
-    public String newUser(ModelMap model){
+    public String newUser(ModelMap model) {
         Customer user = new Customer();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
@@ -230,24 +228,24 @@ public class CustomerServiceImpl implements CustomerService {
         return "registration";
     }
 
-    public String saveUser(Customer user, BindingResult result, ModelMap model){
+    public String saveUser(Customer user, BindingResult result, ModelMap model) {
         if (result.hasErrors()) {
             return "registration";
         }
 
-        if(!isUserSSOUnique(user.getId(), user.getSsoId())){
-            FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
+        if (!isUserSSOUnique(user.getId(), user.getSsoId())) {
+            FieldError ssoError = new FieldError("user", "ssoId", messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
             result.addError(ssoError);
             return "registration";
         }
 
         saveUser(user);
-        model.addAttribute("message", "User " + user.getName() + " "+ user.getSurname() + " registered successfully");
+        model.addAttribute("message", "User " + user.getName() + " " + user.getSurname() + " registered successfully");
         model.addAttribute("loggedinuser", getPrincipal());
         return "registrationsuccess";
     }
 
-    public String editUser(String ssoId, ModelMap model){
+    public String editUser(String ssoId, ModelMap model) {
         Customer editUser = findBySSO(ssoId);
         model.addAttribute("editUser", editUser);
         model.addAttribute("edit", true);
@@ -255,7 +253,7 @@ public class CustomerServiceImpl implements CustomerService {
         return "editUser";
     }
 
-    public String updateUser(Customer user, BindingResult result, ModelMap model, String ssoId){
+    public String updateUser(Customer user, BindingResult result, ModelMap model, String ssoId) {
         if (result.hasErrors()) {
             return "editUser";
         }
@@ -264,12 +262,12 @@ public class CustomerServiceImpl implements CustomerService {
         return "redirect: /list";
     }
 
-    public String deleteUser(String ssoId){
+    public String deleteUser(String ssoId) {
         deleteUserBySSO(ssoId);
         return "redirect:/list";
     }
 
-    public String login(){
+    public String login() {
         if (isCurrentAuthenticationAnonymous()) {
             return "login";
         } else {
@@ -277,9 +275,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    public String logout (HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status){
+    public String logout(HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             status.setComplete();
             webR.removeAttribute("user", webR.SCOPE_SESSION);
             persistentTokenBasedRememberMeServices.logout(request, response, auth);

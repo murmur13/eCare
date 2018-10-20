@@ -23,12 +23,6 @@
           type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css"
           rel="stylesheet">
-    <%--<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">--%>
-    <%--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>--%>
-    <%--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>--%>
-    <%--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>--%>
-    <%--<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>--%>
-    <%--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>--%>
 
 </head>
 
@@ -57,34 +51,34 @@
 
                 <div class="panel-body">
                     <c:if test="${sessionScope.cart.tarifInCart!=null}">
-                    <div class="row">
-                        <div class="col-xs-2"><img class="img-responsive" src="http://placehold.it/100x70">
-                        </div>
-                        <div class="col-xs-4">
-                            <h4 class="product-name"><strong>
-                                <td>${sessionScope.cart.tarifInCart.name}</td>
-                            </strong></h4>
-                            <h4>
-                                <small>Tarif description</small>
-                            </h4>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="col-xs-6 text-right">
-                                <h6><strong>${sessionScope.cart.tarifInCart.price}<span
-                                        class="text-muted"></span></strong></h6>
+                        <div class="row">
+                            <div class="col-xs-2"><img class="img-responsive" src="http://placehold.it/100x70">
                             </div>
-                            <div class="col-xs-2">
-                                <button type="button" class="btn btn-link btn-xs" style="float:right">
-                                    <a href="<c:url value='/cart/deleteTarif' />">
-                                        <span class="glyphicon glyphicon-trash"> </span>
-                                    </a>
-                                </button>
+                            <div class="col-xs-4">
+                                <h4 class="product-name"><strong>
+                                    <td>${sessionScope.cart.tarifInCart.name}</td>
+                                </strong></h4>
+                                <h4>
+                                    <small>Tarif description</small>
+                                </h4>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="col-xs-6 text-right">
+                                    <h6><strong>${sessionScope.cart.tarifInCart.price}<span
+                                            class="text-muted"></span></strong></h6>
+                                </div>
+                                <div class="col-xs-2">
+                                    <button type="button" class="btn btn-link btn-xs" style="float:right">
+                                        <a href="<c:url value='/cart/deleteTarif' />">
+                                            <span class="glyphicon glyphicon-trash"> </span>
+                                        </a>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <br/>
-                      </c:if>
+                        <hr>
+                        <br/>
+                    </c:if>
 
 
                     <c:if test="${sessionScope.cart.optionsInCart!=null}">
@@ -121,7 +115,7 @@
                                 </div>
                                 <div class="col-xs-2">
                                     <button type="button" class="btn btn-link btn-xs" style="float:right">
-                                        <a href="<c:url value='/cart/deleteOption-${feature.featureId}' />">
+                                        <a href="<c:url value='/cart/${feature.featureId}/deleteOption' />">
                                             <span class="glyphicon glyphicon-trash"> </span>
                                         </a>
                                     </button>
@@ -131,42 +125,42 @@
                         <hr>
                         </c:forEach>
                         </c:if>
-                        </div>
+                </div>
 
-                            <%--<hr>--%>
+                <%--<hr>--%>
 
-                        <div class="row">
-                            <div class="text-center">
-                                <div class="col-xs-9">
-                                    <h6 class="text-right">Added items?</h6>
-                                </div>
-                                <div class="col-xs-3">
-                                    <button type="button" class="btn btn-default btn-sm btn-block">
-                                        <a href="<c:url value='/cart/refresh' />"></a>
-                                        Update cart
-                                    </button>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="text-center">
+                        <div class="col-xs-9">
+                            <h6 class="text-right">Added items?</h6>
                         </div>
-                        <%--</div>--%>
-                        <div class="panel-footer">
-                            <div class="row text-center">
-                                <div class="col-xs-9">
-                                    <h4 class="text-right">Total <strong>$50.00</strong></h4>
-                                </div>
-                                <div class="col-xs-3">
-                                    <button type="button" class="btn btn-success btn-block">
-                                        <a href="<c:url value='/cart/submit' />">
-                                            Submit
-                                        </a>
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-default btn-sm btn-block">
+                                <a href="<c:url value='/cart/refresh' />"></a>
+                                Update cart
+                            </button>
                         </div>
+                    </div>
+                </div>
+                <%--</div>--%>
+                <div class="panel-footer">
+                    <div class="row text-center">
+                        <div class="col-xs-9">
+                            <h4 class="text-right">Total <strong>$50.00</strong></h4>
+                        </div>
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-success btn-block">
+                                <a href="<c:url value='/cart/submit' />">
+                                    Submit
+                                </a>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </div>
 </body>

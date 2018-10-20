@@ -11,11 +11,11 @@ import java.util.List;
 @Service
 public interface UserProfileService {
 
-        UserProfile findById(int id);
+    UserProfile findById(int id);
 
-        UserProfile findByType(String type);
+    UserProfile findByType(String type);
 
-        List<UserProfile> findAll();
+    List<UserProfile> findAll();
 
-    }
+}
 

@@ -1,9 +1,11 @@
 package eCare;
 
-import eCare.model.dao.CustomerDao;
 import eCare.model.dao.FeatureDao;
-import eCare.model.po.*;
-import eCare.model.services.*;
+import eCare.model.po.Feature;
+import eCare.model.po.SelectedFeatures;
+import eCare.model.services.ContractService;
+import eCare.model.services.CustomerServiceImpl;
+import eCare.model.services.FeatureServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,48 +105,48 @@ public class FeatureServiceImplTest {
     }
 
     @Test
-    public void blockingFeaturesTestSelectedFeaturesOverheadsLimit(){
+    public void blockingFeaturesTestSelectedFeaturesOverheadsLimit() {
         SelectedFeatures selectedFeatures = new SelectedFeatures();
-        model.addAttribute("ModelNameTest","ModelValueTest");
+        model.addAttribute("ModelNameTest", "ModelValueTest");
         selectedFeatures.setSelectedFeatures(initializeFeatures(4));
         String result = featureService.blockingFeatures(selectedFeatures, null, model);
-        assertEquals(result,"errorPage");
+        assertEquals(result, "errorPage");
     }
 
     @Test
-    public void blockingFeaturesTestCreateBlockingFeatures(){
+    public void blockingFeaturesTestCreateBlockingFeatures() {
         SelectedFeatures selectedFeatures = new SelectedFeatures();
-        model.addAttribute("ModelNameTest","ModelValueTest");
+        model.addAttribute("ModelNameTest", "ModelValueTest");
         selectedFeatures.setSelectedFeatures(initializeFeatures(2));
         BindingResult bindingResTest = Mockito.mock(BindingResult.class);
         when(bindingResTest.hasErrors()).thenReturn(false);
         String result = featureService.blockingFeatures(selectedFeatures, bindingResTest, model);
-        assertEquals(result,"redirect:/features/blockingFeatures/seeAll");
+        assertEquals(result, "redirect:/features/blockingFeatures/seeAll");
     }
 
     @Test
-    public void blockingFeaturesTestNullBlockingFeatures(){
+    public void blockingFeaturesTestNullBlockingFeatures() {
         SelectedFeatures selectedFeatures = new SelectedFeatures();
-        model.addAttribute("ModelNameTest","ModelValueTest");
+        model.addAttribute("ModelNameTest", "ModelValueTest");
         selectedFeatures.setSelectedFeatures(initializeFeatures(0));
         BindingResult bindingResTest = Mockito.mock(BindingResult.class);
         when(bindingResTest.hasErrors()).thenReturn(false);
         String result = featureService.blockingFeatures(selectedFeatures, bindingResTest, model);
-        assertEquals(result,"errorPage");
+        assertEquals(result, "errorPage");
     }
 
     @Test
-    public void unblockFeaturesTest(){
-        model.addAttribute("ModelNameTest","ModelValueTest");
+    public void unblockFeaturesTest() {
+        model.addAttribute("ModelNameTest", "ModelValueTest");
         List<Feature> selectFeatures = new ArrayList<Feature>();
         selectFeatures.addAll(initializeFeatures(2));
         SelectedFeatures result = featureService.unblockFeatures(selectFeatures);
         assertTrue(result.getSelectedFeatures().containsAll(selectFeatures));
     }
 
-    private List<Feature> initializeFeatures(int amountOfFeatures){
+    private List<Feature> initializeFeatures(int amountOfFeatures) {
         List<Feature> selectedFeaturesList = new ArrayList<Feature>();
-        for(int i = 0; i < amountOfFeatures; i++){
+        for (int i = 0; i < amountOfFeatures; i++) {
             Feature feature = new Feature();
             List<Feature> blockingFeatures = new ArrayList<Feature>();
             StringBuilder string = new StringBuilder();

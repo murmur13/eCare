@@ -26,7 +26,7 @@ import java.util.Locale;
 @Service("contractService")
 @DependsOn("messageSource")
 @Transactional
-public class ContractServiceImpl implements ContractService{
+public class ContractServiceImpl implements ContractService {
 
     @Autowired
     private ContractDao contractDao;
@@ -57,7 +57,7 @@ public class ContractServiceImpl implements ContractService{
         contractDao.persist(contract);
     }
 
-    public void delete(Integer id){
+    public void delete(Integer id) {
         Contract contract = contractDao.findById(id);
         contractDao.delete(contract);
     }
@@ -70,7 +70,7 @@ public class ContractServiceImpl implements ContractService{
         return contractDao.findAll();
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         contractDao.deleteAll();
     }
 
@@ -79,25 +79,25 @@ public class ContractServiceImpl implements ContractService{
         return contract;
     }
 
-    public List<Contract> findByCustomerId(Customer customerId){
+    public List<Contract> findByCustomerId(Customer customerId) {
         Customer customer = customerDao.findById(customerId.getId());
         List<Contract> contracts = contractDao.findByCustomerId(customerId);
         return contracts;
     }
 
-    public List<Contract> findContractByTarif(Tarif tarifId){
+    public List<Contract> findContractByTarif(Tarif tarifId) {
         Tarif tarif = tarifDao.findById(tarifId.getTarifId());
-        List<Contract>contracts = contractDao.findContractByTarif(tarif);
+        List<Contract> contracts = contractDao.findContractByTarif(tarif);
         return contracts;
     }
 
-    public Contract findUserContract(Customer user){
+    public Contract findUserContract(Customer user) {
         List<Contract> contracts = findByCustomerId(user);
         Contract contract = contracts.get(0);
         return contract;
     }
 
-    public Contract createNewContract(String phone, String sso, String tarif){
+    public Contract createNewContract(String phone, String sso, String tarif) {
         Customer customer = userService.findBySSO(sso);
         Tarif tarif1 = tarifService.findById(Integer.parseInt(tarif));
         Contract contract = new Contract(phone, customer, tarif1);
@@ -109,7 +109,7 @@ public class ContractServiceImpl implements ContractService{
         return contract;
     }
 
-    public List<Feature> deleteFeatureFromContract(Feature featureToDelete, Contract contract){
+    public List<Feature> deleteFeatureFromContract(Feature featureToDelete, Contract contract) {
         List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         List<Contract> featureContracts = featureToDelete.getFeatureContracts();
         int index = features.indexOf(featureToDelete);
@@ -120,19 +120,19 @@ public class ContractServiceImpl implements ContractService{
         return features;
     }
 
-    public void editContractTarif(Integer contractId, Integer tarifId){
+    public void editContractTarif(Integer contractId, Integer tarifId) {
         Contract contract = findById(contractId);
         Tarif newTarif = tarifService.findById(tarifId);
         contract.setTarif(newTarif);
         update(contract);
     }
 
-    public List<Feature> updateContractOptions(Integer contractId, SelectedFeatures selectedFeaturesIds,Cart cart, HttpSession session){
+    public List<Feature> updateContractOptions(Integer contractId, SelectedFeatures selectedFeaturesIds, Cart cart, HttpSession session) {
         Contract contract = findById(contractId);
         Tarif tarif = contract.getTarif();
         List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
         List<Feature> finalFeatures = selectedFeaturesIds.getSelectedFeatures();
-        if(finalFeatures.isEmpty()) {
+        if (finalFeatures.isEmpty()) {
             for (Feature feature : userFeatures) {
                 List<Tarif> featureTarifs = feature.getFeatureTarifs();
                 List<Contract> featureContracts = feature.getFeatureContracts();
@@ -145,8 +145,7 @@ public class ContractServiceImpl implements ContractService{
                 tarifService.update(tarif);
             }
             userFeatures.clear();
-        }
-        else {
+        } else {
             for (Feature feature : finalFeatures) {
                 if (!userFeatures.contains(feature)) {
                     userFeatures.add(feature);
@@ -172,14 +171,14 @@ public class ContractServiceImpl implements ContractService{
         return userFeatures;
     }
 
-    public String generateNumber(Integer contractId){
+    public String generateNumber(Integer contractId) {
         RandomPhoneNumber numberGenerator = new RandomPhoneNumber();
         Contract contract = findById(contractId);
         String number = numberGenerator.generateNumber();
         List<Contract> allContracts = findAll();
-        for (Contract someContract :allContracts) {
+        for (Contract someContract : allContracts) {
             String someNumber = contract.gettNumber();
-            if(someNumber.equals(number))
+            if (someNumber.equals(number))
                 number = numberGenerator.generateNumber();
         }
         contract.settNumber(number);
@@ -187,40 +186,39 @@ public class ContractServiceImpl implements ContractService{
         return number;
     }
 
-    public String listContracts(Integer page, ModelMap model){
+    public String listContracts(Integer page, ModelMap model) {
         List<Contract> contracts = findAll();
         PagedListHolder<Contract> pagedListHolder = new PagedListHolder<Contract>(contracts);
         pagedListHolder.setPageSize(10);
         model.addAttribute("maxPages", pagedListHolder.getPageCount());
         model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
             pagedListHolder.setPage(0);
             model.addAttribute("contracts", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
+        } else if (page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page - 1);
             model.addAttribute("contracts", pagedListHolder.getPageList());
         }
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractslist";
     }
 
-    public String getMyContract(ModelMap model, HttpSession session){
+    public String getMyContract(ModelMap model, HttpSession session) {
         Customer user = userService.findBySSO(userService.getPrincipal());
-        if(user == null){
+        if (user == null) {
             model.addAttribute("message", "please, login");
             return "errorPage";
         }
         Contract contract = findUserContract(user);
         List<Contract> contracts = findByCustomerId(user);
-        List <Feature> features = featureService.findFeatureByContract(contract.getContractId());
+        List<Feature> features = featureService.findFeatureByContract(contract.getContractId());
         model.addAttribute("userFeatures", features);
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "userContract";
     }
 
-    public String newContract(ModelMap model){
+    public String newContract(ModelMap model) {
         Contract contract = new Contract();
         model.addAttribute("contract", contract);
         model.addAttribute("edit", false);
@@ -228,12 +226,12 @@ public class ContractServiceImpl implements ContractService{
         return "contractRegistration";
     }
 
-    public String saveContract(String phone, String sso, String tarif, ModelMap model){
+    public String saveContract(String phone, String sso, String tarif, ModelMap model) {
         Customer customer = userService.findBySSO(sso);
         List<Contract> allContracts = findAll();
-        for (Contract someContract :allContracts) {
+        for (Contract someContract : allContracts) {
             String someNumber = someContract.gettNumber();
-            if(someNumber.equals(phone)) {
+            if (someNumber.equals(phone)) {
                 model.addAttribute("loggedinuser", userService.getPrincipal());
                 model.addAttribute("message", "This phone number is already taken");
                 return "errorPage";
@@ -249,24 +247,23 @@ public class ContractServiceImpl implements ContractService{
         return "registrationsuccess";
     }
 
-    public String seeContractDetails(int id, ModelMap model){
+    public String seeContractDetails(int id, ModelMap model) {
         Contract contract = findById(id);
         model.addAttribute("contract", contract);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "contractslist";
     }
 
-    public ModelAndView seeContractOptions(int id, HttpSession session){
+    public ModelAndView seeContractOptions(int id, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView("contractFeatures");
         Contract contract = findById(id);
         session.setAttribute("contract", contract);
         List<Feature> contractFeatures = featureService.findFeatureByContract(id);
-        if(!contractFeatures.isEmpty()){
+        if (!contractFeatures.isEmpty()) {
             modelAndView.addObject("features", contractFeatures);
             modelAndView.addObject("loggedinuser", userService.getPrincipal());
             return modelAndView;
-        }
-        else{
+        } else {
             ModelAndView modelAndView2 = new ModelAndView("errorPage");
             String contractWithoutOptions = messageSource.getMessage("contract.not.having.any.options", new String[]{Integer.toString(id)}, Locale.getDefault());
             modelAndView2.addObject("message", contractWithoutOptions);
@@ -275,7 +272,7 @@ public class ContractServiceImpl implements ContractService{
         }
     }
 
-    public String changeTarif(Integer id,  ModelMap model, HttpSession session){
+    public String changeTarif(Integer id, ModelMap model, HttpSession session) {
         Customer user = userService.findBySSO(userService.getPrincipal());
         List<Contract> contracts = findByCustomerId(user);
         Tarif tarif = tarifService.findById(id);
@@ -298,7 +295,7 @@ public class ContractServiceImpl implements ContractService{
         }
     }
 
-    public String deleteFeatureFromContract(Integer featureId, ModelMap model, HttpSession session){
+    public String deleteFeatureFromContract(Integer featureId, ModelMap model, HttpSession session) {
         Contract contract = (Contract) session.getAttribute("contract");
         Feature featureToDelete = featureService.findById(featureId);
         List<Feature> features = deleteFeatureFromContract(featureToDelete, contract);
@@ -307,11 +304,11 @@ public class ContractServiceImpl implements ContractService{
         return "contractFeatures";
     }
 
-    public String editContract(Integer contractId, ModelMap model){
+    public String editContract(Integer contractId, ModelMap model) {
         Contract contract = findById(contractId);
         List<Tarif> tarifs = tarifService.findAll();
         List<Contract> existingContracts = findAll();
-        if(!existingContracts.contains(contract)){
+        if (!existingContracts.contains(contract)) {
             String string = "contract with id " + contractId + " is not found";
             model.addAttribute("message", string);
             return "errorPage";
@@ -325,14 +322,14 @@ public class ContractServiceImpl implements ContractService{
         return "editContractTarif";
     }
 
-    public String updateContract(Integer contractId, Integer tarifId, ModelMap model){
+    public String updateContract(Integer contractId, Integer tarifId, ModelMap model) {
         editContractTarif(contractId, tarifId);
         model.addAttribute("edit", true);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/contracts/listContracts";
     }
 
-    public String editContractOptions(Integer contractId, ModelMap model, HttpSession session){
+    public String editContractOptions(Integer contractId, ModelMap model, HttpSession session) {
         Contract contract = findById(contractId);
         List<Feature> features = featureService.findAll();
         List<Feature> userFeatures = featureService.findFeatureByContract(contractId);
@@ -350,7 +347,7 @@ public class ContractServiceImpl implements ContractService{
     }
 
     public String updateContractOptions(Integer contractId, SelectedFeatures selectedFeaturesIds, BindingResult result,
-                                        ModelMap model, Cart cart, HttpSession session){
+                                        ModelMap model, Cart cart, HttpSession session) {
         List<Feature> userFeatures = updateContractOptions(contractId, selectedFeaturesIds, cart, session);
         if (result.hasErrors()) {
             model.addAttribute("message", "OOOPS");
@@ -363,7 +360,7 @@ public class ContractServiceImpl implements ContractService{
         return "redirect:/contracts/listContracts";
     }
 
-    public String setTarif(Integer id,  ModelMap model, HttpSession session){
+    public String setTarif(Integer id, ModelMap model, HttpSession session) {
         Contract contract = (Contract) session.getAttribute("contract");
         List<Contract> contracts = new ArrayList<Contract>();
         contracts.add(contract);
@@ -388,30 +385,29 @@ public class ContractServiceImpl implements ContractService{
         }
     }
 
-    public String deleteContract(Integer id, ModelMap model){
+    public String deleteContract(Integer id, ModelMap model) {
         delete(id);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "redirect:/contracts/listContracts";
     }
 
-    public String blockContract(Integer id, ModelMap model, HttpSession session){
+    public String blockContract(Integer id, ModelMap model, HttpSession session) {
         Contract contract = findById(id);
         Customer user = contract.getCustomer();
         Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
-        if(user.isBlockedByUser() || user.isBlockedByAdmin()){
+        if (user.isBlockedByUser() || user.isBlockedByAdmin()) {
             model.addAttribute("message", "User " + user.getSsoId() + " is already blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
-        if (!user.equals(notSessionUser)){
+        if (!user.equals(notSessionUser)) {
             user.setBlockedByAdmin(true);
             userService.updateUser(user);
             session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
-        }
-        else{
+        } else {
             user.setBlockedByUser(true);
             userService.updateUser(user);
             session.setAttribute("user", user);
@@ -421,30 +417,30 @@ public class ContractServiceImpl implements ContractService{
         return "registrationsuccess";
     }
 
-    public String unblockContract(Integer id, ModelMap model, HttpSession session){
+    public String unblockContract(Integer id, ModelMap model, HttpSession session) {
         Contract contract = findById(id);
         Customer user = contract.getCustomer();
         Customer notSessionUser = userService.findBySSO(userService.getPrincipal());
 
-        if(!user.isBlockedByUser() && !user.isBlockedByAdmin()){
+        if (!user.isBlockedByUser() && !user.isBlockedByAdmin()) {
             model.addAttribute("message", "User " + user.getSsoId() + " is not blocked");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
-        if(user.isBlockedByAdmin() && user.equals(notSessionUser)){
+        if (user.isBlockedByAdmin() && user.equals(notSessionUser)) {
             model.addAttribute("message", "User " + user.getSsoId() + " is blocked by ADMIN. You can't unblock it");
             model.addAttribute("loggedinuser", userService.getPrincipal());
             return "errorPage";
         }
 
-        if(user.equals(notSessionUser)){
+        if (user.equals(notSessionUser)) {
             user.setBlockedByUser(false);
             userService.updateUser(user);
             session.setAttribute("user", user);
             model.addAttribute("message", "User " + user.getSsoId() + " is unblocked");
         }
 
-        if(!user.equals(notSessionUser)){
+        if (!user.equals(notSessionUser)) {
             user.setBlockedByAdmin(false);
             userService.updateUser(user);
             session.setAttribute("user", user);
@@ -456,7 +452,7 @@ public class ContractServiceImpl implements ContractService{
         return "registrationsuccess";
     }
 
-    public String generateNumber(Integer id, ModelMap model){
+    public String generateNumber(Integer id, ModelMap model) {
         String number = generateNumber(id);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         model.addAttribute("message", "number " + number + " was generated and set to contract");

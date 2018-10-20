@@ -9,13 +9,14 @@ public class SelectedFeatures {
 
     private List<Feature> selectedFeatures;
 
-    public SelectedFeatures(){}
+    public SelectedFeatures() {
+    }
 
-    public List<Feature> getSelectedFeatures(){
+    public List<Feature> getSelectedFeatures() {
         return selectedFeatures;
     }
 
-    public void setSelectedFeatures(List<Feature> selectedFeatures){
+    public void setSelectedFeatures(List<Feature> selectedFeatures) {
         this.selectedFeatures = selectedFeatures;
     }
 

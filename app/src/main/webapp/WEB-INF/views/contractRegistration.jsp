@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -12,7 +12,8 @@
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
 </head>
 
 <body>
@@ -41,7 +42,8 @@
             <div class="form-group col-md-12">
                 <label class="col-md-3 control-lable" for="customer">Customer sso</label>
                 <div class="col-md-7">
-                    <form:input type="text" path="customer" id="customer" name="customer" class="form-control input-sm"/>
+                    <form:input type="text" path="customer" id="customer" name="customer"
+                                class="form-control input-sm"/>
                     <div class="has-error">
                         <form:errors path="customer" class="help-inline"/>
                     </div>
@@ -65,10 +67,12 @@
             <div class="form-actions floatRight">
                 <c:choose>
                     <c:when test="${edit}">
-                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/contracts/listContracts' />">Cancel</a>
+                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a
+                            href="<c:url value='/contracts/listContracts' />">Cancel</a>
                     </c:when>
                     <c:otherwise>
-                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/contracts/listContracts' />">Cancel</a>
+                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a
+                            href="<c:url value='/contracts/listContracts' />">Cancel</a>
                     </c:otherwise>
                 </c:choose>
             </div>

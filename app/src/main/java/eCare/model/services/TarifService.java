@@ -17,7 +17,7 @@ public interface TarifService {
 
     void update(Tarif entity);
 
-     Tarif findById(Integer id);
+    Tarif findById(Integer id);
 
     void delete(Integer id);
 

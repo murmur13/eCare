@@ -66,6 +66,6 @@ public interface CustomerService {
 
     String login();
 
-    String logout (HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status);
+    String logout(HttpServletRequest request, HttpServletResponse response, WebRequest webR, SessionStatus status);
 
 }

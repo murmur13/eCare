@@ -37,16 +37,16 @@
         </div>
     </nav>
     <a4j:region>
-    <h:form>
-        <a4j:poll id="poll" interval="1000" ajaxSingle="true" limitToList="true" immediate="true"
-                  enabled="true" render="poll,any-id" />
+        <h:form>
+            <a4j:poll id="poll" interval="1000" ajaxSingle="true" limitToList="true" immediate="true"
+                      enabled="true" render="poll,any-id"/>
         </h:form>
-        </a4j:region>
+    </a4j:region>
 
     <h:form>
         <h:panelGroup id="group">
             <!--<a4j:outputPanel event="onchange" render=":group" />-->
-            <h:outputText id="serverDate" style="font-size:16px" value="Server Date: #{tarifBean.date}" />
+            <h:outputText id="serverDate" style="font-size:16px" value="Server Date: #{tarifBean.date}"/>
             <table class="table table-hover">
                 <thead class="thead-dark">
                 <tr>
@@ -60,7 +60,7 @@
                     <ui:repeat var="tarif" value="#{tarifBean.cheap}">
                         <!--<a4j:ajax event="onchange" render=":any-id" />-->
                         <tr>
-                            <h:outputText render="#{tarifBean.cheap}" />
+                            <h:outputText render="#{tarifBean.cheap}"/>
                             <td>#{tarif.name}</td>
                             <td>#{tarif.price}</td>
                         </tr>

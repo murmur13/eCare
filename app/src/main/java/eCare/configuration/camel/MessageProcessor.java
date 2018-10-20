@@ -4,6 +4,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,9 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageProcessor implements Processor {
 
-    public void process(Exchange message){
-        System.out.println("Got message: " + message);
+    static final Logger logger = LoggerFactory.getLogger(MessageProcessor.class);
 
+    public void process(Exchange message) {
+        logger.info("Got message: " + message);
         ProducerTemplate template = message.getContext().createProducerTemplate();
         Endpoint endpoint = message.getContext().getEndpoint("activemq:queue:TestQueue");
         template.setDefaultEndpoint(endpoint);
@@ -27,6 +30,6 @@ public class MessageProcessor implements Processor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        }
     }
+}
 

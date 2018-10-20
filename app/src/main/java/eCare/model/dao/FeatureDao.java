@@ -22,7 +22,7 @@ public class FeatureDao implements DaoInterface<Feature, Integer> {
     @Autowired
     private SessionFactory sessionFactory;
 
-    protected Session getSession(){
+    protected Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -47,7 +47,7 @@ public class FeatureDao implements DaoInterface<Feature, Integer> {
         Query query = sessionFactory.getCurrentSession().createQuery("select f from Feature f where f.featureName = :name");
         query.setParameter("name", name);
         List results = query.list();
-        return  results;
+        return results;
     }
 
     public void delete(Feature entity) {
@@ -65,7 +65,7 @@ public class FeatureDao implements DaoInterface<Feature, Integer> {
         return blockingFeatures;
     }
 
-    public List<Feature> findAllRequiredFeatures(){
+    public List<Feature> findAllRequiredFeatures() {
         List<Feature> requiredFeatures = (List<Feature>) getSession().createQuery("select f from Feature f join f.requiredFeatures").list();
         return requiredFeatures;
     }
@@ -85,7 +85,7 @@ public class FeatureDao implements DaoInterface<Feature, Integer> {
         query.setParameter("tarifId", tarifId);
         List results = query.list();
 
-        return  results;
+        return results;
     }
 
     public List<Feature> findFeatureByContract(Integer contract) {
@@ -95,6 +95,6 @@ public class FeatureDao implements DaoInterface<Feature, Integer> {
                 .createQuery("select f from Feature f join f.featureContracts fc where fc.contractId= :contract");
         query.setParameter("contract", contract);
         List results = query.list();
-        return  results;
+        return results;
     }
 }

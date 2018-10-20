@@ -28,26 +28,26 @@ public class Feature {
     @Column(name = "connection_cost")
     private double connectionCost;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="tarif_x_feature",
-            joinColumns=@JoinColumn(name="feature_feature_id", referencedColumnName="feature_id"),
-            inverseJoinColumns=@JoinColumn(name="tarif_tarif_id", referencedColumnName="tarif_id"))
+            name = "tarif_x_feature",
+            joinColumns = @JoinColumn(name = "feature_feature_id", referencedColumnName = "feature_id"),
+            inverseJoinColumns = @JoinColumn(name = "tarif_tarif_id", referencedColumnName = "tarif_id"))
     private List<Tarif> featureTarifs;
 
     @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(
-            name="contract_has_feature",
-            joinColumns=@JoinColumn(name="contractFeature", referencedColumnName="feature_id"),
-            inverseJoinColumns=@JoinColumn(name="contractId", referencedColumnName="contract_id"))
+            name = "contract_has_feature",
+            joinColumns = @JoinColumn(name = "contractFeature", referencedColumnName = "feature_id"),
+            inverseJoinColumns = @JoinColumn(name = "contractId", referencedColumnName = "contract_id"))
     private List<Contract> featureContracts;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="feature_x_blocking_features",
-            joinColumns=@JoinColumn(name="blocking_feature_id", referencedColumnName="feature_id"),
-            inverseJoinColumns=@JoinColumn(name="feature_feature_id", referencedColumnName="feature_id"))
+            name = "feature_x_blocking_features",
+            joinColumns = @JoinColumn(name = "blocking_feature_id", referencedColumnName = "feature_id"),
+            inverseJoinColumns = @JoinColumn(name = "feature_feature_id", referencedColumnName = "feature_id"))
     private List<Feature> blockingFeatures;
 
     public List<Feature> getRequiredFeatures() {
@@ -58,11 +58,11 @@ public class Feature {
         this.requiredFeatures = requiredFeatures;
     }
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="feature_x_requiredfeature",
-            joinColumns=@JoinColumn(name="featureId", referencedColumnName="feature_id"),
-            inverseJoinColumns=@JoinColumn(name="requiredFeatureId", referencedColumnName="feature_id"))
+            name = "feature_x_requiredfeature",
+            joinColumns = @JoinColumn(name = "featureId", referencedColumnName = "feature_id"),
+            inverseJoinColumns = @JoinColumn(name = "requiredFeatureId", referencedColumnName = "feature_id"))
     private List<Feature> requiredFeatures;
 
     public List<Feature> getBlockingFeatures() {

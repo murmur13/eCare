@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "contract")
-public class Contract{
+public class Contract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,15 +18,15 @@ public class Contract{
     @Column(name = "t_number")
     private String tNumber;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="customer_customer_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_customer_id")
     private Customer customer;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="tarif_tarif_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tarif_tarif_id")
     private Tarif tarif;
 
-    public Contract(){
+    public Contract() {
     }
 
     public Contract(String tNumber, Customer customer, Tarif tarif) {

@@ -3,7 +3,6 @@ package eCare.model.services;
 import eCare.model.dao.UserProfileDao;
 import eCare.model.po.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Service("userProfileService")
 @Transactional
-    public class UserProfileServieImpl  implements UserProfileService{
+public class UserProfileServieImpl implements UserProfileService {
 
     @Autowired
     private UserProfileDao dao;
@@ -24,7 +23,7 @@ import java.util.List;
         return dao.findById(id);
     }
 
-    public UserProfile findByType(String type){
+    public UserProfile findByType(String type) {
         return dao.findByType(type);
     }
 

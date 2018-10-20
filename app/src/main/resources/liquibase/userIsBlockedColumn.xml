@@ -9,10 +9,10 @@
     <changeSet author="echerkas" id="1516384652249-41">
         <addColumn tableName="customer">
             <column name="isBlockedByUser" type="TINYINT(1)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="isBlockedByAdmin" type="TINYINT(1)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>

@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
@@ -13,7 +13,8 @@
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
 </head>
 
 <body>
@@ -46,7 +47,9 @@
                         <td>${feature.featureName}</td>
                         <td>${requiredFeature.featureName}</td>
                         <sec:authorize access="hasRole('ADMIN')">
-                            <td><a href="<c:url value='/features/dismissRequiredFeatures/${requiredFeature.featureId}_${feature.featureId}' />" class="btn btn-success custom-width">Dismiss</a></td>
+                            <td>
+                                <a href="<c:url value='/features/dismissRequiredFeatures/${requiredFeature.featureId}/${feature.featureId}' />"
+                                   class="btn btn-success custom-width">Dismiss</a></td>
                         </sec:authorize>
                     </tr>
                 </c:forEach>
@@ -61,13 +64,14 @@
             <c:param name="page" value="${page-1}"/>
         </c:url>
         <c:if test="${page > 1}">
-            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+            <li><a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
         </c:if>
 
         <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
             <c:choose>
                 <c:when test="${page == i.index}">
-                    <li class="active"><span>${i.index}</span><li>
+                    <li class="active"><span>${i.index}</span>
+                    <li>
                 </c:when>
                 <c:otherwise>
                     <c:url value="/features/listFeatures" var="url">

@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 
@@ -12,7 +12,8 @@
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
 </head>
 
 <body>
@@ -47,22 +48,26 @@
                     <td>${contract.tarif.name}</td>
                     <td>${contract.tarif.price}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/contracts/edit-contract-${contract.contractId}' />" class="btn btn-success custom-width">edit</a></td>
+                        <td><a href="<c:url value='/contracts/edit-contract-${contract.contractId}' />"
+                               class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/delete-contract-${contract.contractId}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/contracts/${contract.contractId}/deleteContract' />"
+                               class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
-                    <td><a href="<c:url value='/contracts/block-contract-${contract.contractId}' />" class="btn btn-danger custom-width">block</a></td>
-                    <td><a href="<c:url value='/contracts/unblock-contract-${contract.contractId}' />" class="btn btn-success custom-width">unblock</a></td>
+                    <td><a href="<c:url value='/contracts/${contract.contractId}/block' />"
+                           class="btn btn-danger custom-width">block</a></td>
+                    <td><a href="<c:url value='/contracts/${contract.contractId}/unblock' />"
+                           class="btn btn-success custom-width">unblock</a></td>
                 </tr>
             </c:forEach>
             <br>
             <br>
             <br>
             </tbody>
-            </table>
+        </table>
 
-            <table class="table table-hover">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>Feature Id</th>
@@ -78,7 +83,7 @@
                 </sec:authorize>
 
             </tr>
-        </thead>
+            </thead>
             <tbody>
             <c:forEach items="${userFeatures}" var="feature">
                 <tr>
@@ -86,15 +91,18 @@
                     <td>${feature.featureName}</td>
                     <td>${feature.featurePrice}</td>
                     <td>${feature.connectionCost}</td>
-                    <%--<td>${contract.tarif.name}</td>--%>
+                        <%--<td>${contract.tarif.name}</td>--%>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />" class="btn btn-success custom-width">edit</a></td>
+                        <td><a href="<c:url value='/features/edit-feature-${feature.featureId}' />"
+                               class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}' />"
+                               class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}/fromContract' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/features/delete-feature-${feature.featureId}/fromContract' />"
+                               class="btn btn-danger custom-width">delete</a></td>
                     </sec:authorize>
                 </tr>
             </c:forEach>

@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Repository("userProfileDao")
-public class UserProfileDaoImpl extends AbstractDao<Integer, UserProfile>implements UserProfileDao{
+public class UserProfileDaoImpl extends AbstractDao<Integer, UserProfile> implements UserProfileDao {
 
     public UserProfile findById(int id) {
         return getByKey(id);
@@ -26,10 +26,10 @@ public class UserProfileDaoImpl extends AbstractDao<Integer, UserProfile>impleme
     }
 
     @SuppressWarnings("unchecked")
-    public List<UserProfile> findAll(){
+    public List<UserProfile> findAll() {
         Criteria crit = createEntityCriteria();
         crit.addOrder(Order.asc("type"));
-        return (List<UserProfile>)crit.list();
+        return (List<UserProfile>) crit.list();
     }
 
 }

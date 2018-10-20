@@ -1,9 +1,10 @@
 package ejb;
 
-import eCare.configuration.MessageSender;
 import eCare.model.dao.TarifDao;
 import eCare.model.po.Tarif;
 import eCare.model.services.TarifServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -22,12 +23,14 @@ import java.util.List;
 @Interceptors(SpringBeanAutowiringInterceptor.class)
 public class TarifEjb {
 
+    static final Logger logger = LoggerFactory.getLogger(TarifEjb.class);
+
     public TarifEjb() {
     }
 
     @PostConstruct
     public void test() {
-        System.out.println(applicationContext);
+        logger.info(applicationContext.toString());
     }
 
     @Autowired
@@ -39,7 +42,7 @@ public class TarifEjb {
     @Autowired
     private TarifDao TarifDao;
 
-    public List<Tarif> getCheapTarifs(){
+    public List<Tarif> getCheapTarifs() {
         List<Tarif> allTarifs = tarifService.findAll();
         List<Tarif> cheapTarifs;
 

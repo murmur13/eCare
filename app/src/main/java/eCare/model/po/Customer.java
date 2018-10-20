@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,15 +13,15 @@ import java.util.Set;
 
 @Entity
 @Table(name = "customer")
-public class Customer{
+public class Customer {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private Integer customerId;
 
     @NotEmpty
-    @Column(name="sso_id", unique=true, nullable=false)
+    @Column(name = "sso_id", unique = true, nullable = false)
     private String ssoId;
 
     @NotEmpty
@@ -58,11 +57,11 @@ public class Customer{
     @Column(name = "isBlockedByUser", columnDefinition = "TINYINT(1)")
     private boolean isBlockedByUser;
 
-    @Type(type= "org.hibernate.type.NumericBooleanType")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     @Column(name = "isBlockedByAdmin", columnDefinition = "TINYINT(1)")
     private boolean isBlockedByAdmin;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy="customer")
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "customer")
     private Contract contract;
 
     public String getSsoId() {
@@ -84,9 +83,9 @@ public class Customer{
     @NotEmpty
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="customer_has_user_profile",
-            joinColumns=@JoinColumn(name="user_id", referencedColumnName="customer_id"),
-            inverseJoinColumns=@JoinColumn(name="user_profile_id", referencedColumnName="profile_id"))
+            name = "customer_has_user_profile",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "profile_id"))
     private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
 
     public Customer(String name, String surname, String birthDate, String telNumber, String mail, String password) {
@@ -238,15 +237,6 @@ public class Customer{
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
-
-//    public List<Contract> getContracts() {
-//        return contracts;
-//    }
-
-//    public void setContracts(List<Contract> contracts) {
-//        this.contracts = contracts;
-//    }
-
 
     public Contract getContract() {
         return contract;

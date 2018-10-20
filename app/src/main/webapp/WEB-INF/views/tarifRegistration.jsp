@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -48,10 +48,12 @@
             <div class="form-actions floatRight">
                 <c:choose>
                     <c:when test="${edit}">
-                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
+                        <input type="submit" value="Update" class="btn btn-primary btn-sm"/> or <a
+                            href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
                     </c:when>
                     <c:otherwise>
-                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
+                        <input type="submit" value="Register" class="btn btn-primary btn-sm"/> or <a
+                            href="<c:url value='/tarifs/listTarifs' />">Cancel</a>
                     </c:otherwise>
                 </c:choose>
             </div>

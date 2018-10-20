@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
 
@@ -12,14 +12,15 @@
     <link href="<c:url value='/resources/css/app.css' />" rel="stylesheet"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
 </head>
 
 <body>
 <%@ include file="menu.jsp" %>
 <div class="generic-container">
     <div class="panel panel-default">
-    <%--<%@include file="authheader.jsp" %>--%>
+        <%--<%@include file="authheader.jsp" %>--%>
         <!-- Default panel contents -->
         <div class="panel-heading"><span class="lead">List of Users </span></div>
         <table class="table table-hover">
@@ -48,10 +49,12 @@
                     <td>${user.ssoId}</td>
                     <td>${user.telNumber}</td>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
-                        <td><a href="<c:url value='/edit-user-${user.ssoId}' />" class="btn btn-success custom-width">edit</a></td>
+                        <td><a href="<c:url value='/user/${user.ssoId}/edit' />" class="btn btn-success custom-width">edit</a>
+                        </td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/delete-user-${user.ssoId}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td><a href="<c:url value='/user/${user.ssoId}/delete' />" class="btn btn-danger custom-width">delete</a>
+                        </td>
                     </sec:authorize>
                 </tr>
             </c:forEach>
@@ -69,13 +72,14 @@
             <c:param name="page" value="${page-1}"/>
         </c:url>
         <c:if test="${page > 1}">
-            <li> <a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
+            <li><a href="<c:out value="${prev}" />" class="pn prev">Prev</a></li>
         </c:if>
 
         <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
             <c:choose>
                 <c:when test="${page == i.index}">
-                    <li class="active"><span>${i.index}</span><li>
+                    <li class="active"><span>${i.index}</span>
+                    <li>
                 </c:when>
                 <c:otherwise>
                     <c:url value="/list" var="url">

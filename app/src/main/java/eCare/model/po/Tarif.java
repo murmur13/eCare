@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "tarif")
-public class Tarif implements Serializable{
+public class Tarif implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,10 @@ public class Tarif implements Serializable{
         this.tarifContracts = tarifContracts;
     }
 
-    @OneToMany(mappedBy="tarif")
+    @OneToMany(mappedBy = "tarif")
     private List<Contract> tarifContracts;
 
-    public Tarif(){
+    public Tarif() {
     }
 
     public Double getPrice() {

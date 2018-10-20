@@ -6,20 +6,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
 
-    <!-- If a bean is defined in Spring XML or scanned using the Spring 2.5
-        component scanning mechanism and a <camelContext> is used or a CamelBeanPostProcessor
-        then we process a number of Camel annotations to do various things such as
-        injecting resources or producing, consuming or routing messages. -->
-    <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared
-        above -->
     <bean id="main-broker" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="brokerURL" value="tcp://localhost:61616"/>
         <property name="trustAllPackages" value="true"/>
     </bean>
 
-    <bean id="jmsToFileRoute" class="eCare.configuration.camel.JmsToEmailRoute" />
+    <bean id="jmsToFileRoute" class="eCare.configuration.camel.JmsToEmailRoute"/>
 
     <camel:camelContext id="camelContext">
-        <camel:routeBuilder ref="jmsToFileRoute" />
+        <camel:routeBuilder ref="jmsToFileRoute"/>
     </camel:camelContext>
 </beans>

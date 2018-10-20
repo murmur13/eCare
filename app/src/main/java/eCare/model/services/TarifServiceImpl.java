@@ -5,8 +5,6 @@ import eCare.model.dao.TarifDao;
 import eCare.model.po.Tarif;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
@@ -91,7 +89,7 @@ public class TarifServiceImpl implements TarifService {
         this.tarifDao = tarifDAO;
     }
 
-    public Tarif editTarifAndSendToQueue(Tarif tarif){
+    public Tarif editTarifAndSendToQueue(Tarif tarif) {
         update(tarif);
         Exchange ex = new DefaultExchange(camelContext);
         final UUID correlationID = createUuid();
@@ -106,26 +104,25 @@ public class TarifServiceImpl implements TarifService {
         return uuid;
     }
 
-    public String listTarifs(Integer page, ModelMap model){
+    public String listTarifs(Integer page, ModelMap model) {
         List<Tarif> tarifs = findAll();
 
         PagedListHolder<Tarif> pagedListHolder = new PagedListHolder<Tarif>(tarifs);
         pagedListHolder.setPageSize(15);
         model.addAttribute("maxPages", pagedListHolder.getPageCount());
         model.addAttribute("page", page);
-        if(page == null || page < 1 || page > pagedListHolder.getPageCount()){
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
             pagedListHolder.setPage(0);
             model.addAttribute("tarifs", pagedListHolder.getPageList());
-        }
-        else if(page <= pagedListHolder.getPageCount()) {
-            pagedListHolder.setPage(page-1);
+        } else if (page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page - 1);
             model.addAttribute("tarifs", pagedListHolder.getPageList());
         }
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "tarifslist";
     }
 
-    public String newTarif(ModelMap model){
+    public String newTarif(ModelMap model) {
         Tarif tarif = new Tarif();
         tarif.setName("sdgsd");
         tarif.setPrice(13.0);
@@ -136,7 +133,7 @@ public class TarifServiceImpl implements TarifService {
         return "tarifRegistration";
     }
 
-    public String saveTarif(Tarif tarif, BindingResult result, ModelMap model){
+    public String saveTarif(Tarif tarif, BindingResult result, ModelMap model) {
 
         if (result.hasErrors()) {
             return "tarifRegistration";
@@ -154,7 +151,7 @@ public class TarifServiceImpl implements TarifService {
         return "registrationsuccess";
     }
 
-    public String editTarif(Integer id, ModelMap model){
+    public String editTarif(Integer id, ModelMap model) {
         Tarif tarif = findById(id);
         model.addAttribute("tarif", tarif);
         model.addAttribute("edit", true);
@@ -162,7 +159,7 @@ public class TarifServiceImpl implements TarifService {
         return "tarifRegistration";
     }
 
-    public String updateTarif(Tarif tarif, BindingResult result, ModelMap model, Integer id){
+    public String updateTarif(Tarif tarif, BindingResult result, ModelMap model, Integer id) {
         if (result.hasErrors()) {
             return "tarifRegistration";
         }
@@ -172,9 +169,9 @@ public class TarifServiceImpl implements TarifService {
         return "registrationsuccess";
     }
 
-    public String deleteTarif(Integer id, ModelMap model){
+    public String deleteTarif(Integer id, ModelMap model) {
         Tarif tarif = findById(id);
-        if(!contractService.findContractByTarif(tarif).isEmpty()){
+        if (!contractService.findContractByTarif(tarif).isEmpty()) {
             String tarifNotDeleted = messageSource.getMessage("tarif.not.deletable", new String[]{Integer.toString(tarif.getTarifId())}, Locale.getDefault());
             model.addAttribute("message", tarifNotDeleted);
             model.addAttribute("loggedinuser", userService.getPrincipal());

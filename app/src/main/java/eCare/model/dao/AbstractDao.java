@@ -11,19 +11,19 @@ import java.lang.reflect.ParameterizedType;
 /**
  * Created by echerkas on 15.11.2017.
  */
-public abstract class AbstractDao <PK extends Serializable, T> {
+public abstract class AbstractDao<PK extends Serializable, T> {
 
-        private Class<T> persistentClass;
+    private Class<T> persistentClass;
 
-	@SuppressWarnings("unchecked")
-	public AbstractDao(){
-            this.persistentClass =(Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-        }
+    @SuppressWarnings("unchecked")
+    public AbstractDao() {
+        this.persistentClass = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+    }
 
-        @Autowired
-        private SessionFactory sessionFactory;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    protected Session getSession(){
+    protected Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractDao <PK extends Serializable, T> {
         getSession().delete(entity);
     }
 
-    protected Criteria createEntityCriteria(){
+    protected Criteria createEntityCriteria() {
         return getSession().createCriteria(persistentClass);
     }
 }

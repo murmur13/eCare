@@ -27,7 +27,7 @@ public class Rest {
     @Path("/getTarifs")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-        public String getTarifs() {
+    public String getTarifs() {
         List<Tarif> tarifs = tarifService.findAll();
         JSONArray array = new JSONArray();
         array.put(tarifs);
@@ -38,7 +38,7 @@ public class Rest {
     @Path("/getTarifs/{tarifId}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getTarif(@PathParam("tarifId") Integer tarifId){
+    public String getTarif(@PathParam("tarifId") Integer tarifId) {
         Tarif tarif = tarifService.findById(tarifId);
         JSONArray array = new JSONArray();
         array.put(tarif);

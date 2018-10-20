@@ -9,10 +9,10 @@
     <changeSet author="echerkas" id="1516384652249-42">
         <createTable tableName="feature_x_requiredFeature">
             <column name="featureId" type="INT">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="requiredFeatureId" type="INT">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

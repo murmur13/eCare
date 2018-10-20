@@ -30,16 +30,18 @@
             <div class="col-md-8">
                 <div class="form-group">
                     <td>List of options:</td>
-                    <form:select  id= "features" class="form-control" multiple="true" path="selectedFeatures" attribute="selectedFeatures" >
+                    <form:select id="features" class="form-control" multiple="true" path="selectedFeatures"
+                                 attribute="selectedFeatures">
                         <c:forEach items="${selectedFeatures.selectedFeatures}" var="feature">
-                                <c:choose>
-                                    <c:when test="${userFeatures.contains(feature)}">
-                                        <option selected value="${feature.featureId}">${feature.featureName}  ${feature.featurePrice}</option>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <option value="${feature.featureId}">${feature.featureName}  ${feature.featurePrice}</option>
-                                    </c:otherwise>
-                                </c:choose>
+                            <c:choose>
+                                <c:when test="${userFeatures.contains(feature)}">
+                                    <option selected
+                                            value="${feature.featureId}">${feature.featureName} ${feature.featurePrice}</option>
+                                </c:when>
+                                <c:otherwise>
+                                    <option value="${feature.featureId}">${feature.featureName} ${feature.featurePrice}</option>
+                                </c:otherwise>
+                            </c:choose>
                         </c:forEach>
                     </form:select>
                 </div>

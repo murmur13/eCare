@@ -38,7 +38,7 @@ public interface FeatureService {
 
     List<Feature> findAllBlockingFeatures();
 
-    List <Feature> findAllRequiredFeatures();
+    List<Feature> findAllRequiredFeatures();
 
     Contract deletedFeatureFromContract(Integer id, Customer user);
 
@@ -54,7 +54,7 @@ public interface FeatureService {
 
     String listFeatures(Integer page, ModelMap model);
 
-    String newFeature (ModelMap model);
+    String newFeature(ModelMap model);
 
     String saveFeature(Feature feature, BindingResult result, ModelMap model);
 
@@ -70,20 +70,20 @@ public interface FeatureService {
 
     String blockingFeatures(ModelMap model);
 
-    String blockingFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
+    String blockingFeatures(SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
 
     String requiredFeatures(ModelMap model);
 
-    String requiredFeatures (SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
+    String requiredFeatures(SelectedFeatures selectedFeaturesIds, BindingResult result, ModelMap model);
 
     String seeRequiredFeatures(ModelMap model);
 
     String unblockFeatures(ModelMap model);
 
-    String unblockFeatures (Integer id, Integer secondId, ModelMap model);
+    String unblockFeatures(Integer id, Integer secondId, ModelMap model);
 
     String dismissRequiredFeatures(ModelMap model);
 
-    String dismissRequiredFeatures (Integer id, Integer secondId, ModelMap model);
+    String dismissRequiredFeatures(Integer id, Integer secondId, ModelMap model);
 
 }

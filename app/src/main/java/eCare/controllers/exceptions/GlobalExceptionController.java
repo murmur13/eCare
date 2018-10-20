@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -33,17 +34,17 @@ public class GlobalExceptionController {
     static final Logger logger = LoggerFactory.getLogger(GlobalExceptionController.class);
 
     @ExceptionHandler(SQLException.class)
-    public String handleSQLException(HttpServletRequest request, Exception ex, Model model){
-        logger.info("SQLException Occured:: URL="+request.getRequestURL() + ex);
-        model.addAttribute("message", "SQLException Occured:: URL="+request.getRequestURL());
+    public String handleSQLException(HttpServletRequest request, Exception ex, Model model) {
+        logger.info("SQLException Occured:: URL=" + request.getRequestURL() + ex);
+        model.addAttribute("message", "SQLException Occured:: URL=" + request.getRequestURL());
         return "error";
     }
 
-    @ResponseStatus(value= HttpStatus.NOT_FOUND, reason="IOException occured")
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "IOException occured")
     @ExceptionHandler(IOException.class)
-    public String handleIOException(HttpServletRequest request, Model model, Exception ex){
+    public String handleIOException(HttpServletRequest request, Model model, Exception ex) {
         logger.error("IOException handler executed" + ex);
-        model.addAttribute("message", "IOException Occured:: URL="+ request.getRequestURL());
+        model.addAttribute("message", "IOException Occured:: URL=" + request.getRequestURL());
         return "404ErrorCode";
     }
 
@@ -70,7 +71,7 @@ public class GlobalExceptionController {
     }
 
     @ExceptionHandler(value = ServletException.class)
-    public ModelAndView handleJspExceptions(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException{
+    public ModelAndView handleJspExceptions(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException {
         ModelAndView mav = new ModelAndView();
         mav.addObject("loggedinuser", getPrincipal());
         mav.setViewName("jspError");
@@ -81,12 +82,12 @@ public class GlobalExceptionController {
     /**
      * This method returns the principal[user-name] of logged-in user.
      */
-    private String getPrincipal(){
+    private String getPrincipal() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
+            userName = ((UserDetails) principal).getUsername();
         } else {
             userName = principal.toString();
         }

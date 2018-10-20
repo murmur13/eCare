@@ -55,7 +55,7 @@ public interface ContractService {
 
     ModelAndView seeContractOptions(int id, HttpSession session);
 
-    String changeTarif(Integer id,  ModelMap model, HttpSession session);
+    String changeTarif(Integer id, ModelMap model, HttpSession session);
 
     String deleteFeatureFromContract(Integer featureId, ModelMap model, HttpSession session);
 
@@ -68,7 +68,7 @@ public interface ContractService {
     String updateContractOptions(Integer contractId, SelectedFeatures selectedFeaturesIds, BindingResult result,
                                  ModelMap model, Cart cart, HttpSession session);
 
-    String setTarif(Integer id,  ModelMap model, HttpSession session);
+    String setTarif(Integer id, ModelMap model, HttpSession session);
 
     String deleteContract(Integer id, ModelMap model);
 

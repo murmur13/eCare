@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 @Repository("secondCustomerDao")
-public class CustomerDaoImpl extends AbstractDao <Integer, Customer> implements CustomerDao {
+public class CustomerDaoImpl extends AbstractDao<Integer, Customer> implements CustomerDao {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -72,7 +72,7 @@ public class CustomerDaoImpl extends AbstractDao <Integer, Customer> implements 
         return results;
     }
 
-    public List<Customer> findByTelNumber(String telNumber){
+    public List<Customer> findByTelNumber(String telNumber) {
         logger.info("CustomerTelNumber : {}", telNumber);
         Query query = sessionFactory.getCurrentSession().createQuery("select t from Customer t where t.telNumber = :telNumber");
         query.setParameter("telNumber", telNumber);

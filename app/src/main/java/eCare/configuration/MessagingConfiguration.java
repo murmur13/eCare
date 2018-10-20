@@ -36,7 +36,7 @@ public class MessagingConfiguration {
         CamelContext context = camelContext();
         ActiveMQComponent comp = ActiveMQComponent.activeMQComponent(DEFAULT_BROKER_URL);
         comp.start();
-        context.addComponent("jms",comp);
+        context.addComponent("jms", comp);
         context.addRoutes(new JmsToEmailRoute());
         context.start();
         connectionFactory.setTrustAllPackages(true);
@@ -67,7 +67,7 @@ public class MessagingConfiguration {
 
 
     @Bean
-    MessageConverter converter(){
+    MessageConverter converter() {
         return new SimpleMessageConverter();
     }
 
