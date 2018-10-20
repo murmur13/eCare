@@ -270,7 +270,7 @@ public class FeatureServiceImpl implements FeatureService {
         List<Feature> userFeatures = findFeatureByContract(updatedContract.getContractId());
         model.addAttribute("userFeatures", userFeatures);
         model.addAttribute("loggedinuser", userService.getPrincipal());
-        return "redirect:/contracts/getMyContract";
+        return "redirect:/contracts/myContract";
     }
 
     public String seeBlockingFeatures(ModelMap model) {

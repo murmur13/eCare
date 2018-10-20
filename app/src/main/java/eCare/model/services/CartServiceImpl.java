@@ -93,6 +93,11 @@ public class CartServiceImpl implements CartService {
 
     public String searchResults(Model model, HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) {
+            model.addAttribute("message", "Your cart is empty");
+            model.addAttribute("loggedinuser", userService.getPrincipal());
+            return "errorPage";
+        }
         if (cart.getTarifInCart() == null && cart.getOptionsInCart().isEmpty()) {
             model.addAttribute("message", "Your cart is empty");
             model.addAttribute("loggedinuser", userService.getPrincipal());
@@ -220,7 +225,7 @@ public class CartServiceImpl implements CartService {
         model.addAttribute("contracts", contracts);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         if (user.getUserProfiles().contains(userProfileService.findByType("USER"))) {
-            return "redirect:/contracts/getMyContract";
+            return "redirect:/contracts/myContract";
         } else return "redirect: /list";
     }
 }

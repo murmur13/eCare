@@ -35,7 +35,7 @@ public class ErrorHandleFilter implements Filter {
             throws IOException, ServletException {
 
         try {
-            globalExceptionController.handleJspExceptions(servletRequest, servletResponse);
+//            globalExceptionController.handleJspExceptions(servletRequest, servletResponse);
             filterChain.doFilter(servletRequest, servletResponse);
 
         } catch (Exception ex) {

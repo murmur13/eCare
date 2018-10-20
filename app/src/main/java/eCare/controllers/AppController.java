@@ -142,7 +142,7 @@ public class AppController {
     /**
      * This method will delete an user by it's SSOID value.
      */
-    @RequestMapping(value = {"/user/{ssoId}/delete"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/user/{ssoId}/delete"}, method = RequestMethod.POST)
     public String deleteUser(@PathVariable String ssoId) {
         String view = userService.deleteUser(ssoId);
         return view;

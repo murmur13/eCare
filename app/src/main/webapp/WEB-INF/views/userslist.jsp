@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 
@@ -53,8 +54,15 @@
                         </td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/user/${user.ssoId}/delete' />" class="btn btn-danger custom-width">delete</a>
+                        <c:url var="deleteUrl" value="/user/${user.ssoId}/delete"/>
+                        <td>
+                            <form:form id="${deleteForm}" action="${deleteUrl}" method="POST">
+                                <input id="user" name="user" type="hidden" value="${user.ssoId}"/>
+                                <input type="submit" class="btn btn-danger custom-width" value="delete"
+                                       onClick="return confirm('sure?')"/>
+                            </form:form>
                         </td>
+
                     </sec:authorize>
                 </tr>
             </c:forEach>

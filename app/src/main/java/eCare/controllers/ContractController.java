@@ -72,13 +72,13 @@ public class ContractController {
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/changeTarif"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/changeTarif"}, method = RequestMethod.POST)
     public String changeTarif(@PathVariable Integer id, ModelMap model, HttpSession session) {
         String view = contractService.changeTarif(id, model, session);
         return view;
     }
 
-    @RequestMapping(value = {"/{featureId}/deleteFromContract"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{featureId}/deleteFromContract"}, method = RequestMethod.POST)
     public String deleteFeatureFromContract(@PathVariable Integer featureId,
                                             ModelMap model, HttpSession session) {
         String view = contractService.deleteFeatureFromContract(featureId, model, session);
@@ -115,13 +115,13 @@ public class ContractController {
     }
 
 
-    @RequestMapping(value = {"/{id}/setTarif"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/setTarif"}, method = RequestMethod.POST)
     public String setTarif(@PathVariable Integer id, ModelMap model, HttpSession session) {
         String view = contractService.setTarif(id, model, session);
         return view;
     }
 
-    @RequestMapping(value = {"/{id}/deleteContract"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{id}/deleteContract"}, method = RequestMethod.POST)
     public String deleteContract(@PathVariable Integer id, ModelMap model) {
         String view = contractService.deleteContract(id, model);
         return view;

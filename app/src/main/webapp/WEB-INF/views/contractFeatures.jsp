@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 
@@ -28,9 +29,6 @@
                 <th>name</th>
                 <th>price (&#8381)</th>
                 <th>connection cost (&#8381)</th>
-                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
-                <%--<jsp:forward page="main.jsp"/>--%>
-                <%--</sec:authorize>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -59,8 +57,16 @@
                                class="btn btn-success custom-width">edit</a></td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
-                        <td><a href="<c:url value='/contracts/${feature.featureId}/deleteFromContract' />"
-                               class="btn btn-danger custom-width">delete</a></td>
+                        <c:url var="deleteUrl" value="/contracts/${feature.featureId}/deleteFromContract"/>
+                        <td>
+                            <form:form id="${deleteForm}" action="${deleteUrl}" method="POST">
+                                <input id="feature" name="feature" type="hidden" value="${feature.featureId}"/>
+                                <input type="submit" class="btn btn-danger custom-width" value="delete"
+                                       onClick="return confirm('sure?')"/>
+                            </form:form>
+                        </td>
+                        <%--<td><a href="<c:url value='/contracts/${feature.featureId}/deleteFromContract' />"--%>
+                               <%--class="btn btn-danger custom-width">delete</a></td>--%>
                     </sec:authorize>
                 </tr>
             </c:forEach>
