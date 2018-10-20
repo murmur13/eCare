@@ -29,9 +29,6 @@
                 <th>name</th>
                 <th>price (&#8381)</th>
                 <th>connection cost (&#8381)</th>
-                <%--<sec:authorize access="hasRole('USER') or hasRole('DBA')">--%>
-                <%--<jsp:forward page="main.jsp"/>--%>
-                <%--</sec:authorize>--%>
                 <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                     <th width="100"></th>
                 </sec:authorize>
@@ -52,8 +49,13 @@
                     <td>${feature.featurePrice}</td>
                     <td>${feature.connectionCost}</td>
                     <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/cart/${feature.featureId}/addToCart' />"
-                               class="btn btn-success custom-width">Choose option</a></td>
+                        <c:url var="addUrl" value="/cart/${feature.featureId}/addToCart"/>
+                        <td>
+                            <form:form id="${addForm}" action="${addUrl}" method="POST">
+                                <input id="feature" name="feature" type="hidden" value="${feature.featureId}"/>
+                                <input type="submit" class="btn btn-success custom-width" value="Choose option"/>
+                            </form:form>
+                        </td>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/features/${feature.featureId}/editFeature' />"

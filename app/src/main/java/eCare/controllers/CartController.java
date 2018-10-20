@@ -1,7 +1,7 @@
 package eCare.controllers;
 
-import eCare.model.po.*;
-import eCare.model.services.*;
+import eCare.model.po.Cart;
+import eCare.model.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * Created by echerkas on 03.04.2018.
@@ -30,13 +29,13 @@ public class CartController {
         return view;
     }
 
-    @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/{featureId}/addToCart", method = RequestMethod.POST)
     public String addFeatureToCart(@PathVariable Integer featureId, Model model, HttpSession session) {
         String view = cartService.addFeatureToCart(featureId, model, session);
         return view;
     }
 
-    @RequestMapping(value = "/cart/{tarifId}/addTarifToCart", method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/{tarifId}/addTarifToCart", method = RequestMethod.POST)
     public String addTarifToCart(@PathVariable Integer tarifId, Model model, HttpSession session) {
         String view = cartService.addTarifToCart(tarifId, model, session);
         return view;

@@ -46,12 +46,14 @@
                     <td>${tarif.name}</td>
                     <td>${tarif.price}</td>
                     <sec:authorize access="hasRole('USER')">
-                        <td><a href="<c:url value='/cart/${tarif.tarifId}/addTarifToCart' />"
-                               class="btn btn-success custom-width">Add tarif to cart</a></td>
+                        <c:url var="addUrl" value="/cart/${tarif.tarifId}/addTarifToCart"/>
+                        <td>
+                            <form:form id="${addForm}" action="${addUrl}" method="POST">
+                                <input id="tarif" name="tarif" type="hidden" value="${tarif.tarifId}"/>
+                                <input type="submit" class="btn btn-success custom-width" value="Add tarif to cart"/>
+                            </form:form>
+                        </td>
                     </sec:authorize>
-                        <%--<sec:authorize access="hasRole('USER')">--%>
-                        <%--<td><a href="<c:url value='/contracts/${tarif.tarifId}/changeTarif' />" class="btn btn-success custom-width">Change tarif</a></td>--%>
-                        <%--</sec:authorize>--%>
                     <sec:authorize access="hasRole('ADMIN') or hasRole('DBA')">
                         <td><a href="<c:url value='/tarifs/${tarif.tarifId}/editTarif' />"
                                class="btn btn-success custom-width">edit</a></td>

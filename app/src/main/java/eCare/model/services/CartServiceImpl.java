@@ -163,7 +163,8 @@ public class CartServiceImpl implements CartService {
             return "errorPage";
         }
         Tarif tarifToAdd = addTarifToCart(tarifId, cart);
-        model.addAttribute("tarifInCart", tarifToAdd);
+        cart.setTarifInCart(tarifToAdd);
+        session.setAttribute("cart", cart);
         model.addAttribute("tarifInCart", tarifToAdd);
         model.addAttribute("loggedinuser", userService.getPrincipal());
         return "cart";
