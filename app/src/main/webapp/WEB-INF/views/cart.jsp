@@ -149,10 +149,14 @@
                             <h4 class="text-right">Total <strong>$50.00</strong></h4>
                         </div>
                         <div class="col-xs-3">
-                            <button type="button" class="btn btn-success btn-block">
-                                <a href="<c:url value='/cart/submit' />">
-                                    Submit
-                                </a>
+
+                            <c:url var="submitUrl" value="/cart/submit"/>
+                            <td>
+                                <form:form id="${submitForm}" action="${submitUrl}" method="POST">
+                                    <input type="submit" class="btn btn-success btn-block" value="submit"
+                                           onClick="return confirm('sure?')"/>
+                                </form:form>
+                            </td>
                             </button>
                         </div>
                     </div>

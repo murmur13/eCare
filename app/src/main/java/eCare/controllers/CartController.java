@@ -60,7 +60,7 @@ public class CartController {
         return view;
     }
 
-    @RequestMapping(value = "/cart/submit", method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/submit", method = RequestMethod.POST)
     public String submitCartGet(Model model, HttpSession session, Cart cart, SessionStatus status) {
         String view = cartService.submitCartGet(model, session, cart, status);
         return view;

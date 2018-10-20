@@ -65,8 +65,6 @@
                                        onClick="return confirm('sure?')"/>
                             </form:form>
                         </td>
-                        <%--<td><a href="<c:url value='/contracts/${feature.featureId}/deleteFromContract' />"--%>
-                               <%--class="btn btn-danger custom-width">delete</a></td>--%>
                     </sec:authorize>
                 </tr>
             </c:forEach>
